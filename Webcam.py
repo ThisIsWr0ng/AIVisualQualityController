@@ -1,6 +1,6 @@
 import cv2
 
-cv2.namedWindow("previe")
+cv2.namedWindow("preview")
 url = "https://192.168.1.239:8080/video"
 webcam = 0 # 0 for laptop webcam / 1 for external webcam
 vc = cv2.VideoCapture(url)
