@@ -20,7 +20,7 @@
           <object class="GtkImage" id="previewWindow">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="stock">gtk-missing-image</property>
+            <property name="stock">gtk-zoom-fit</property>
           </object>
           <packing>
             <property name="resize">False</property>
@@ -41,7 +41,7 @@
             </child>
             <child>
               <object class="GtkButton" id="start">
-                <property name="label" translatable="yes">button</property>
+                <property name="label" translatable="yes">Start Preview</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
