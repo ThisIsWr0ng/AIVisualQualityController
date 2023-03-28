@@ -3,8 +3,8 @@ import numpy as np
 import os
 
 margin = 20
-input_folder = "C:/Dataset"
-output_folder = "C:/Dataset_ROI"
+input_folder = r'C:\Dataset'
+output_folder = r'C:\Dataset_ROI'
 
 # Define the colors to be used for drawing contours and lines
 green = (0, 255, 0)
