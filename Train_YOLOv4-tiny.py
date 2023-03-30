@@ -13,8 +13,8 @@ pretrained_weights = 'yolov4-tiny.conv.29'
 num_classes = 5
 
 # Set the batch size and number of iterations
-batch_size = 64
-max_batches = 6000
+batch_size = 128
+max_batches = 10000
 
 # Set the learning rate schedule
 learning_rate = 0.00261
