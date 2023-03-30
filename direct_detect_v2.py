@@ -5,8 +5,8 @@ import darknet
 
 # Set the network configuration and weights files
 config_file = 'custom-yolov4-tiny-detector'
-weights_file = 'weights_v4.weights'
-data_file = 'obj.names'
+weights_file = 'weights_v3.weights'
+_v4data_file = 'obj.names'
 
 # Load the network
 network, class_names, class_colors = darknet.load_network(config_file, data_file, weights_file)
