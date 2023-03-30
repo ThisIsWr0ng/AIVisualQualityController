@@ -1,6 +1,6 @@
 classes = 5
 train = C:\Dataset_YOLO\train
 valid = C:\Dataset_YOLO\valid
-names = C:\Dataset_YOLO\classes.txt
+names = classes.txt
 backup = backup/
 eval=coco
