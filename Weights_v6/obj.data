@@ -1,0 +1,5 @@
+classes = 4
+train = C:\Darknet\data\train.txt
+valid = C:\Darknet\data\valid.txt
+names = obj.names
+backup = backup\
