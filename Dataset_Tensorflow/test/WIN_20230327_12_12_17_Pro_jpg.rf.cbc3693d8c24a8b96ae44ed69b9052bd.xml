@@ -1,0 +1,27 @@
+<annotation>
+	<folder></folder>
+	<filename>WIN_20230327_12_12_17_Pro_jpg.rf.cbc3693d8c24a8b96ae44ed69b9052bd.jpg</filename>
+	<path>WIN_20230327_12_12_17_Pro_jpg.rf.cbc3693d8c24a8b96ae44ed69b9052bd.jpg</path>
+	<source>
+		<database>roboflow.ai</database>
+	</source>
+	<size>
+		<width>224</width>
+		<height>224</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Cut</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>3</xmin>
+			<xmax>221</xmax>
+			<ymin>9</ymin>
+			<ymax>217</ymax>
+		</bndbox>
+	</object>
+</annotation>

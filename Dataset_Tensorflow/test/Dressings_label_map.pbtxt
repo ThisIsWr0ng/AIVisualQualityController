@@ -1,0 +1,20 @@
+item {
+    name: "Cut",
+    id: 1,
+    display_name: "Cut"
+}
+item {
+    name: "Dressing",
+    id: 2,
+    display_name: "Dressing"
+}
+item {
+    name: "F_Body",
+    id: 3,
+    display_name: "F_Body"
+}
+item {
+    name: "Red_T",
+    id: 4,
+    display_name: "Red_T"
+}

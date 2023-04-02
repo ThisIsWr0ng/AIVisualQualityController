@@ -1,0 +1,27 @@
+<annotation>
+	<folder></folder>
+	<filename>WIN_20230327_12_06_24_Pro_jpg.rf.6fedc3ff4588483b59ad969fed4eb9fd.jpg</filename>
+	<path>WIN_20230327_12_06_24_Pro_jpg.rf.6fedc3ff4588483b59ad969fed4eb9fd.jpg</path>
+	<source>
+		<database>roboflow.ai</database>
+	</source>
+	<size>
+		<width>224</width>
+		<height>224</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Dressing</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>14</xmin>
+			<xmax>147</xmax>
+			<ymin>4</ymin>
+			<ymax>174</ymax>
+		</bndbox>
+	</object>
+</annotation>
