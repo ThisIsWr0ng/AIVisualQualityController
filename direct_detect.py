@@ -13,16 +13,14 @@ output_layers = net.getUnconnectedOutLayersNames()
 
 # Initialize camera feed
 cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
 
 
 while True:
     # Read frame from camera feed
     ret, frame = cap.read()
-    #frame = cv2.resize(frame, (640, 640))
+    frame = cv2.resize(frame, (224, 224))
     # Preprocess the frame for YOLOv4-tiny
-    blob = cv2.dnn.blobFromImage(frame, 1/255, (640, 640), swapRB=True, crop=False)
+    blob = cv2.dnn.blobFromImage(frame, 1/255, (224, 224), swapRB=True, crop=False)
     net.setInput(blob)
     #output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
  

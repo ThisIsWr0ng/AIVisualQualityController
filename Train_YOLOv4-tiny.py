@@ -10,10 +10,10 @@ pretrained_weights = 'yolov4-tiny.conv.29'
 #Training from previous best model
 #pretrained_weights = 'Weights_v1.weights'
 # Set the number of classes
-num_classes = 5
+num_classes = 4
 
 # Set the batch size and number of iterations
-batch_size = 128
+batch_size = 64
 max_batches = 10000
 
 # Set the learning rate schedule
