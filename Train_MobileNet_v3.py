@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras.applications import MobileNetV3Small
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from keras.applications import MobileNetV3Small
+from keras.preprocessing.image import ImageDataGenerator
 
 # Define the path to the directory containing the dataset
 data_dir = '/path/to/dataset'
