@@ -2,11 +2,11 @@ import os
 
 # Set the paths to the Darknet executable and the configuration and dataset files
 darknet_path = r'C:\Darknet\darknet.exe'
-config_file = 'cfg/custom-yolov4-tiny-detector.cfg'
+config_file = 'cfg/custom-yolov7-tiny-detector.cfg'
 data_file = 'data/obj.data'
 
 # Training from original weights
-pretrained_weights = 'yolov4-tiny.conv.29'
+pretrained_weights = 'yolov7-tiny.conv.87'
 #Training from previous best model
 #pretrained_weights = 'Weights_v1.weights'
 # Set the number of classes
