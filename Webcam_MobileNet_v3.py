@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 
 # Load your trained model
-model_path = 'path/to/your/trained/model.h5'
+model_path = 'model.h5'
 model = tf.keras.models.load_model(model_path)
 
 # Label map
