@@ -45,7 +45,7 @@ label_map = read_label_map(label_map_file)
 input_shape = (224, 224, 3)
 num_classes = num_classes = len(label_map)
 batch_size = 32
-num_epochs = 100
+num_epochs = 400
 train_tfrecords = "C:/Dataset_Tensorflow_v3/train/train.tfrecord"
 val_tfrecords = "C:/Dataset_Tensorflow_v3/valid/val.tfrecord"
 
@@ -62,4 +62,4 @@ model.compile(optimizer=Adam(learning_rate=1e-4), loss='categorical_crossentropy
 
 # Train the model
 history = model.fit(train_data, epochs=num_epochs, validation_data=val_data)
-model.save('model.h5')
+model.save('modelv2.h5')
