@@ -32,15 +32,22 @@ def load_dataset(tfrecords, input_shape, batch_size, num_classes):
     dataset = dataset.prefetch(buffer_size=tf.data.AUTOTUNE)
 
     return dataset
+def read_label_map(label_map_file):
+    with open(label_map_file, 'r') as f:
+        lines = f.readlines()
+    label_map = {i: class_name.strip() for i, class_name in enumerate(lines)}
+    return label_map
 
+label_map_file = 'C:\Dataset_Tensorflow_v3/label_map.txt'
+label_map = read_label_map(label_map_file)
 
 # Define parameters
 input_shape = (224, 224, 3)
-num_classes = 4
+num_classes = num_classes = len(label_map)
 batch_size = 32
 num_epochs = 100
-train_tfrecords = "C:/Dataset_Tensorflow_v2/train/Dressings.tfrecord"
-val_tfrecords = "C:/Dataset_Tensorflow_v2/valid/Dressings.tfrecord"
+train_tfrecords = "C:/Dataset_Tensorflow_v3/train/train.tfrecord"
+val_tfrecords = "C:/Dataset_Tensorflow_v3/valid/val.tfrecord"
 
 # Load datasets
 train_data = load_dataset(train_tfrecords, input_shape, batch_size, num_classes)

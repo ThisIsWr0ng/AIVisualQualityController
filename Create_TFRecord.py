@@ -1,7 +1,8 @@
 import os
+import csv
 import tensorflow as tf
+import pandas as pd
 from PIL import Image
-from sklearn.model_selection import train_test_split
 
 def _bytes_feature(value):
     return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
@@ -11,40 +12,65 @@ def _int64_feature(value):
 
 def create_tfrecord(images, labels, output_file):
     with tf.io.TFRecordWriter(output_file) as writer:
-        for img_path, label in zip(images, labels):
-            img = Image.open(img_path)
-            width, height = img.size
-            img_bytes = img.tobytes()
-
-            feature = {
-                'image/encoded': _bytes_feature(img_bytes),
+        for image_path, label in zip(images, labels):
+            with open(image_path, 'rb') as img_file:
+                img = img_file.read()
+            image = Image.open(image_path)
+            width, height = image.size
+            example = tf.train.Example(features=tf.train.Features(feature={
+                'image/encoded': _bytes_feature(img),
                 'image/object/class/label': _int64_feature(label),
                 'image/height': _int64_feature(height),
-                'image/width': _int64_feature(width),
-            }
-
-            example = tf.train.Example(features=tf.train.Features(feature=feature))
+                'image/width': _int64_feature(width)
+            }))
             writer.write(example.SerializeToString())
 
-def create_tfrecords_from_folder(data_folder, train_output, val_output, test_output, val_split=0.1, test_split=0.1):
-    class_names = os.listdir(data_folder)
-    images, labels = [], []
-    for class_index, class_name in enumerate(class_names):
-        class_folder = os.path.join(data_folder, class_name)
-        for image_name in os.listdir(class_folder):
-            images.append(os.path.join(class_folder, image_name))
-            labels.append(class_index)
+def read_images_and_labels_from_csv(csv_file):
+    images = []
+    labels = []
 
-    train_images, test_images, train_labels, test_labels = train_test_split(images, labels, test_size=test_split, stratify=labels)
-    train_images, val_images, train_labels, val_labels = train_test_split(train_images, train_labels, test_size=val_split, stratify=train_labels)
+    df = pd.read_csv(csv_file)
+    for _, row in df.iterrows():
+        img_path = os.path.join(os.path.dirname(csv_file), row['class'], row['filename'])
+        label = label_map[row['class']]
 
-    create_tfrecord(train_images, train_labels, train_output)
-    create_tfrecord(val_images, val_labels, val_output)
-    create_tfrecord(test_images, test_labels, test_output)
+        images.append(img_path)
+        labels.append(label)
 
-data_folder = 'C:\Dataset_Tensorflow_v3'
-train_output = 'train.tfrecord'
-val_output = 'val.tfrecord'
-test_output = 'test.tfrecord'
+    return images, labels
 
-create_tfrecords_from_folder(data_folder, train_output, val_output, test_output)
+def create_tfrecords_from_folder(data_folder, train_output, val_output, test_output):
+    def process_folder(folder, output_file):
+        images, labels = read_images_and_labels_from_csv(os.path.join(folder, '_annotations.csv'))
+        create_tfrecord(images, labels, output_file)
+
+    train_folder = os.path.join(data_folder, 'train')
+    val_folder = os.path.join(data_folder, 'valid')
+    test_folder = os.path.join(data_folder, 'test')
+
+    process_folder(train_folder, train_output)
+    process_folder(val_folder, val_output)
+    process_folder(test_folder, test_output)
+
+if __name__ == "__main__":
+    data_folder = "C:\Dataset_Tensorflow_v3"
+    train_output = "C:/Dataset_Tensorflow_v3/train/train.tfrecord"
+    val_output = "C:/Dataset_Tensorflow_v3/valid/val.tfrecord"
+    test_output = "C:/Dataset_Tensorflow_v3/test/test.tfrecord"
+    label_map = {'Cut': 0, 'Dressing': 1, 'F_Body': 2, 'Red_T': 3}
+
+
+    create_tfrecords_from_folder(data_folder, train_output, val_output, test_output)
+
+#create label map.txt   
+def create_label_map(data_folder, output_file):
+    train_folder = os.path.join(data_folder, 'train')
+    class_names = [d for d in os.listdir(train_folder) if os.path.isdir(os.path.join(train_folder, d))]
+    
+    with open(output_file, 'w') as f:
+        for class_name in class_names:
+            f.write(f"{class_name}\n")
+
+label_map_output = 'C:\Dataset_Tensorflow_v3/label_map.txt'
+
+create_label_map(data_folder, label_map_output)

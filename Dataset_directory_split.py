@@ -15,6 +15,9 @@ def split_dataset(data_dir, annotations_csv, output_dir):
 
         shutil.copy(image_path, class_dir)
 
+    # Copy the annotation file to the output directory
+    shutil.copy(annotations_csv, output_dir)
+
 data_folders = ['train', 'valid', 'test']
 base_data_folder = 'C:\Dataset_Tensorflow_v2'
 output_base_folder = 'C:\Dataset_Tensorflow_v3'
