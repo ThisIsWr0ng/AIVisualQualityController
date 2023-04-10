@@ -10,14 +10,24 @@ model = tf.keras.models.load_model(model_path)
 # Label map
 label_map = {0: 'Cut', 1: 'Dressing', 2: 'F_Body', 3: 'Red_T'}
 
-def process_frame(frame, model, input_size):
-    resized_frame = cv2.resize(frame, input_size)
-    input_data = np.expand_dims(resized_frame, axis=0) / 255.0
+# Preallocate memory for input_data
+input_data = np.empty((1, 224, 224, 3), dtype=np.float32)
+
+def process_frame(frame, model, input_data):
+    resized_frame = cv2.resize(frame, input_data.shape[1:3])
+    np.copyto(input_data, resized_frame[np.newaxis] / 255.0)
     predictions = model.predict(input_data)
-    top_two_indices = np.argpartition(predictions[0], -2)[-2:]
-    top_two_probs = predictions[0][top_two_indices]
-    top_two_labels = [label_map[i] for i in top_two_indices]
-    return top_two_labels, top_two_probs
+    
+    top_index = np.argmax(predictions)
+    top_label = label_map[top_index]
+    top_prob = predictions[0][top_index]
+    predictions[0][top_index] = 0
+    
+    second_index = np.argmax(predictions)
+    second_label = label_map[second_index]
+    second_prob = predictions[0][second_index]
+    
+    return [(top_label, top_prob), (second_label, second_prob)]
 
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
@@ -54,20 +64,19 @@ while True:
         roi_h = min(max_side + 2 * margin, frame.shape[0] - roi_y)
 
         roi = frame[roi_y:roi_y+roi_h, roi_x:roi_x+roi_w]
-        cv2.imshow('ROI', roi)
+        cv2.imshow('camera', frame)
 
-            # Process the ROI and get the predictions
-    top_two_labels, top_two_probs = process_frame(roi, model, (224, 224))
+        # Process the ROI and get the predictions
+        top_two_preds = process_frame(roi, model, input_data)
 
-    # Display the top two detected classes and confidences on the ROI
-    text1 = f"{top_two_labels[0]}: {top_two_probs[0] * 100:.2f}%"
-    text2 = f"{top_two_labels[1]}: {top_two_probs[1] * 100:.2f}%"
-    cv2.putText(roi, text1, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
-    cv2.putText(roi, text2, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+        # Display the top two detected classes and confidences on the ROI
+        for i, (label, prob) in enumerate(top_two_preds):
+            text = f"{label}: {prob * 100:.2f}%"
+            cv2.putText(roi, text, (10, 30 + 30 * i), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
-    # Display FPS on the frame
-    fps_text = f"FPS: {fps:.2f}"
-    cv2.putText(roi, fps_text, (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        # Display FPS on the frame
+        fps_text = f"FPS: {fps:.2f}"
+        cv2.putText(roi, fps_text, (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
     # Show the ROI
     cv2.imshow('Object Detection', roi)
