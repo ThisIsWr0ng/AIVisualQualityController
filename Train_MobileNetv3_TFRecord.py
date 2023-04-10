@@ -62,3 +62,4 @@ model.compile(optimizer=Adam(learning_rate=1e-4), loss='categorical_crossentropy
 
 # Train the model
 history = model.fit(train_data, epochs=num_epochs, validation_data=val_data)
+model.save('model.h5')
