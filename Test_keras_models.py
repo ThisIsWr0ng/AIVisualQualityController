@@ -4,10 +4,10 @@ from keras.models import load_model
 from sklearn.metrics import classification_report, confusion_matrix
 
 # Load the trained model
-model = load_model('model_mobilev2.h5')
+model = load_model('model_mobilev2_v2.h5')
 
 # Define test dataset file
-test_tfrecords = "C:/Dataset_Tensorflow_v3/test/test.tfrecord"
+test_tfrecords = "C:/Dataset_Tensorflow_v4/test/test.tfrecord"
 def load_dataset(tfrecords, input_shape, batch_size, num_classes):
     def parse_tfrecord(example_proto):
         feature_description = {
@@ -44,11 +44,11 @@ def read_label_map(label_map_file):
     label_map = {i: class_name.strip() for i, class_name in enumerate(lines)}
     return label_map
 
-label_map_file = 'C:\Dataset_Tensorflow_v3/label_map.txt'
+label_map_file = 'C:\Dataset_Tensorflow_v4/label_map.txt'
 label_map = read_label_map(label_map_file)
 
 # Define parameters
-input_shape = (224, 224, 3)
+input_shape = (416, 416, 3)
 num_classes = len(label_map)
 batch_size = 32
 
