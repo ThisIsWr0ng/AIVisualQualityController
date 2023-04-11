@@ -1,6 +1,7 @@
 import tensorflow as tf
 from keras.applications import MobileNetV2
 from keras.optimizers import Adam
+from keras.callbacks import EarlyStopping, TensorBoard
 
 # Custom load_dataset function
 def load_dataset(tfrecords, input_shape, batch_size, num_classes):
@@ -61,6 +62,11 @@ model = tf.keras.Model(inputs=base_model.inputs, outputs=x)
 
 model.compile(optimizer=Adam(learning_rate=1e-4), loss='categorical_crossentropy', metrics=['accuracy'])
 
+#Early stopping to prevent overfitting
+early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1, restore_best_weights=True, start_from_epoch=20)
+#tensorboard for logging
+tensorboard = TensorBoard(log_dir='logs')
+#tensorboard --C:\Users\dawid\OneDrive\Documents\GitHub\AIVisualQualityController\logs logs
 # Train the model
-history = model.fit(train_data, epochs=num_epochs, validation_data=val_data)
+history = model.fit(train_data, epochs=num_epochs, validation_data=val_data, callbacks=[early_stopping, tensorboard])
 model.save('model_mobilev2_v2.h5')
