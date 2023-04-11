@@ -10,6 +10,10 @@ def load_dataset(tfrecords, input_shape, batch_size, num_classes):
             'image/object/class/label': tf.io.VarLenFeature(tf.int64),
             'image/height': tf.io.FixedLenFeature([], tf.int64),
             'image/width': tf.io.FixedLenFeature([], tf.int64),
+            'image/object/bbox/xmin': tf.io.VarLenFeature(tf.float32),
+            'image/object/bbox/ymin': tf.io.VarLenFeature(tf.float32),
+            'image/object/bbox/xmax': tf.io.VarLenFeature(tf.float32),
+            'image/object/bbox/ymax': tf.io.VarLenFeature(tf.float32),
         }
         example = tf.io.parse_single_example(example_proto, feature_description)
         image = tf.image.decode_jpeg(example['image/encoded'], channels=3)
@@ -23,7 +27,14 @@ def load_dataset(tfrecords, input_shape, batch_size, num_classes):
             label = label.values[0]
         label = tf.one_hot(label, depth=num_classes)
 
-        return image, label
+        bbox = tf.stack([
+            example['image/object/bbox/xmin'].values,
+            example['image/object/bbox/ymin'].values,
+            example['image/object/bbox/xmax'].values,
+            example['image/object/bbox/ymax'].values
+        ], axis=-1)
+
+        return image, label, bbox
 
     dataset = tf.data.TFRecordDataset(tfrecords)
     dataset = dataset.map(parse_tfrecord, num_parallel_calls=tf.data.AUTOTUNE)
@@ -32,6 +43,7 @@ def load_dataset(tfrecords, input_shape, batch_size, num_classes):
     dataset = dataset.prefetch(buffer_size=tf.data.AUTOTUNE)
 
     return dataset
+
 def read_label_map(label_map_file):
     with open(label_map_file, 'r') as f:
         lines = f.readlines()
