@@ -53,11 +53,11 @@ def create_tfrecords_from_folder(data_folder, train_output, val_output, test_out
     process_folder(test_folder, test_output)
 
 if __name__ == "__main__":
-    data_folder = "C:\Dataset_Tensorflow_v3"
-    train_output = "C:/Dataset_Tensorflow_v3/train/train.tfrecord"
-    val_output = "C:/Dataset_Tensorflow_v3/valid/val.tfrecord"
-    test_output = "C:/Dataset_Tensorflow_v3/test/test.tfrecord"
-    label_map = {'Cut': 0, 'Dressing': 1, 'F_Body': 2, 'Red_T': 3}
+    data_folder = "C:\Dataset_Tensorflow_v4"
+    train_output = "C:/Dataset_Tensorflow_v4/train/train.tfrecord"
+    val_output = "C:/Dataset_Tensorflow_v4/valid/val.tfrecord"
+    test_output = "C:/Dataset_Tensorflow_v4/test/test.tfrecord"
+    label_map = {'Cut': 0, 'F_Body': 1, 'Red_T': 2}
 
 
     create_tfrecords_from_folder(data_folder, train_output, val_output, test_output)
@@ -71,6 +71,6 @@ def create_label_map(data_folder, output_file):
         for class_name in class_names:
             f.write(f"{class_name}\n")
 
-label_map_output = 'C:\Dataset_Tensorflow_v3/label_map.txt'
+label_map_output = 'C:\Dataset_Tensorflow_v4/label_map.txt'
 
 create_label_map(data_folder, label_map_output)

@@ -19,8 +19,8 @@ def split_dataset(data_dir, annotations_csv, output_dir):
     shutil.copy(annotations_csv, output_dir)
 
 data_folders = ['train', 'valid', 'test']
-base_data_folder = 'C:\Dataset_Tensorflow_v2'
-output_base_folder = 'C:\Dataset_Tensorflow_v3'
+base_data_folder = 'C:\Dataset_416_3class'
+output_base_folder = 'C:\Dataset_Tensorflow_v4'
 
 for data_folder in data_folders:
     input_data_folder = os.path.join(base_data_folder, data_folder)

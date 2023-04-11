@@ -39,16 +39,16 @@ def read_label_map(label_map_file):
     label_map = {i: class_name.strip() for i, class_name in enumerate(lines)}
     return label_map
 
-label_map_file = 'C:\Dataset_Tensorflow_v3/label_map.txt'
+label_map_file = 'C:\Dataset_Tensorflow_v4/label_map.txt'
 label_map = read_label_map(label_map_file)
 
 # Define parameters
-input_shape = (224, 224, 3)
+input_shape = (416, 416, 3)
 num_classes = len(label_map)
 batch_size = 32
 num_epochs = 100
-train_tfrecords = "C:/Dataset_Tensorflow_v3/train/train.tfrecord"
-val_tfrecords = "C:/Dataset_Tensorflow_v3/valid/val.tfrecord"
+train_tfrecords = "C:/Dataset_Tensorflow_v4/train/train.tfrecord"
+val_tfrecords = "C:/Dataset_Tensorflow_v4/valid/val.tfrecord"
 
 # Load datasets
 train_data = load_dataset(train_tfrecords, input_shape, batch_size, num_classes)
@@ -63,4 +63,4 @@ model.compile(optimizer=Adam(learning_rate=1e-4), loss='categorical_crossentropy
 
 # Train the model
 history = model.fit(train_data, epochs=num_epochs, validation_data=val_data)
-model.save('model_mobilev2.h5')
+model.save('model_mobilev2_v2.h5')

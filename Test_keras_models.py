@@ -4,7 +4,7 @@ from keras.models import load_model
 from sklearn.metrics import classification_report, confusion_matrix
 
 # Load the trained model
-model = load_model('modelv2.h5')
+model = load_model('model_mobilev2.h5')
 
 # Define test dataset file
 test_tfrecords = "C:/Dataset_Tensorflow_v3/test/test.tfrecord"
