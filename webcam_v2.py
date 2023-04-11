@@ -2,10 +2,18 @@ import cv2
 import numpy as np
 import tensorflow as tf
 import time
+from keras.utils import custom_object_scope
+
+def class_loss(y_true, y_pred):
+    return tf.keras.losses.categorical_crossentropy(y_true, y_pred)
+
+def bbox_loss(y_true, y_pred):
+    return tf.keras.losses.mean_squared_error(y_true, y_pred)
 
 # Load your trained model
 model_path = 'model_mobilev2_v3.h5'
-model = tf.keras.models.load_model(model_path)
+with custom_object_scope({'class_loss': class_loss, 'bbox_loss': bbox_loss}):
+    model = tf.keras.models.load_model(model_path)
 
 # Label map
 label_map = {0: 'Cut', 1: 'Dressing', 2: 'F_Body', 3: 'Red_T'}

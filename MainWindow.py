@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 import time
-from PyQt5 import QtCore, QtGui, QtWidgets
+from Qt5 import QtCore, QtGui, QtWidgets
 
 # Load your trained model
 model_path = 'model.h5'
