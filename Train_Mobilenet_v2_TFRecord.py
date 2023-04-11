@@ -65,7 +65,7 @@ model.compile(optimizer=Adam(learning_rate=1e-4), loss='categorical_crossentropy
 #Early stopping to prevent overfitting
 early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1, restore_best_weights=True, start_from_epoch=20)
 #tensorboard for logging
-tensorboard = TensorBoard(log_dir='logs')
+tensorboard = TensorBoard(log_dir='C:\Users\dawid\OneDrive\Documents\GitHub\AIVisualQualityController\logs')
 #tensorboard --C:\Users\dawid\OneDrive\Documents\GitHub\AIVisualQualityController\logs logs
 # Train the model
 history = model.fit(train_data, epochs=num_epochs, validation_data=val_data, callbacks=[early_stopping, tensorboard])
