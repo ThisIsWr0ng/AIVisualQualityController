@@ -4,7 +4,7 @@ import tensorflow as tf
 import time
 
 # Load your trained model
-model_path = 'model.h5'
+model_path = 'model_mobilev2_v3.h5'
 model = tf.keras.models.load_model(model_path)
 
 # Label map
@@ -16,7 +16,7 @@ input_data = np.empty((1, 224, 224, 3), dtype=np.float32)
 def process_frame(frame, model, input_data):
     resized_frame = cv2.resize(frame, input_data.shape[1:3])
     np.copyto(input_data, resized_frame[np.newaxis] / 255.0)
-    predictions = model.predict(input_data)
+    predictions, bbox_preds = model.predict(input_data)
     
     top_index = np.argmax(predictions)
     top_label = label_map[top_index]
@@ -27,7 +27,7 @@ def process_frame(frame, model, input_data):
     second_label = label_map[second_index]
     second_prob = predictions[0][second_index]
     
-    return [(top_label, top_prob), (second_label, second_prob)]
+    return [(top_label, top_prob), (second_label, second_prob)], bbox_preds[0]
 
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
@@ -66,13 +66,21 @@ while True:
         roi = frame[roi_y:roi_y+roi_h, roi_x:roi_x+roi_w]
         cv2.imshow('camera', frame)
 
-        # Process the ROI and get the predictions
-        top_two_preds = process_frame(roi, model, input_data)
+        # Process the ROI and get the predictions and bounding boxes
+        top_two_preds, bbox_pred = process_frame(roi, model, input_data)
 
         # Display the top two detected classes and confidences on the ROI
         for i, (label, prob) in enumerate(top_two_preds):
             text = f"{label}: {prob * 100:.2f}%"
             cv2.putText(roi, text, (10, 30 + 30 * i), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+
+        # Draw predicted bounding boxes on the ROI
+        bbox_xmin = int(bbox_pred[0] * roi_w)
+        bbox_ymin = int(bbox_pred[1] * roi_h)
+        bbox_xmax = int(bbox_pred[2] * roi_w)
+        bbox_ymax = int(bbox_pred[3] * roi_h)
+
+        cv2.rectangle(roi, (bbox_xmin, bbox_ymin), (bbox_xmax, bbox_ymax), (0, 255, 0), 2)
 
         # Display FPS on the frame
         fps_text = f"FPS: {fps:.2f}"
