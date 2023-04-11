@@ -2,9 +2,18 @@ import numpy as np
 import tensorflow as tf
 from keras.models import load_model
 from sklearn.metrics import classification_report, confusion_matrix, mean_squared_error
+from keras.utils import custom_object_scope
 
-# Load the trained model
-model = load_model('model_mobilev2_v3.h5')
+def class_loss(y_true, y_pred):
+    return tf.keras.losses.categorical_crossentropy(y_true, y_pred)
+
+def bbox_loss(y_true, y_pred):
+    return tf.keras.losses.mean_squared_error(y_true, y_pred)
+
+# Load your trained model
+model_path = 'model_mobilev2_v3.h5'
+with custom_object_scope({'class_loss': class_loss, 'bbox_loss': bbox_loss}):
+    model = tf.keras.models.load_model(model_path)
 
 # Define test dataset file
 test_tfrecords = "C:/Dataset_Tensorflow_v5/test/test.tfrecord"
