@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from keras.applications import MobileNetV2
+from keras.applications import EfficientNetB1
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, TensorBoard
 from sklearn.metrics import classification_report, confusion_matrix, mean_squared_error
@@ -59,8 +59,8 @@ label_map = read_label_map(label_map_file)
 # Define parameters
 input_shape = (224, 224, 3)
 num_classes = len(label_map)
-batch_size = 24
-num_epochs = 300
+batch_size = 32
+num_epochs = 100
 train_tfrecords = "C:/Dataset_Tensorflow_v5/train/train.tfrecord"
 val_tfrecords = "C:/Dataset_Tensorflow_v5/valid/val.tfrecord"
 test_tfrecords = "C:/Dataset_Tensorflow_v5/test/test.tfrecord"
@@ -72,7 +72,7 @@ train_data = train_data.map(lambda x, y, z: (x, {'class_output': y, 'bbox_output
 val_data = val_data.map(lambda x, y, z: (x, {'class_output': y, 'bbox_output': z}))
 
 #Create a custom heads for the model
-base_model = MobileNetV2(input_shape=input_shape, include_top=False, weights='imagenet', pooling='avg')
+base_model = EfficientNetB1(input_shape=input_shape, include_top=False, weights='imagenet', pooling='avg')
 #x = tf.keras.layers.Dense(num_classes, activation='softmax')(base_model.output)
 class_head = tf.keras.layers.Dense(num_classes, activation='softmax', name='class_output')(base_model.output)
 bbox_head = tf.keras.layers.Dense(4, activation='linear', name='bbox_output')(base_model.output)
@@ -87,18 +87,18 @@ def bbox_loss(y_true, y_pred):
     return tf.keras.losses.mean_squared_error(y_true, y_pred)
 
 # Compile the model
-model.compile(optimizer=Adam(learning_rate=1e-3),
+model.compile(optimizer=Adam(learning_rate=1e-4),
               loss={'class_output': class_loss, 'bbox_output': bbox_loss},
               metrics={'class_output': 'accuracy', 'bbox_output': 'mse'})
 
 #Early stopping to prevent overfitting
-early_stopping = EarlyStopping(monitor='class_output_accuracy', min_delta=0, patience=30, verbose=1, restore_best_weights=True, start_from_epoch=20)
+early_stopping = EarlyStopping(monitor='class_output_accuracy', min_delta=0, patience=50, verbose=1, restore_best_weights=True, start_from_epoch=120)
 #tensorboard for logging
 tensorboard = TensorBoard(log_dir='C:/Users/dawid/OneDrive/Documents/GitHub/AIVisualQualityController/logs')
 #tensorboard --logdir=C:/Users/dawid/OneDrive/Documents/GitHub/AIVisualQualityController/logs 
 # Train the model
 history = model.fit(train_data, epochs=num_epochs, validation_data=val_data, callbacks=[early_stopping, tensorboard])
-model.save('model_mobilev2_v4.h5')
+model.save('model_mobilev2_v6.h5')
 
 
 
