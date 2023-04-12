@@ -81,6 +81,6 @@ def create_label_map(data_folder, output_file):
         for class_name in class_names:
             f.write(f"{class_name}\n")
 
-label_map_output = 'C:\Dataset_Tensorflow_v4/label_map.txt'
+label_map_output = 'C:\Dataset_Tensorflow_v5/label_map.txt'
 
 create_label_map(data_folder, label_map_output)

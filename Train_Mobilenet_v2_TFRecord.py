@@ -1,7 +1,9 @@
 import tensorflow as tf
+import numpy as np
 from keras.applications import MobileNetV2
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, TensorBoard
+from sklearn.metrics import classification_report, confusion_matrix, mean_squared_error
 
 # Custom load_dataset function
 def load_dataset(tfrecords, input_shape, batch_size, num_classes):
@@ -57,10 +59,11 @@ label_map = read_label_map(label_map_file)
 # Define parameters
 input_shape = (224, 224, 3)
 num_classes = len(label_map)
-batch_size = 32
-num_epochs = 100
+batch_size = 24
+num_epochs = 300
 train_tfrecords = "C:/Dataset_Tensorflow_v5/train/train.tfrecord"
 val_tfrecords = "C:/Dataset_Tensorflow_v5/valid/val.tfrecord"
+test_tfrecords = "C:/Dataset_Tensorflow_v5/test/test.tfrecord"
 
 # Load datasets
 train_data = load_dataset(train_tfrecords, input_shape, batch_size, num_classes)
@@ -84,15 +87,49 @@ def bbox_loss(y_true, y_pred):
     return tf.keras.losses.mean_squared_error(y_true, y_pred)
 
 # Compile the model
-model.compile(optimizer=Adam(learning_rate=1e-4),
+model.compile(optimizer=Adam(learning_rate=1e-3),
               loss={'class_output': class_loss, 'bbox_output': bbox_loss},
               metrics={'class_output': 'accuracy', 'bbox_output': 'mse'})
 
 #Early stopping to prevent overfitting
-early_stopping = EarlyStopping(monitor='class_output_accuracy', min_delta=0, patience=12, verbose=1, restore_best_weights=True, start_from_epoch=20)
+early_stopping = EarlyStopping(monitor='class_output_accuracy', min_delta=0, patience=30, verbose=1, restore_best_weights=True, start_from_epoch=20)
 #tensorboard for logging
 tensorboard = TensorBoard(log_dir='C:/Users/dawid/OneDrive/Documents/GitHub/AIVisualQualityController/logs')
 #tensorboard --logdir=C:/Users/dawid/OneDrive/Documents/GitHub/AIVisualQualityController/logs 
 # Train the model
 history = model.fit(train_data, epochs=num_epochs, validation_data=val_data, callbacks=[early_stopping, tensorboard])
-model.save('model_mobilev2_v3.h5')
+model.save('model_mobilev2_v4.h5')
+
+
+
+
+#--------TESTING--------------
+# Load test dataset
+test_data = load_dataset(test_tfrecords, input_shape, batch_size, num_classes)
+
+# Get true labels and bounding boxes from the test dataset
+y_true_labels = []
+y_true_bboxes = []
+for images, labels, bboxes in test_data.unbatch():
+    y_true_labels.append(np.argmax(labels.numpy()))
+    y_true_bboxes.append(bboxes.numpy())
+
+y_true_labels = np.array(y_true_labels)
+y_true_bboxes = np.stack(y_true_bboxes)
+
+# Get model predictions on the test dataset
+predictions = model.predict(test_data)
+y_pred_labels = np.argmax(predictions[0], axis=1)
+y_pred_bboxes = np.vstack(predictions[1])
+
+# Calculate and print the classification report
+print("Classification Report:")
+print(classification_report(y_true_labels, y_pred_labels, target_names=list(label_map.values())))
+
+# Calculate and print the confusion matrix
+print("Confusion Matrix:")
+print(confusion_matrix(y_true_labels, y_pred_labels))
+
+# Calculate and print the mean squared error for bounding box predictions
+print("Bounding Box Mean Squared Error:")
+print(mean_squared_error(y_true_bboxes, y_pred_bboxes))
