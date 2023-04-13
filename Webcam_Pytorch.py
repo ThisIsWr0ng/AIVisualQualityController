@@ -8,7 +8,6 @@ import torch
 # Load model
 ort_session = ort.InferenceSession("Model/Yolo_weights_quant.onnx")
 
-
 torch.backends.quantized.engine = 'qnnpack'
 # Initialize camera
 cap = cv2.VideoCapture(0)
@@ -36,22 +35,21 @@ with torch.no_grad():
         input_tensor = preprocess(image)
         input_numpy = input_tensor.numpy()
         outputs = ort_session.run(None, {"input": [input_numpy]})
-        print("Number of elements in outputs:", len(outputs))
-        print("Outputs:", outputs)
-
-
+        #print("Number of elements in outputs:", len(outputs))
+        #print("Outputs:", outputs)
 
         # Extract boxes, scores, and labels from the output
-        boxes = outputs[0]
-        scores = outputs[1]
-        labels = outputs[2]
+        boxes = outputs[0][0]
+        scores = outputs[1][0]
 
         # Draw bounding boxes on the original image
-        for box, score, label in zip(boxes, scores, labels):
-            if score > 0.5:  # Set a threshold for the confidence score
+        for box, score in zip(boxes, scores):
+            max_score_idx = np.argmax(score)
+            max_score = score[max_score_idx]
+            if max_score > 0.5:  # Set a threshold for the confidence score
                 x1, y1, x2, y2 = box
                 cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 2)
-                cv2.putText(image, str(label), (int(x1), int(y1)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+                cv2.putText(image, str(max_score_idx), (int(x1), int(y1)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
         # Show the camera feed with bounding boxes
         cv2.imshow("Camera Feed", image)
@@ -70,5 +68,3 @@ with torch.no_grad():
 
 cap.release()
 cv2.destroyAllWindows()
-
-
