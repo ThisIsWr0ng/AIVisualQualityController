@@ -45,8 +45,9 @@ def create_tracker():
 # Initialize trackers for each detected object
 trackers = []
 frame_counter = 0
-detection_interval = 10 #how many frames to skip between detection
-#detection loop
+detection_interval = 5 #how many frames to skip between detection
+
+# detection loop
 with torch.no_grad():
     while True:
         frame_counter += 1
@@ -55,9 +56,8 @@ with torch.no_grad():
         ret, image = cap.read()
         if not ret:
             raise RuntimeError("failed to read frame")
+
         if is_detection_frame:
-
-
             # Preprocess input image
             input_tensor = preprocess(image)
             input_numpy = input_tensor.numpy()
@@ -66,9 +66,6 @@ with torch.no_grad():
             # Extract boxes, scores, and labels from the output
             boxes = outputs[0].reshape(-1, 4)
             scores = outputs[1].squeeze(0)
-
-
-            #print("boxes: ", boxes, "Scores: ", scores)
 
             # Convert boxes and scores to PyTorch tensors
             boxes_tensor = torch.tensor(boxes, dtype=torch.float32)
@@ -82,36 +79,35 @@ with torch.no_grad():
                 class_indices = nms(boxes_tensor, class_scores, nms_threshold)
                 keep_indices.extend([(i, class_index) for i in class_indices])
 
-            # Filter boxes, scores, and labels using the keep_indices
-            filtered_boxes = np.array([boxes[i] for i, c in keep_indices if c == 1])  # Only class 1
-            filtered_scores = np.array([scores[i, c] for i, c in keep_indices if c == 1])  # Only class 1
-            filtered_labels = np.array([c for _, c in keep_indices if c == 1])  # Only class 1
-
             height, width, _ = image.shape
+            pixel_boxes = []
+            filtered_labels = []
             # Draw bounding boxes on the original image
-            for box, score, label in zip(filtered_boxes, filtered_scores, filtered_labels):
-                if np.max(score) > 0.5:
-                    
-                    pixel_boxes = []
-                    for box in filtered_boxes:
-                        x1, y1, x2, y2 = box * np.array([width, height, width, height])
-                        pixel_boxes.append([int(x1), int(y1), int(x2 - x1), int(y2 - y1)])
-
-                    print("box: ",box)
+            for i, c in keep_indices:
+                box = boxes[i]
+                score = scores[i, c]
+                if score > 0.5:
+                    x1, y1, x2, y2 = box * np.array([width, height, width, height])
                     cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 2)
-                    cv2.putText(image, f"{class_names[label]} {np.max(score):.2f}", (int(x1), int(y1)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+                    cv2.putText(image, f"{class_names[c]} {score:.2f}", (int(x1), int(y1)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+
+                    if c == 1:  # Only track class 1
+                        pixel_boxes.append([int(x1), int(y1), int(x2 - x1), int(y2 - y1)])
+                        filtered_labels.append(c)
+
             # Initialize a tracker for each detected object
-            trackers = [create_tracker() for _ in range(len(pixel_boxes))]
-            for tracker, box in zip(trackers, pixel_boxes):
+            trackers = [(create_tracker(), label) for _, label in zip(pixel_boxes, filtered_labels)]
+            for (tracker, _), box in zip(trackers, pixel_boxes):
                 tracker.init(image, tuple(box))
         else:
             # Update the trackers
-            for tracker in trackers:
+            for tracker, label in trackers:
                 success, box = tracker.update(image)
                 if success:
                     x1, y1, x2, y2 = [int(coord) for coord in box]
                     cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
-    
+                    cv2.putText(image, f"{class_names[label]}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+
         # Calculate FPS
         frame_count += 1
         now = time.time()
