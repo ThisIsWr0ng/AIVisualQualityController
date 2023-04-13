@@ -1,22 +1,22 @@
 import cv2
 import time
-import torch
+import numpy as np
+import onnxruntime as ort
 import torchvision.transforms as T
-from torchvision.models.detection import fasterrcnn_resnet50_fpn
-from torchvision import models, transforms
-# Load model and put it in eval mode
-torch.backends.quantized.engine = 'qnnpack'
-net = models.quantization.mobilenet_v2(pretrained=True, quantize=True)
-net.eval()
-net = torch.jit.script(net)
+import torch
 
+# Load model
+ort_session = ort.InferenceSession("Model/Yolo_weights.onnx")
+
+
+torch.backends.quantized.engine = 'qnnpack'
 # Initialize camera
 cap = cv2.VideoCapture(0)
 
 # Define image pre-processing transforms
 preprocess = T.Compose([
     T.ToPILImage(),
-    T.Resize((224, 224)),
+    T.Resize((416, 416)),
     T.ToTensor(),
     T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
@@ -34,15 +34,17 @@ with torch.no_grad():
 
         # Preprocess input image
         input_tensor = preprocess(image)
+        input_numpy = input_tensor.numpy()
+        outputs = ort_session.run(None, {"input": [input_numpy]})
+        print("Number of elements in outputs:", len(outputs))
+        print("Outputs:", outputs)
 
-        # Run model
-        output = net([input_tensor])
+
 
         # Extract boxes, scores, and labels from the output
-        losses, detections = output
-        boxes = detections[0]['boxes'].cpu().numpy()
-        scores = detections[0]['scores'].cpu().numpy()
-        labels = detections[0]['labels'].cpu().numpy()
+        boxes = outputs[0]
+        scores = outputs[1]
+        labels = outputs[2]
 
         # Draw bounding boxes on the original image
         for box, score, label in zip(boxes, scores, labels):
@@ -68,3 +70,5 @@ with torch.no_grad():
 
 cap.release()
 cv2.destroyAllWindows()
+
+
