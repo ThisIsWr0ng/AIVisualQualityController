@@ -2,7 +2,7 @@ import os
 
 # Set up training file directories for custom dataset
 os.chdir('C:/Darknet')
-dataset = 'C:\\Dataset_YOLO_v4'
+dataset = 'E:\Downloads\QC.v10i.darknet'
 os.system(f"copy {dataset}\\train\\_darknet.labels data\\obj.names")
 os.mkdir("C:\\Darknet\\data\\obj")
 
