@@ -6,7 +6,7 @@ import torchvision.transforms as T
 import torch
 
 # Load model
-ort_session = ort.InferenceSession("Model/Yolo_weights.onnx")
+ort_session = ort.InferenceSession("Model/Yolo_weights_quant.onnx")
 
 
 torch.backends.quantized.engine = 'qnnpack'
