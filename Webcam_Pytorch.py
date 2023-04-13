@@ -41,15 +41,17 @@ with torch.no_grad():
         # Extract boxes, scores, and labels from the output
         boxes = outputs[0][0]
         scores = outputs[1][0]
+        #print("boxes: ", boxes, "scores: ", scores)
 
         # Draw bounding boxes on the original image
         for box, score in zip(boxes, scores):
             max_score_idx = np.argmax(score)
             max_score = score[max_score_idx]
             if max_score > 0.5:  # Set a threshold for the confidence score
-                x1, y1, x2, y2 = box
-                cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 2)
-                cv2.putText(image, str(max_score_idx), (int(x1), int(y1)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+                print("box:",box)
+                x1, y1, x2, y2 = box[0]
+                cv2.rectangle(image, (int(x1*image.shape[1]), int(y1*image.shape[0])), (int(x2*image.shape[1]), int(y2*image.shape[0])), (255, 0, 0), 2)
+                cv2.putText(image, str(max_score_idx), (int(x1*image.shape[1]), int(y1*image.shape[0])), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
         # Show the camera feed with bounding boxes
         cv2.imshow("Camera Feed", image)
