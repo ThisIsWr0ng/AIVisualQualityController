@@ -29,6 +29,7 @@ output_dir = 'data/out'
 
 # train the model
 #os.system(f"cd C:\darknet")
-command = f"cd c:/darknet \n darknet.exe detector train {data_file} {config_file} {pretrained_weights} -dont_show -map" #-gpus 0 -batch {batch_size} -max_batches {max_batches} -learning_rate {learning_rate} -learning_rate_decay {learning_rate_decay} -learning_rate_decay_steps {learning_rate_decay_steps} -momentum {momentum} -out {output_dir}"
+#command = f"cd c:/darknet \n darknet.exe detector train {data_file} {config_file} {pretrained_weights} -map" #-dont_show -gpus 0 -batch {batch_size} -max_batches {max_batches} -learning_rate {learning_rate} -learning_rate_decay {learning_rate_decay} -learning_rate_decay_steps {learning_rate_decay_steps} -momentum {momentum} -out {output_dir}"
+command = f"darknet.exe detector map {data_file} {config_file} backup/custom-yolov4-tiny-detector_4class_final.weights"
 #os.system(command)
 print(command)
