@@ -1,2 +1,2 @@
 cd /home/dawid/pytorch-YOLOv4
-python darknet2onnx.py custom-yolov4-tiny-detector_4class.cfg Yolov4-tiny_416_4class.weights Yolo_weights.onnx
+python darknet2onnx.py custom-yolov4-tiny-detector_4class.cfg yolov4-tiny_224_v3.weights yolov4-tiny_224_v3.onnx

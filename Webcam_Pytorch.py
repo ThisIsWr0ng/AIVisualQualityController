@@ -7,7 +7,7 @@ import torch
 from torchvision.ops import nms
 
 # Load model
-ort_session = ort.InferenceSession("Model/Yolo_weights_quant.onnx")
+ort_session = ort.InferenceSession("Model/yolov4_-1_3_224_224_dynamic.onnx")
 
 # Read class names from file
 with open("Model/obj.names", "r") as f:
@@ -19,7 +19,7 @@ cap = cv2.VideoCapture(0)
 # Define image pre-processing transforms
 preprocess = T.Compose([
     T.ToPILImage(),
-    T.Resize((416, 416)),
+    T.Resize((224, 224)),
     T.ToTensor(),
     T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
@@ -45,7 +45,7 @@ def create_tracker():
 # Initialize trackers for each detected object
 trackers = []
 frame_counter = 0
-detection_interval = 5 #how many frames to skip between detection
+detection_interval = 1 #how many frames to skip between detection
 
 # detection loop
 with torch.no_grad():
@@ -66,34 +66,42 @@ with torch.no_grad():
             # Extract boxes, scores, and labels from the output
             boxes = outputs[0].reshape(-1, 4)
             scores = outputs[1].squeeze(0)
-
+            print(outputs)
             # Convert boxes and scores to PyTorch tensors
             boxes_tensor = torch.tensor(boxes, dtype=torch.float32)
             scores_tensor = torch.tensor(scores, dtype=torch.float32)
 
             # Apply NMS
-            nms_threshold = 0.5
-            keep_indices = []
-            for class_index in range(scores.shape[1]):
-                class_scores = scores_tensor[:, class_index]
-                class_indices = nms(boxes_tensor, class_scores, nms_threshold)
-                keep_indices.extend([(i, class_index) for i in class_indices])
+            #nms_threshold = 0.5
+            #keep_indices = []
+            #for class_index in range(scores.shape[1]):
+            #    class_scores = scores_tensor[:, class_index]
+            #    class_indices = nms(boxes_tensor, class_scores, nms_threshold)
+            #    keep_indices.extend([(i, class_index) for i in class_indices])
+            keep_indices = [(i, class_index) for i in range(scores.shape[0]) for class_index in range(scores.shape[1])]
 
             height, width, _ = image.shape
             pixel_boxes = []
             filtered_labels = []
+            #Print all confidences
+            for c in range(scores.shape[1]):
+                max_score = np.max(scores[:, c])
+                print(f"Class: {class_names[c]}, Max Confidence: {max_score:.2f}")
+            print("-----------------------")
             # Draw bounding boxes on the original image
             for i, c in keep_indices:
                 box = boxes[i]
                 score = scores[i, c]
-                if score > 0.5:
+                max_score = np.max(scores[:, c])
+                if score > 0.3:
+                    print(f"Class: {class_names[c]}, Max Confidence: {max_score:.2f}")
                     x1, y1, x2, y2 = box * np.array([width, height, width, height])
                     cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 2)
                     cv2.putText(image, f"{class_names[c]} {score:.2f}", (int(x1), int(y1)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
-                    if c == 1:  # Only track class 1
-                        pixel_boxes.append([int(x1), int(y1), int(x2 - x1), int(y2 - y1)])
-                        filtered_labels.append(c)
+                    pixel_boxes.append([int(x1), int(y1), int(x2 - x1), int(y2 - y1)])
+                    filtered_labels.append(c)
+
 
             # Initialize a tracker for each detected object
             trackers = [(create_tracker(), label) for _, label in zip(pixel_boxes, filtered_labels)]
@@ -106,7 +114,7 @@ with torch.no_grad():
                 if success:
                     x1, y1, x2, y2 = [int(coord) for coord in box]
                     cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
-                    cv2.putText(image, f"{class_names[label]}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+                    cv2.putText(image, f"{class_names[label]} {scores[i, label]:.2f}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
         # Calculate FPS
         frame_count += 1

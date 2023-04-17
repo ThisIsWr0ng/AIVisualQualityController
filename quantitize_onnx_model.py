@@ -1,3 +1,4 @@
+
 import onnx
 from onnxruntime.quantization import quantize_dynamic, QuantType
 
@@ -16,7 +17,7 @@ def main(input_onnx_file, output_onnx_file):
     print(f"Quantized ONNX model saved to {output_onnx_file}")
 
 if __name__ == "__main__":
-    input_onnx_file = "Model/Yolo_weights.onnx"
-    output_onnx_file = "Model/Yolo_weights_quant.onnx"
+    input_onnx_file = "Model/yolov4-tiny_224_v3.onnx"
+    output_onnx_file = "Model/yolov4-tiny_224_v3_quant.onnx"
 
     main(input_onnx_file, output_onnx_file)

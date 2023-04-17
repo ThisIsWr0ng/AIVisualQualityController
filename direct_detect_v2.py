@@ -4,16 +4,16 @@ import time
 import darknet
 
 # Set the network configuration and weights files
-config_file = 'custom-yolov4-tiny-detector'
-weights_file = 'weights_v3.weights'
-data_file = 'obj.names'
+config_file = 'Model/custom-yolov4-tiny-detector_4class.cfg'
+weights_file = 'Model/yolov4-tiny_224_v3.weights'
+data_file = 'Model/obj.names'
 
 # Load the network
 network, class_names, class_colors = darknet.load_network(config_file, data_file, weights_file)
 
 # Set the width and height of the network input
-width = 640
-height = 640
+width = 224
+height = 224
 
 # Open a video capture object for the webcam
 cap = cv2.VideoCapture(0)
