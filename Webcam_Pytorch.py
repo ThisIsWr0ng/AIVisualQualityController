@@ -1,136 +1,108 @@
 import cv2
-import time
 import numpy as np
-import onnxruntime as ort
-import torchvision.transforms as T
+import onnxruntime
 import torch
-from torchvision.ops import nms
-
-# Load model
-ort_session = ort.InferenceSession("Model/yolov4_-1_3_224_224_dynamic.onnx")
-
-# Read class names from file
-with open("Model/obj.names", "r") as f:
-    class_names = [line.strip() for line in f.readlines()]
-
-# Initialize camera
-cap = cv2.VideoCapture(0)
-
-# Define image pre-processing transforms
-preprocess = T.Compose([
-    T.ToPILImage(),
-    T.Resize((224, 224)),
-    T.ToTensor(),
-    T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-])
-
-started = time.time()
-last_logged = time.time()
-frame_count = 0
-
-# Choose a object tracker type
-tracker_type = 'KCF'
-
-# Function to create a tracker based on the tracker type
-def create_tracker():
-    if tracker_type == 'KCF':
-        return cv2.TrackerKCF_create()
-    elif tracker_type == 'TLD':
-        return cv2.TrackerTLD_create()
-    elif tracker_type == 'MOSSE':
-        return cv2.TrackerMOSSE_create()
-    else:
-        raise ValueError("Invalid tracker type")
-
-# Initialize trackers for each detected object
-trackers = []
-frame_counter = 0
-detection_interval = 1 #how many frames to skip between detection
-
-# detection loop
-with torch.no_grad():
-    while True:
-        frame_counter += 1
-        is_detection_frame = frame_counter % detection_interval == 0
-        # Read frame
-        ret, image = cap.read()
-        if not ret:
-            raise RuntimeError("failed to read frame")
-
-        if is_detection_frame:
-            # Preprocess input image
-            input_tensor = preprocess(image)
-            input_numpy = input_tensor.numpy()
-            outputs = ort_session.run(None, {"input": [input_numpy]})
-
-            # Extract boxes, scores, and labels from the output
-            boxes = outputs[0].reshape(-1, 4)
-            scores = outputs[1].squeeze(0)
-            print(outputs)
-            # Convert boxes and scores to PyTorch tensors
-            boxes_tensor = torch.tensor(boxes, dtype=torch.float32)
-            scores_tensor = torch.tensor(scores, dtype=torch.float32)
-
-            # Apply NMS
-            #nms_threshold = 0.5
-            #keep_indices = []
-            #for class_index in range(scores.shape[1]):
-            #    class_scores = scores_tensor[:, class_index]
-            #    class_indices = nms(boxes_tensor, class_scores, nms_threshold)
-            #    keep_indices.extend([(i, class_index) for i in class_indices])
-            keep_indices = [(i, class_index) for i in range(scores.shape[0]) for class_index in range(scores.shape[1])]
-
-            height, width, _ = image.shape
-            pixel_boxes = []
-            filtered_labels = []
-            #Print all confidences
-            for c in range(scores.shape[1]):
-                max_score = np.max(scores[:, c])
-                print(f"Class: {class_names[c]}, Max Confidence: {max_score:.2f}")
-            print("-----------------------")
-            # Draw bounding boxes on the original image
-            for i, c in keep_indices:
-                box = boxes[i]
-                score = scores[i, c]
-                max_score = np.max(scores[:, c])
-                if score > 0.3:
-                    print(f"Class: {class_names[c]}, Max Confidence: {max_score:.2f}")
-                    x1, y1, x2, y2 = box * np.array([width, height, width, height])
-                    cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 2)
-                    cv2.putText(image, f"{class_names[c]} {score:.2f}", (int(x1), int(y1)), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
-
-                    pixel_boxes.append([int(x1), int(y1), int(x2 - x1), int(y2 - y1)])
-                    filtered_labels.append(c)
 
 
-            # Initialize a tracker for each detected object
-            trackers = [(create_tracker(), label) for _, label in zip(pixel_boxes, filtered_labels)]
-            for (tracker, _), box in zip(trackers, pixel_boxes):
-                tracker.init(image, tuple(box))
+def load_class_names(namesfile):
+    with open(namesfile) as f:
+        class_names = [line.strip() for line in f.readlines()]
+    return class_names
+
+
+def plot_boxes_cv2(img, boxes, class_names=None, color=None, line_thickness=None):
+    if boxes is None:
+        return img
+    
+    img = img.copy()
+    height, width, _ = img.shape
+
+    for box in boxes:
+        box, conf, cls_id = box
+
+        x1, y1, x2, y2 = box
+        if color:
+            rgb = color
         else:
-            # Update the trackers
-            for tracker, label in trackers:
-                success, box = tracker.update(image)
-                if success:
-                    x1, y1, x2, y2 = [int(coord) for coord in box]
-                    cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
-                    cv2.putText(image, f"{class_names[label]} {scores[i, label]:.2f}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+            rgb = (255, 0, 0)
+        if line_thickness:
+            thickness = line_thickness
+        else:
+            thickness = 4
 
-        # Calculate FPS
-        frame_count += 1
-        now = time.time()
-        fps = frame_count / (now - last_logged)
+        cv2.rectangle(img, (x1, y1), (x2, y2), rgb, thickness)
+        if class_names:
+            cls_name = class_names[cls_id]
+            ((text_w, text_h), _) = cv2.getTextSize(cls_name, cv2.FONT_HERSHEY_SIMPLEX, 0.35, 1)
+            cv2.rectangle(img, (x1, y1 - int(1.3 * text_h)), (x1 + text_w, y1), rgb, -1)
+            cv2.putText(img, cls_name, (x1, y1 - int(0.3 * text_h)), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (255, 255, 255), 1)
 
-        # Display FPS on the image
-        cv2.putText(image, f"FPS: {fps:.2f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    return img
 
-        # Show the camera feed with bounding boxes
-        cv2.imshow("Camera Feed", image)
 
-        # Press 'q' to exit the loop
+def postprocess(outputs, original_width, original_height, conf_thresh, nms_thresh):
+    box_attrs = outputs[1].reshape(-1, 4)
+    print('reshaped outputs:', outputs[1].reshape(-1, 4))
+    boxes = []
+    for box in box_attrs:
+        x, y, w, h = box
+        x1 = int((x - w / 2) * original_width)
+        y1 = int((y - h / 2) * original_height)
+        x2 = int((x + w / 2) * original_width)
+        y2 = int((y + h / 2) * original_height)
+
+        boxes.append([x1, y1, x2, y2])
+
+    indices = cv2.dnn.NMSBoxes(boxes, [1.0] * len(boxes), conf_thresh, nms_thresh)
+    return [(boxes[i], 1.0, 0) for i in indices.flatten()]
+
+
+def detect(session, image_src, namesfile):
+    IN_IMAGE_H = session.get_inputs()[0].shape[2]
+    IN_IMAGE_W = session.get_inputs()[0].shape[3]
+    
+    original_height, original_width, _ = image_src.shape
+
+    # Input
+    resized = cv2.resize(image_src, (IN_IMAGE_W, IN_IMAGE_H), interpolation=cv2.INTER_LINEAR)
+    img_in = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)
+    img_in = np.transpose(img_in, (2, 0, 1)).astype(np.float32)
+    img_in = np.expand_dims(img_in, axis=0)
+    img_in /= 255.0
+    #print("Shape of the network input: ", img_in.shape)
+
+    # Compute
+    input_name = session.get_inputs()[0].name
+
+    outputs = session.run(None, {input_name: img_in})
+
+    boxes = postprocess(outputs, original_width, original_height, 0.4, 0.6)
+    return boxes
+
+
+
+
+def main(onnx_file, names_file):
+    session = onnxruntime.InferenceSession(onnx_file)
+    class_names = load_class_names(names_file)
+    cap = cv2.VideoCapture(0)
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        #frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_LINEAR)
+        boxes = detect(session, frame, names_file)
+        #print(boxes)
+        img_with_boxes = plot_boxes_cv2(frame, boxes, class_names=class_names)
+        cv2.imshow('Detections', img_with_boxes)
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-cap.release()
-cv2.destroyAllWindows()
-
+    cap.release()
+    cv2.destroyAllWindows()
+if __name__ == '__main__':
+    onnx_file = 'Model/yolov4_-1_3_224_224_dynamic.onnx'
+    names_file = 'Model/obj.names'
+    main(onnx_file, names_file)
