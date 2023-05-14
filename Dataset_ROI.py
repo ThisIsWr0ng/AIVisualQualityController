@@ -1,3 +1,4 @@
+#This code crops images to the size of the dressing
 import cv2
 import numpy as np
 import os

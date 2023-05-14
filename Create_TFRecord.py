@@ -1,5 +1,4 @@
 import os
-import csv
 import tensorflow as tf
 import pandas as pd
 from PIL import Image
@@ -20,6 +19,7 @@ def create_tfrecord(images, labels, bboxes, output_file):
                 img = img_file.read()
             image = Image.open(image_path)
             width, height = image.size
+            #set the dataset features
             example = tf.train.Example(features=tf.train.Features(feature={
                 'image/encoded': _bytes_feature(img),
                 'image/object/class/label': _int64_feature(label),

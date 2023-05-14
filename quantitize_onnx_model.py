@@ -1,4 +1,4 @@
-
+#Quantitize the onnx model for better performance
 import onnx
 from onnxruntime.quantization import quantize_dynamic, QuantType
 
