@@ -1,0 +1,935 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineSystem.cmake:204 (message)"
+      - "CMakeLists.txt:109 (project)"
+    message: |
+      The system is: Windows - 10.0.22623 - AMD64
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:109 (project)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler:  
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+      Build started 12/04/2023 17:56:59.
+      Included response file: C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.rsp
+      
+      Project "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdC\\CompilerIdC.vcxproj" on node 1 (default targets).
+      PrepareForBuild:
+        Creating directory "Debug\\".
+        Creating directory "Debug\\CompilerIdC.tlog\\".
+      InitializeBuildStatus:
+        Creating "Debug\\CompilerIdC.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+      ClCompile:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\CL.exe /c /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TC /FC /errorReport:queue CMakeCCompilerId.c
+        CMakeCCompilerId.c
+      Link:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdC.lib" /MACHINE:X64 Debug\\CMakeCCompilerId.obj
+        CompilerIdC.vcxproj -> C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdC\\CompilerIdC.exe
+      PostBuildEvent:
+        for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
+        :VCEnd
+        CMAKE_C_COMPILER=C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\Hostx64\\x64\\cl.exe
+      FinalizeBuildStatus:
+        Deleting file "Debug\\CompilerIdC.tlog\\unsuccessfulbuild".
+        Touching "Debug\\CompilerIdC.tlog\\CompilerIdC.lastbuildstate".
+      Done Building Project "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdC\\CompilerIdC.vcxproj" (default targets).
+      
+      Build succeeded.
+          0 Warning(s)
+          0 Error(s)
+      
+      Time Elapsed 00:00:00.70
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
+      
+      The C compiler identification is MSVC, found in:
+        C:/Darknet/CMakeFiles/3.26.0/CompilerIdC/CompilerIdC.exe
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:109 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler:  
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+      Build started 12/04/2023 17:57:00.
+      Included response file: C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.rsp
+      
+      Project "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCXX\\CompilerIdCXX.vcxproj" on node 1 (default targets).
+      PrepareForBuild:
+        Creating directory "Debug\\".
+        Creating directory "Debug\\CompilerIdCXX.tlog\\".
+      InitializeBuildStatus:
+        Creating "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+      ClCompile:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\CL.exe /c /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TP /FC /errorReport:queue CMakeCXXCompilerId.cpp
+        CMakeCXXCompilerId.cpp
+      Link:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdCXX.lib" /MACHINE:X64 Debug\\CMakeCXXCompilerId.obj
+        CompilerIdCXX.vcxproj -> C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCXX\\CompilerIdCXX.exe
+      PostBuildEvent:
+        for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
+        :VCEnd
+        CMAKE_CXX_COMPILER=C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\Hostx64\\x64\\cl.exe
+      FinalizeBuildStatus:
+        Deleting file "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild".
+        Touching "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.lastbuildstate".
+      Done Building Project "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCXX\\CompilerIdCXX.vcxproj" (default targets).
+      
+      Build succeeded.
+          0 Warning(s)
+          0 Error(s)
+      
+      Time Elapsed 00:00:00.47
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
+      
+      The CXX compiler identification is MSVC, found in:
+        C:/Darknet/CMakeFiles/3.26.0/CompilerIdCXX/CompilerIdCXX.exe
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:109 (project)"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-mj7xe9"
+      binary: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-mj7xe9"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-mj7xe9
+        
+        Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_4b9c4.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n && MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+        Build started 12/04/2023 17:57:01.
+        Included response file: C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.rsp
+        
+        Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-mj7xe9\\cmTC_4b9c4.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_4b9c4.dir\\Debug\\".
+          Creating directory "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-mj7xe9\\Debug\\".
+          Creating directory "cmTC_4b9c4.dir\\Debug\\cmTC_4b9c4.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_4b9c4.dir\\Debug\\cmTC_4b9c4.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_4b9c4.dir\\Debug\\\\" /Fd"cmTC_4b9c4.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.26\\Modules\\CMakeCCompilerABI.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.35.32216.1 for x64
+          CMakeCCompilerABI.c
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_4b9c4.dir\\Debug\\\\" /Fd"cmTC_4b9c4.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.26\\Modules\\CMakeCCompilerABI.c"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-mj7xe9\\Debug\\cmTC_4b9c4.exe" /INCREMENTAL /ILK:"cmTC_4b9c4.dir\\Debug\\cmTC_4b9c4.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-mj7xe9/Debug/cmTC_4b9c4.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-mj7xe9/Debug/cmTC_4b9c4.lib" /MACHINE:X64  /machine:x64 cmTC_4b9c4.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_4b9c4.vcxproj -> C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-mj7xe9\\Debug\\cmTC_4b9c4.exe
+        FinalizeBuildStatus:
+          Deleting file "cmTC_4b9c4.dir\\Debug\\cmTC_4b9c4.tlog\\unsuccessfulbuild".
+          Touching "cmTC_4b9c4.dir\\Debug\\cmTC_4b9c4.tlog\\cmTC_4b9c4.lastbuildstate".
+        Done Building Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-mj7xe9\\cmTC_4b9c4.vcxproj" (default targets).
+        
+        Build succeeded.
+            0 Warning(s)
+            0 Error(s)
+        
+        Time Elapsed 00:00:00.44
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:109 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-gdt14f"
+      binary: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-gdt14f"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /GR /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-gdt14f
+        
+        Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_e1be6.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n && MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+        Build started 12/04/2023 17:57:02.
+        Included response file: C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.rsp
+        
+        Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-gdt14f\\cmTC_e1be6.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_e1be6.dir\\Debug\\".
+          Creating directory "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-gdt14f\\Debug\\".
+          Creating directory "cmTC_e1be6.dir\\Debug\\cmTC_e1be6.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_e1be6.dir\\Debug\\cmTC_e1be6.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_e1be6.dir\\Debug\\\\" /Fd"cmTC_e1be6.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.26\\Modules\\CMakeCXXCompilerABI.cpp"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.35.32216.1 for x64
+          CMakeCXXCompilerABI.cpp
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_e1be6.dir\\Debug\\\\" /Fd"cmTC_e1be6.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.26\\Modules\\CMakeCXXCompilerABI.cpp"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-gdt14f\\Debug\\cmTC_e1be6.exe" /INCREMENTAL /ILK:"cmTC_e1be6.dir\\Debug\\cmTC_e1be6.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-gdt14f/Debug/cmTC_e1be6.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-gdt14f/Debug/cmTC_e1be6.lib" /MACHINE:X64  /machine:x64 cmTC_e1be6.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_e1be6.vcxproj -> C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-gdt14f\\Debug\\cmTC_e1be6.exe
+        FinalizeBuildStatus:
+          Deleting file "cmTC_e1be6.dir\\Debug\\cmTC_e1be6.tlog\\unsuccessfulbuild".
+          Touching "cmTC_e1be6.dir\\Debug\\cmTC_e1be6.tlog\\cmTC_e1be6.lastbuildstate".
+        Done Building Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-gdt14f\\cmTC_e1be6.vcxproj" (default targets).
+        
+        Build succeeded.
+            0 Warning(s)
+            0 Error(s)
+        
+        Time Elapsed 00:00:00.44
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CheckLanguage.cmake:93 (message)"
+      - "CMakeLists.txt:152 (check_language)"
+    checks:
+      - "Looking for a CUDA compiler"
+    message: |
+      Looking for a CUDA compiler passed with the following output:
+      -- Selecting Windows SDK version 10.0.22000.0 to target Windows 10.0.22623.
+      -- The CUDA compiler identification is NVIDIA 12.1.66
+      -- Detecting CUDA compiler ABI info
+      -- Detecting CUDA compiler ABI info - done
+      -- Check for working CUDA compiler: C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/bin/nvcc.exe - skipped
+      -- Detecting CUDA compile features
+      -- Detecting CUDA compile features - done
+      -- Configuring done (5.3s)
+      -- Generating done (0.0s)
+      -- Build files have been written to: C:/Darknet/CMakeFiles/CheckCUDA
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCompilerId.cmake:53 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCUDACompiler.cmake:307 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:158 (enable_language)"
+    message: |
+      Compiling the CUDA compiler identification source file "CMakeCUDACompilerId.cu" succeeded.
+      Compiler: C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/bin/nvcc.exe 
+      Build flags: 
+      Id flags: --keep;--keep-dir;tmp -v
+      
+      The output was:
+      0
+      MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+      Build started 12/04/2023 17:57:08.
+      Included response file: C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.rsp
+      
+      Project "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CompilerIdCUDA.vcxproj" on node 1 (default targets).
+      PrepareForBuild:
+        Creating directory "Debug\\".
+        Creating directory "Debug\\CompilerIdCUDA.tlog\\".
+      InitializeBuildStatus:
+        Creating "Debug\\CompilerIdCUDA.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+      AddCudaCompileDeps:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\cl.exe /E /nologo /showIncludes /TP /D__CUDACC__ /D__CUDACC_VER_MAJOR__=12 /D__CUDACC_VER_MINOR__=1 /D_MBCS /I"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\include" /I"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin" /I"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\include" /I. /FIcuda_runtime.h /c C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CMakeCUDACompilerId.cu 
+      Project "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CompilerIdCUDA.vcxproj" (1) is building "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CompilerIdCUDA.vcxproj" (1:2) on node 1 (CudaBuildCore target(s)).
+      CudaBuildCore:
+        Compiling CUDA source file CMakeCUDACompilerId.cu...
+        Creating directory "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\x64\\Debug".
+        cmd.exe /C "C:\\Users\\dawid\\AppData\\Local\\Temp\\tmp072ed86e7516440fb0969c171b738048.cmd"
+        "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin\\nvcc.exe" -gencode=arch=compute_52,code=\\"sm_52,compute_52\\" --use-local-env -ccbin "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64" -x cu   -I"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\include" -I"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\include"  -G   --keep-dir x64\\Debug  -maxrregcount=0   --machine 64 --compile -cudart static -v -g  -D_MBCS -Xcompiler "/EHsc /W0 /nologo /Od /FS /Zi /RTC1 /MDd " -Xcompiler "/FdDebug\\vc143.pdb" -o C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\x64\\Debug\\CMakeCUDACompilerId.cu.obj "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CMakeCUDACompilerId.cu"
+        
+        C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA>"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin\\nvcc.exe" -gencode=arch=compute_52,code=\\"sm_52,compute_52\\" --use-local-env -ccbin "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64" -x cu   -I"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\include" -I"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\include"  -G   --keep-dir x64\\Debug  -maxrregcount=0   --machine 64 --compile -cudart static -v -g  -D_MBCS -Xcompiler "/EHsc /W0 /nologo /Od /FS /Zi /RTC1 /MDd " -Xcompiler "/FdDebug\\vc143.pdb" -o C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\x64\\Debug\\CMakeCUDACompilerId.cu.obj "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CMakeCUDACompilerId.cu" 
+        #$ _NVVM_BRANCH_=nvvm
+        #$ _SPACE_= 
+        #$ _CUDART_=cudart
+        #$ _HERE_=C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin
+        #$ _THERE_=C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin
+        #$ _TARGET_SIZE_=
+        #$ _TARGET_DIR_=
+        #$ _TARGET_SIZE_=64
+        #$ _WIN_PLATFORM_=x64
+        #$ TOP=C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin/..
+        #$ NVVMIR_LIBRARY_DIR=C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin/../nvvm/libdevice
+        #$ PATH=C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin/../nvvm/bin;C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin;C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin/../lib;C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.22000.0\\x64;;C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.22000.0\\x86;;C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools;C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\tools;C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\ide;C:\\Program Files (x86)\\HTML Help Workshop;;C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64;C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\;C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\;C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin;C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\;;C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin;C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\libnvvp;;C:\\Program Files\\Microsoft\\jdk-11.0.16.101-hotspot\\bin;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Program Files\\NVIDIA Corporation\\NVIDIA NvDLISR;C:\\Program Files\\Git\\cmd;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;C:\\Program Files (x86)\\Windows Kits\\10\\Microsoft Application Virtualization\\Sequencer\\;C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\;C:\\Program Files\\NVIDIA Corporation\\Nsight Compute 2023.1.0\\;C:\\Program Files\\dotnet\\;C:\\opencv\\include;C:\\opencv\\bin;C:\\OpenCV\\install\\x64\\vc17\\bin;C:\\OpenCV\\install\\x64\\vc17\\lib;C:\\OpenCV\\install\\bin;C:\\OpenCV\\install\\include;C:\\opencv\\bin\\debug;c:\\users\\dawid\\appdata\\local\\programs\\python\\python311\\lib\\site-packages;C:\\protoc-22.2-win64\\bin;C:\\Program Files\\Docker\\Docker\\resources\\bin;C:\\Users\\dawid\\AppData\\Local\\Programs\\Python\\Python37;C:\\Program Files\\CMake\\bin;C:\\Users\\dawid\\.dotnet\\tools;C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin;C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\include;C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\lib\\x64;C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1;C:\\Users\\dawid\\AppData\\Local\\Programs\\Python\\Python311;C:\\Users\\dawid\\AppData\\Local\\Programs\\Python\\Python311\\Scripts;C:\\OpenCV\\zlibwapi;C:\\Program Files\\UnxUpdates;C:\\Users\\dawid\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages;c:\\Darknet;C:\\Users\\dawid\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Users\\dawid\\AppData\\Local\\Programs\\Python\\Python37;;
+        #$ INCLUDES="-IC:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin/../include"  
+        #$ LIBRARIES=  "/LIBPATH:C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin/../lib/x64"
+        #$ CUDAFE_FLAGS=--sdk_dir "C:\\Program Files (x86)\\Windows Kits\\10"
+        #$ PTXAS_FLAGS=
+        CMakeCUDACompilerId.cu
+        #$ resource file C:\\Users\\dawid\\AppData\\Local\\Temp/tmpxft_00001fe4_00000000-8.res: [-D__CUDA_ARCH_LIST__=520 -nologo -E -TP -EHsc -D__CUDACC__ -D__NVCC__ -D__CUDACC_DEBUG__  /EHsc /W0 /nologo /Od /FS /Zi /RTC1 /MDd /FdDebug\\vc143.pdb -I"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/include" -I"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/include" "-IC:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin/../include"    -D "_MBCS" -D__CUDACC_VER_MAJOR__=12 -D__CUDACC_VER_MINOR__=1 -D__CUDACC_VER_BUILD__=66 -D__CUDA_API_VER_MAJOR__=12 -D__CUDA_API_VER_MINOR__=1 -D__NVCC_DIAG_PRAGMA_SUPPORT__=1 -FI "cuda_runtime.h" -Zi "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CMakeCUDACompilerId.cu" ]
+        #$ cl.exe @"C:\\Users\\dawid\\AppData\\Local\\Temp/tmpxft_00001fe4_00000000-8.res" > "C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-6_CMakeCUDACompilerId.cpp4.ii" 
+        CMakeCUDACompilerId.cu
+        #$ erase C:\\Users\\dawid\\AppData\\Local\\Temp/tmpxft_00001fe4_00000000-8.res
+        #$ cudafe++ --microsoft_version=1935 --msvc_target_version=1935 --compiler_bindir "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.35.32215/bin/HostX64/x64/../../../../../../.." --display_error_number --orig_src_file_name "C:/Darknet/CMakeFiles/3.26.0/CompilerIdCUDA/CMakeCUDACompilerId.cu" --orig_src_path_name "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CMakeCUDACompilerId.cu" --allow_managed --debug_mode --sdk_dir "C:\\Program Files (x86)\\Windows Kits\\10" --m64 --parse_templates --gen_c_file_name "C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-7_CMakeCUDACompilerId.cudafe1.cpp" --stub_file_name "tmpxft_00001fe4_00000000-7_CMakeCUDACompilerId.cudafe1.stub.c" --gen_module_id_file --module_id_file_name "C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-5_CMakeCUDACompilerId.module_id" "C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-6_CMakeCUDACompilerId.cpp4.ii" 
+        #$ resource file C:\\Users\\dawid\\AppData\\Local\\Temp/tmpxft_00001fe4_00000000-10.res: [-D__CUDA_ARCH__=520 -D__CUDA_ARCH_LIST__=520 -nologo -E -TP  -DCUDA_DOUBLE_MATH_FUNCTIONS -EHsc -D__CUDACC__ -D__NVCC__ -D__CUDACC_DEBUG__  /EHsc /W0 /nologo /Od /FS /Zi /RTC1 /MDd /FdDebug\\vc143.pdb -I"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/include" -I"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/include" "-IC:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin/../include"    -D "_MBCS" -D__CUDACC_VER_MAJOR__=12 -D__CUDACC_VER_MINOR__=1 -D__CUDACC_VER_BUILD__=66 -D__CUDA_API_VER_MAJOR__=12 -D__CUDA_API_VER_MINOR__=1 -D__NVCC_DIAG_PRAGMA_SUPPORT__=1 -FI "cuda_runtime.h" -Zi "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CMakeCUDACompilerId.cu" ]
+        #$ cl.exe @"C:\\Users\\dawid\\AppData\\Local\\Temp/tmpxft_00001fe4_00000000-10.res" > "C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-9_CMakeCUDACompilerId.cpp1.ii" 
+        CMakeCUDACompilerId.cu
+        #$ erase C:\\Users\\dawid\\AppData\\Local\\Temp/tmpxft_00001fe4_00000000-10.res
+        #$ cicc --microsoft_version=1935 --msvc_target_version=1935 --compiler_bindir "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.35.32215/bin/HostX64/x64/../../../../../../.." --display_error_number --orig_src_file_name "C:/Darknet/CMakeFiles/3.26.0/CompilerIdCUDA/CMakeCUDACompilerId.cu" --orig_src_path_name "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CMakeCUDACompilerId.cu" --allow_managed --debug_mode --sdk_dir "C:\\Program Files (x86)\\Windows Kits\\10"  -arch compute_52 -m64 --no-version-ident -ftz=0 -prec_div=1 -prec_sqrt=1 -fmad=1 --include_file_name "tmpxft_00001fe4_00000000-4_CMakeCUDACompilerId.fatbin.c" -g -O0 -tused --module_id_file_name "C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-5_CMakeCUDACompilerId.module_id" --gen_c_file_name "C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-7_CMakeCUDACompilerId.cudafe1.c" --stub_file_name "C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-7_CMakeCUDACompilerId.cudafe1.stub.c" --gen_device_file_name "C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-7_CMakeCUDACompilerId.cudafe1.gpu"  "C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-9_CMakeCUDACompilerId.cpp1.ii" -o "C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-7_CMakeCUDACompilerId.ptx"
+        #$ ptxas -arch=sm_52 -m64 -g --dont-merge-basicblocks --return-at-end "C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-7_CMakeCUDACompilerId.ptx"  -o "C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-11_CMakeCUDACompilerId.sm_52.cubin" 
+        #$ fatbinary -64 --ident="C:/Darknet/CMakeFiles/3.26.0/CompilerIdCUDA/CMakeCUDACompilerId.cu" --cmdline="-g --dont-merge-basicblocks --return-at-end " --cicc-cmdline="-ftz=0 -prec_div=1 -prec_sqrt=1 -fmad=1 " -g "--image3=kind=elf,sm=52,file=C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-11_CMakeCUDACompilerId.sm_52.cubin" "--image3=kind=ptx,sm=52,file=C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-7_CMakeCUDACompilerId.ptx" --embedded-fatbin="C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-4_CMakeCUDACompilerId.fatbin.c" 
+        #$ erase C:/Users/dawid/AppData/Local/Temp/tmpxft_00001fe4_00000000-4_CMakeCUDACompilerId.fatbin
+        #$ resource file C:\\Users\\dawid\\AppData\\Local\\Temp/tmpxft_00001fe4_00000000-12.res: [-D__CUDA_ARCH__=520 -D__CUDA_ARCH_LIST__=520 -nologo -c -TP  -DCUDA_DOUBLE_MATH_FUNCTIONS -EHsc /EHsc /W0 /nologo /Od /FS /Zi /RTC1 /MDd /FdDebug\\vc143.pdb -I"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/include" -I"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/include" "-IC:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin/../include"   -Zi "C:\\Users\\dawid\\AppData\\Local\\Temp\\tmpxft_00001fe4_00000000-7_CMakeCUDACompilerId.cudafe1.cpp" ]
+        #$ cl.exe @"C:\\Users\\dawid\\AppData\\Local\\Temp/tmpxft_00001fe4_00000000-12.res" -Fo"C:/Darknet/CMakeFiles/3.26.0/CompilerIdCUDA/x64/Debug/CMakeCUDACompilerId.cu.obj" 
+        tmpxft_00001fe4_00000000-7_CMakeCUDACompilerId.cudafe1.cpp
+        #$ erase C:\\Users\\dawid\\AppData\\Local\\Temp/tmpxft_00001fe4_00000000-12.res
+      Done Building Project "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CompilerIdCUDA.vcxproj" (CudaBuildCore target(s)).
+      Link:
+        C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdCUDA.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\lib\\x64" cudart_static.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdCUDA.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdCUDA.lib" /MACHINE:X64 C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\x64\\Debug\\CMakeCUDACompilerId.cu.obj
+           Creating library .\\CompilerIdCUDA.lib and object .\\CompilerIdCUDA.exp
+      LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library [C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CompilerIdCUDA.vcxproj]
+        CompilerIdCUDA.vcxproj -> C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CompilerIdCUDA.exe
+      PostBuildEvent:
+        echo CMAKE_CUDA_COMPILER=C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin\\nvcc.exe
+        :VCEnd
+        CMAKE_CUDA_COMPILER=C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin\\nvcc.exe
+      FinalizeBuildStatus:
+        Deleting file "Debug\\CompilerIdCUDA.tlog\\unsuccessfulbuild".
+        Touching "Debug\\CompilerIdCUDA.tlog\\CompilerIdCUDA.lastbuildstate".
+      Done Building Project "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CompilerIdCUDA.vcxproj" (default targets).
+      
+      Build succeeded.
+      
+      "C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CompilerIdCUDA.vcxproj" (default target) (1) ->
+      (Link target) -> 
+        LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library [C:\\Darknet\\CMakeFiles\\3.26.0\\CompilerIdCUDA\\CompilerIdCUDA.vcxproj]
+      
+          1 Warning(s)
+          0 Error(s)
+      
+      Time Elapsed 00:00:01.76
+      
+      
+      Compilation of the CUDA compiler identification source "CMakeCUDACompilerId.cu" produced "CompilerIdCUDA.exe"
+      
+      Compilation of the CUDA compiler identification source "CMakeCUDACompilerId.cu" produced "CompilerIdCUDA.exp"
+      
+      Compilation of the CUDA compiler identification source "CMakeCUDACompilerId.cu" produced "CompilerIdCUDA.lib"
+      
+      Compilation of the CUDA compiler identification source "CMakeCUDACompilerId.cu" produced "CompilerIdCUDA.vcxproj"
+      
+      The CUDA compiler identification is NVIDIA, found in:
+        C:/Darknet/CMakeFiles/3.26.0/CompilerIdCUDA/CompilerIdCUDA.exe
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCUDACompiler.cmake:579 (message)"
+      - "CMakeLists.txt:158 (enable_language)"
+    message: |
+      Parsed CUDA nvcc include information:
+        found 'INCLUDES=' string: ["-IC:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin/../include"  ]
+      
+      
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeTestCUDACompiler.cmake:19 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:158 (enable_language)"
+    checks:
+      - "Detecting CUDA compiler ABI info"
+    directories:
+      source: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-zfozp6"
+      binary: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-zfozp6"
+    cmakeVariables:
+      CMAKE_CUDA_ARCHITECTURES: "52"
+      CMAKE_CUDA_FLAGS: "-D_WINDOWS -Xcompiler=\" /GR /EHsc\""
+      CMAKE_CUDA_FLAGS_DEBUG: "-Xcompiler=\" -Zi -Ob0 -Od /RTC1\""
+      CMAKE_CUDA_RUNTIME_LIBRARY: "Static"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "C:/Darknet/cmake/Modules/"
+    buildResult:
+      variable: "CMAKE_CUDA_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-zfozp6
+        
+        Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_3d6fd.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n && MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+        Build started 12/04/2023 17:57:10.
+        Included response file: C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.rsp
+        
+        Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_3d6fd.dir\\Debug\\".
+          Creating directory "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\Debug\\".
+          Creating directory "cmTC_3d6fd.dir\\Debug\\cmTC_3d6fd.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_3d6fd.dir\\Debug\\cmTC_3d6fd.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+        AddCudaCompileDeps:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\cl.exe /E /nologo /showIncludes /TP /D__CUDACC__ /D__CUDACC_VER_MAJOR__=12 /D__CUDACC_VER_MINOR__=1 /D_WINDOWS /DCMAKE_INTDIR="Debug" /D_MBCS /DCMAKE_INTDIR="Debug" /I"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin" /I"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\include" /I. /FIcuda_runtime.h /c "C:\\Program Files\\CMake\\share\\cmake-3.26\\Modules\\CMakeCUDACompilerABI.cu" 
+        Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" (1) is building "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" (1:2) on node 1 (CudaBuildCore target(s)).
+        CudaBuildCore:
+          Compiling CUDA source file ..\\..\\..\\..\\Program Files\\CMake\\share\\cmake-3.26\\Modules\\CMakeCUDACompilerABI.cu...
+          cmd.exe /C "C:\\Users\\dawid\\AppData\\Local\\Temp\\tmp2a4786bff3db44828defaa9020ce0820.cmd"
+          "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin\\nvcc.exe"  --use-local-env -ccbin "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64" -x cu    -I"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\include"     --keep-dir x64\\Debug  -maxrregcount=0   --machine 64 --compile -cudart static --generate-code=arch=compute_52,code=[compute_52,sm_52] -Xcompiler="/EHsc -Zi -Ob0 -v" -g  -D_WINDOWS -D"CMAKE_INTDIR=\\"Debug\\"" -D_MBCS -D"CMAKE_INTDIR=\\"Debug\\"" -Xcompiler "/EHsc /W1 /nologo /Od /FS /Zi /RTC1 /MDd /GR" -Xcompiler "/FdcmTC_3d6fd.dir\\Debug\\vc143.pdb" -o cmTC_3d6fd.dir\\Debug\\CMakeCUDACompilerABI.obj "C:\\Program Files\\CMake\\share\\cmake-3.26\\Modules\\CMakeCUDACompilerABI.cu"
+          
+          C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6>"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin\\nvcc.exe"  --use-local-env -ccbin "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64" -x cu    -I"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\include"     --keep-dir x64\\Debug  -maxrregcount=0   --machine 64 --compile -cudart static --generate-code=arch=compute_52,code=[compute_52,sm_52] -Xcompiler="/EHsc -Zi -Ob0 -v" -g  -D_WINDOWS -D"CMAKE_INTDIR=\\"Debug\\"" -D_MBCS -D"CMAKE_INTDIR=\\"Debug\\"" -Xcompiler "/EHsc /W1 /nologo /Od /FS /Zi /RTC1 /MDd /GR" -Xcompiler "/FdcmTC_3d6fd.dir\\Debug\\vc143.pdb" -o cmTC_3d6fd.dir\\Debug\\CMakeCUDACompilerABI.obj "C:\\Program Files\\CMake\\share\\cmake-3.26\\Modules\\CMakeCUDACompilerABI.cu" 
+        cl : Command line warning D9002: ignoring unknown option '-v' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]
+          CMakeCUDACompilerABI.cu
+        cl : Command line warning D9002: ignoring unknown option '-v' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]
+          CMakeCUDACompilerABI.cu
+          CMakeCUDACompilerABI.cu
+        cl : Command line warning D9002: ignoring unknown option '-v' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]
+          tmpxft_000084d0_00000000-7_CMakeCUDACompilerABI.cudafe1.cpp
+        Done Building Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" (CudaBuildCore target(s)).
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\Debug\\cmTC_3d6fd.exe" /INCREMENTAL /ILK:"cmTC_3d6fd.dir\\Debug\\cmTC_3d6fd.ilk" /NOLOGO /LIBPATH:"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\lib\\x64" cudadevrt.lib cudart_static.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-zfozp6/Debug/cmTC_3d6fd.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-zfozp6/Debug/cmTC_3d6fd.lib" /MACHINE:X64  /machine:x64 -v cmTC_3d6fd.dir\\Debug\\CMakeCUDACompilerABI.obj
+        LINK : warning LNK4044: unrecognized option '/v'; ignored [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]
+             Creating library C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-zfozp6/Debug/cmTC_3d6fd.lib and object C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-zfozp6/Debug/cmTC_3d6fd.exp
+        LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]
+          cmTC_3d6fd.vcxproj -> C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\Debug\\cmTC_3d6fd.exe
+        FinalizeBuildStatus:
+          Deleting file "cmTC_3d6fd.dir\\Debug\\cmTC_3d6fd.tlog\\unsuccessfulbuild".
+          Touching "cmTC_3d6fd.dir\\Debug\\cmTC_3d6fd.tlog\\cmTC_3d6fd.lastbuildstate".
+        Done Building Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" (default targets).
+        
+        Build succeeded.
+        
+        "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" (default target) (1) ->
+        "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" (CudaBuildCore target) (1:2) ->
+        (CudaBuildCore target) -> 
+          cl : Command line warning D9002: ignoring unknown option '-v' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]
+          cl : Command line warning D9002: ignoring unknown option '-v' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]
+          cl : Command line warning D9002: ignoring unknown option '-v' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]
+        
+        
+        "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" (default target) (1) ->
+        (Link target) -> 
+          LINK : warning LNK4044: unrecognized option '/v'; ignored [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]
+          LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]
+        
+            5 Warning(s)
+            0 Error(s)
+        
+        Time Elapsed 00:00:01.81
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCompilerABI.cmake:127 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeTestCUDACompiler.cmake:19 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:158 (enable_language)"
+    message: |
+      Parsed CUDA implicit include dir info: rv=start
+        warn: unable to parse implicit include dirs!
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCompilerABI.cmake:152 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeTestCUDACompiler.cmake:19 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:158 (enable_language)"
+    message: |
+      Parsed CUDA implicit link information:
+        link line regex: [^( *|.*[/\\])(link\\.exe|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        ignore line: [Change Dir: C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-zfozp6]
+        ignore line: []
+        ignore line: [Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_3d6fd.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n && MSBuild version 17.5.1+f6fdcf537 for .NET Framework]
+        ignore line: [Build started 12/04/2023 17:57:10.]
+        ignore line: [Included response file: C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.rsp]
+        ignore line: []
+        ignore line: [Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" on node 1 (default targets).]
+        ignore line: [PrepareForBuild:]
+        ignore line: [  Creating directory "cmTC_3d6fd.dir\\Debug\\".]
+        ignore line: [  Creating directory "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\Debug\\".]
+        ignore line: [  Creating directory "cmTC_3d6fd.dir\\Debug\\cmTC_3d6fd.tlog\\".]
+        ignore line: [InitializeBuildStatus:]
+        ignore line: [  Creating "cmTC_3d6fd.dir\\Debug\\cmTC_3d6fd.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.]
+        ignore line: [AddCudaCompileDeps:]
+        ignore line: [  C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\cl.exe /E /nologo /showIncludes /TP /D__CUDACC__ /D__CUDACC_VER_MAJOR__=12 /D__CUDACC_VER_MINOR__=1 /D_WINDOWS /DCMAKE_INTDIR="Debug" /D_MBCS /DCMAKE_INTDIR="Debug" /I"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin" /I"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\include" /I. /FIcuda_runtime.h /c "C:\\Program Files\\CMake\\share\\cmake-3.26\\Modules\\CMakeCUDACompilerABI.cu" ]
+        ignore line: [Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" (1) is building "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" (1:2) on node 1 (CudaBuildCore target(s)).]
+        ignore line: [CudaBuildCore:]
+        ignore line: [  Compiling CUDA source file ..\\..\\..\\..\\Program Files\\CMake\\share\\cmake-3.26\\Modules\\CMakeCUDACompilerABI.cu...]
+        ignore line: [  cmd.exe /C "C:\\Users\\dawid\\AppData\\Local\\Temp\\tmp2a4786bff3db44828defaa9020ce0820.cmd"]
+        ignore line: [  "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin\\nvcc.exe"  --use-local-env -ccbin "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64" -x cu    -I"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\include"     --keep-dir x64\\Debug  -maxrregcount=0   --machine 64 --compile -cudart static --generate-code=arch=compute_52 code=[compute_52 sm_52] -Xcompiler="/EHsc -Zi -Ob0 -v" -g  -D_WINDOWS -D"CMAKE_INTDIR=\\"Debug\\"" -D_MBCS -D"CMAKE_INTDIR=\\"Debug\\"" -Xcompiler "/EHsc /W1 /nologo /Od /FS /Zi /RTC1 /MDd /GR" -Xcompiler "/FdcmTC_3d6fd.dir\\Debug\\vc143.pdb" -o cmTC_3d6fd.dir\\Debug\\CMakeCUDACompilerABI.obj "C:\\Program Files\\CMake\\share\\cmake-3.26\\Modules\\CMakeCUDACompilerABI.cu"]
+        ignore line: [  ]
+        ignore line: [  C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6>"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\bin\\nvcc.exe"  --use-local-env -ccbin "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64" -x cu    -I"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\include"     --keep-dir x64\\Debug  -maxrregcount=0   --machine 64 --compile -cudart static --generate-code=arch=compute_52 code=[compute_52 sm_52] -Xcompiler="/EHsc -Zi -Ob0 -v" -g  -D_WINDOWS -D"CMAKE_INTDIR=\\"Debug\\"" -D_MBCS -D"CMAKE_INTDIR=\\"Debug\\"" -Xcompiler "/EHsc /W1 /nologo /Od /FS /Zi /RTC1 /MDd /GR" -Xcompiler "/FdcmTC_3d6fd.dir\\Debug\\vc143.pdb" -o cmTC_3d6fd.dir\\Debug\\CMakeCUDACompilerABI.obj "C:\\Program Files\\CMake\\share\\cmake-3.26\\Modules\\CMakeCUDACompilerABI.cu" ]
+        ignore line: [cl : Command line warning D9002: ignoring unknown option '-v' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]]
+        ignore line: [  CMakeCUDACompilerABI.cu]
+        ignore line: [cl : Command line warning D9002: ignoring unknown option '-v' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]]
+        ignore line: [  CMakeCUDACompilerABI.cu]
+        ignore line: [  CMakeCUDACompilerABI.cu]
+        ignore line: [cl : Command line warning D9002: ignoring unknown option '-v' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]]
+        ignore line: [  tmpxft_000084d0_00000000-7_CMakeCUDACompilerABI.cudafe1.cpp]
+        ignore line: [Done Building Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" (CudaBuildCore target(s)).]
+        ignore line: [Link:]
+        ignore line: [  C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\Debug\\cmTC_3d6fd.exe" /INCREMENTAL /ILK:"cmTC_3d6fd.dir\\Debug\\cmTC_3d6fd.ilk" /NOLOGO /LIBPATH:"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.1\\lib\\x64" cudadevrt.lib cudart_static.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-zfozp6/Debug/cmTC_3d6fd.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-zfozp6/Debug/cmTC_3d6fd.lib" /MACHINE:X64  /machine:x64 -v cmTC_3d6fd.dir\\Debug\\CMakeCUDACompilerABI.obj]
+        ignore line: [LINK : warning LNK4044: unrecognized option '/v']
+        ignore line: [ ignored [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]]
+        ignore line: [     Creating library C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-zfozp6/Debug/cmTC_3d6fd.lib and object C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-zfozp6/Debug/cmTC_3d6fd.exp]
+        ignore line: [LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs]
+        ignore line: [ use /NODEFAULTLIB:library [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]]
+        ignore line: [  cmTC_3d6fd.vcxproj -> C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\Debug\\cmTC_3d6fd.exe]
+        ignore line: [FinalizeBuildStatus:]
+        ignore line: [  Deleting file "cmTC_3d6fd.dir\\Debug\\cmTC_3d6fd.tlog\\unsuccessfulbuild".]
+        ignore line: [  Touching "cmTC_3d6fd.dir\\Debug\\cmTC_3d6fd.tlog\\cmTC_3d6fd.lastbuildstate".]
+        ignore line: [Done Building Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" (default targets).]
+        ignore line: []
+        ignore line: [Build succeeded.]
+        ignore line: []
+        ignore line: ["C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" (default target) (1) ->]
+        ignore line: ["C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" (CudaBuildCore target) (1:2) ->]
+        ignore line: [(CudaBuildCore target) -> ]
+        ignore line: [  cl : Command line warning D9002: ignoring unknown option '-v' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]]
+        ignore line: [  cl : Command line warning D9002: ignoring unknown option '-v' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]]
+        ignore line: [  cl : Command line warning D9002: ignoring unknown option '-v' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]]
+        ignore line: []
+        ignore line: []
+        ignore line: ["C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj" (default target) (1) ->]
+        ignore line: [(Link target) -> ]
+        ignore line: [  LINK : warning LNK4044: unrecognized option '/v']
+        ignore line: [ ignored [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]]
+        ignore line: [  LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs]
+        ignore line: [ use /NODEFAULTLIB:library [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-zfozp6\\cmTC_3d6fd.vcxproj]]
+        ignore line: []
+        ignore line: [    5 Warning(s)]
+        ignore line: [    0 Error(s)]
+        ignore line: []
+        ignore line: [Time Elapsed 00:00:01.81]
+        ignore line: []
+        ignore line: []
+        implicit libs: []
+        implicit objs: []
+        implicit dirs: []
+        implicit fwks: []
+      
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CheckCSourceCompiles.cmake:76 (cmake_check_source_compiles)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindThreads.cmake:97 (CHECK_C_SOURCE_COMPILES)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindThreads.cmake:163 (_threads_check_libc)"
+      - "CMakeLists.txt:203 (find_package)"
+    checks:
+      - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
+    directories:
+      source: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-rqu8fp"
+      binary: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-rqu8fp"
+    cmakeVariables:
+      CMAKE_CUDA_ARCHITECTURES: "52"
+      CMAKE_CUDA_RUNTIME_LIBRARY: "Shared"
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "C:/Darknet/cmake/Modules/"
+    buildResult:
+      variable: "CMAKE_HAVE_LIBC_PTHREAD"
+      cached: true
+      stdout: |
+        Change Dir: C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-rqu8fp
+        
+        Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_43a27.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n && MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+        Build started 12/04/2023 17:57:12.
+        Included response file: C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.rsp
+        
+        Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rqu8fp\\cmTC_43a27.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_43a27.dir\\Debug\\".
+          Creating directory "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rqu8fp\\Debug\\".
+          Creating directory "cmTC_43a27.dir\\Debug\\cmTC_43a27.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_43a27.dir\\Debug\\cmTC_43a27.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CMAKE_HAVE_LIBC_PTHREAD /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_43a27.dir\\Debug\\\\" /Fd"cmTC_43a27.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rqu8fp\\src.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.35.32216.1 for x64
+          src.c
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CMAKE_HAVE_LIBC_PTHREAD /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_43a27.dir\\Debug\\\\" /Fd"cmTC_43a27.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rqu8fp\\src.c"
+        C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rqu8fp\\src.c(1,10): fatal  error C1083: Cannot open include file: 'pthread.h': No such file or directory [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rqu8fp\\cmTC_43a27.vcxproj]
+        Done Building Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rqu8fp\\cmTC_43a27.vcxproj" (default targets) -- FAILED.
+        
+        Build FAILED.
+        
+        "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rqu8fp\\cmTC_43a27.vcxproj" (default target) (1) ->
+        (ClCompile target) -> 
+          C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rqu8fp\\src.c(1,10): fatal  error C1083: Cannot open include file: 'pthread.h': No such file or directory [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rqu8fp\\cmTC_43a27.vcxproj]
+        
+            0 Warning(s)
+            1 Error(s)
+        
+        Time Elapsed 00:00:00.29
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CheckLibraryExists.cmake:71 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindThreads.cmake:112 (CHECK_LIBRARY_EXISTS)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindThreads.cmake:175 (_threads_check_lib)"
+      - "CMakeLists.txt:203 (find_package)"
+    checks:
+      - "Looking for pthread_create in pthreads"
+    directories:
+      source: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-g11938"
+      binary: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-g11938"
+    cmakeVariables:
+      CMAKE_CUDA_ARCHITECTURES: "52"
+      CMAKE_CUDA_RUNTIME_LIBRARY: "Shared"
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "C:/Darknet/cmake/Modules/"
+    buildResult:
+      variable: "CMAKE_HAVE_PTHREADS_CREATE"
+      cached: true
+      stdout: |
+        Change Dir: C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-g11938
+        
+        Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_30838.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n && MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+        Build started 12/04/2023 17:57:12.
+        Included response file: C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.rsp
+        
+        Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-g11938\\cmTC_30838.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_30838.dir\\Debug\\".
+          Creating directory "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-g11938\\Debug\\".
+          Creating directory "cmTC_30838.dir\\Debug\\cmTC_30838.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_30838.dir\\Debug\\cmTC_30838.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_30838.dir\\Debug\\\\" /Fd"cmTC_30838.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-g11938\\CheckFunctionExists.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.35.32216.1 for x64
+          CheckFunctionExists.c
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_30838.dir\\Debug\\\\" /Fd"cmTC_30838.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-g11938\\CheckFunctionExists.c"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-g11938\\Debug\\cmTC_30838.exe" /INCREMENTAL /ILK:"cmTC_30838.dir\\Debug\\cmTC_30838.ilk" /NOLOGO pthreads.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-g11938/Debug/cmTC_30838.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-g11938/Debug/cmTC_30838.lib" /MACHINE:X64  /machine:x64 cmTC_30838.dir\\Debug\\CheckFunctionExists.obj
+        LINK : fatal error LNK1104: cannot open file 'pthreads.lib' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-g11938\\cmTC_30838.vcxproj]
+        Done Building Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-g11938\\cmTC_30838.vcxproj" (default targets) -- FAILED.
+        
+        Build FAILED.
+        
+        "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-g11938\\cmTC_30838.vcxproj" (default target) (1) ->
+        (Link target) -> 
+          LINK : fatal error LNK1104: cannot open file 'pthreads.lib' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-g11938\\cmTC_30838.vcxproj]
+        
+            0 Warning(s)
+            1 Error(s)
+        
+        Time Elapsed 00:00:00.35
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CheckLibraryExists.cmake:71 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindThreads.cmake:112 (CHECK_LIBRARY_EXISTS)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindThreads.cmake:176 (_threads_check_lib)"
+      - "CMakeLists.txt:203 (find_package)"
+    checks:
+      - "Looking for pthread_create in pthread"
+    directories:
+      source: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-rl1lpk"
+      binary: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-rl1lpk"
+    cmakeVariables:
+      CMAKE_CUDA_ARCHITECTURES: "52"
+      CMAKE_CUDA_RUNTIME_LIBRARY: "Shared"
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "C:/Darknet/cmake/Modules/"
+    buildResult:
+      variable: "CMAKE_HAVE_PTHREAD_CREATE"
+      cached: true
+      stdout: |
+        Change Dir: C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-rl1lpk
+        
+        Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_9aaaf.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n && MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+        Build started 12/04/2023 17:57:13.
+        Included response file: C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.rsp
+        
+        Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rl1lpk\\cmTC_9aaaf.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_9aaaf.dir\\Debug\\".
+          Creating directory "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rl1lpk\\Debug\\".
+          Creating directory "cmTC_9aaaf.dir\\Debug\\cmTC_9aaaf.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_9aaaf.dir\\Debug\\cmTC_9aaaf.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_9aaaf.dir\\Debug\\\\" /Fd"cmTC_9aaaf.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rl1lpk\\CheckFunctionExists.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.35.32216.1 for x64
+          CheckFunctionExists.c
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_9aaaf.dir\\Debug\\\\" /Fd"cmTC_9aaaf.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rl1lpk\\CheckFunctionExists.c"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rl1lpk\\Debug\\cmTC_9aaaf.exe" /INCREMENTAL /ILK:"cmTC_9aaaf.dir\\Debug\\cmTC_9aaaf.ilk" /NOLOGO pthread.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-rl1lpk/Debug/cmTC_9aaaf.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-rl1lpk/Debug/cmTC_9aaaf.lib" /MACHINE:X64  /machine:x64 cmTC_9aaaf.dir\\Debug\\CheckFunctionExists.obj
+        LINK : fatal error LNK1104: cannot open file 'pthread.lib' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rl1lpk\\cmTC_9aaaf.vcxproj]
+        Done Building Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rl1lpk\\cmTC_9aaaf.vcxproj" (default targets) -- FAILED.
+        
+        Build FAILED.
+        
+        "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rl1lpk\\cmTC_9aaaf.vcxproj" (default target) (1) ->
+        (Link target) -> 
+          LINK : fatal error LNK1104: cannot open file 'pthread.lib' [C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-rl1lpk\\cmTC_9aaaf.vcxproj]
+        
+            0 Warning(s)
+            1 Error(s)
+        
+        Time Elapsed 00:00:00.35
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindOpenMP.cmake:219 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindOpenMP.cmake:483 (_OPENMP_GET_FLAGS)"
+      - "CMakeLists.txt:242 (find_package)"
+    description: "Detecting C OpenMP compiler info"
+    directories:
+      source: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-nwmm7v"
+      binary: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-nwmm7v"
+    cmakeVariables:
+      CMAKE_CUDA_ARCHITECTURES: "52"
+      CMAKE_CUDA_RUNTIME_LIBRARY: "Shared"
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "C:/Darknet/cmake/Modules/"
+    buildResult:
+      variable: "OpenMP_COMPILE_RESULT_C_openmp"
+      cached: true
+      stdout: |
+        Change Dir: C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-nwmm7v
+        
+        Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_8d8ed.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n && MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+        Build started 12/04/2023 17:57:14.
+        Included response file: C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.rsp
+        
+        Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-nwmm7v\\cmTC_8d8ed.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_8d8ed.dir\\Debug\\".
+          Creating directory "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-nwmm7v\\Debug\\".
+          Creating directory "cmTC_8d8ed.dir\\Debug\\cmTC_8d8ed.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_8d8ed.dir\\Debug\\cmTC_8d8ed.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /openmp /Fo"cmTC_8d8ed.dir\\Debug\\\\" /Fd"cmTC_8d8ed.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-nwmm7v\\OpenMPTryFlag.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.35.32216.1 for x64
+          OpenMPTryFlag.c
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /openmp /Fo"cmTC_8d8ed.dir\\Debug\\\\" /Fd"cmTC_8d8ed.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-nwmm7v\\OpenMPTryFlag.c"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-nwmm7v\\Debug\\cmTC_8d8ed.exe" /INCREMENTAL /ILK:"cmTC_8d8ed.dir\\Debug\\cmTC_8d8ed.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-nwmm7v/Debug/cmTC_8d8ed.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-nwmm7v/Debug/cmTC_8d8ed.lib" /MACHINE:X64  /machine:x64 cmTC_8d8ed.dir\\Debug\\OpenMPTryFlag.obj
+          cmTC_8d8ed.vcxproj -> C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-nwmm7v\\Debug\\cmTC_8d8ed.exe
+        FinalizeBuildStatus:
+          Deleting file "cmTC_8d8ed.dir\\Debug\\cmTC_8d8ed.tlog\\unsuccessfulbuild".
+          Touching "cmTC_8d8ed.dir\\Debug\\cmTC_8d8ed.tlog\\cmTC_8d8ed.lastbuildstate".
+        Done Building Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-nwmm7v\\cmTC_8d8ed.vcxproj" (default targets).
+        
+        Build succeeded.
+            0 Warning(s)
+            0 Error(s)
+        
+        Time Elapsed 00:00:00.42
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindOpenMP.cmake:219 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindOpenMP.cmake:483 (_OPENMP_GET_FLAGS)"
+      - "CMakeLists.txt:242 (find_package)"
+    description: "Detecting CXX OpenMP compiler info"
+    directories:
+      source: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-op5w5q"
+      binary: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-op5w5q"
+    cmakeVariables:
+      CMAKE_CUDA_ARCHITECTURES: "52"
+      CMAKE_CUDA_RUNTIME_LIBRARY: "Shared"
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /GR /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "C:/Darknet/cmake/Modules/"
+    buildResult:
+      variable: "OpenMP_COMPILE_RESULT_CXX_openmp"
+      cached: true
+      stdout: |
+        Change Dir: C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-op5w5q
+        
+        Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_ef418.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n && MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+        Build started 12/04/2023 17:57:15.
+        Included response file: C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.rsp
+        
+        Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-op5w5q\\cmTC_ef418.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_ef418.dir\\Debug\\".
+          Creating directory "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-op5w5q\\Debug\\".
+          Creating directory "cmTC_ef418.dir\\Debug\\cmTC_ef418.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_ef418.dir\\Debug\\cmTC_ef418.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /openmp /Fo"cmTC_ef418.dir\\Debug\\\\" /Fd"cmTC_ef418.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-op5w5q\\OpenMPTryFlag.cpp"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.35.32216.1 for x64
+          OpenMPTryFlag.cpp
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /openmp /Fo"cmTC_ef418.dir\\Debug\\\\" /Fd"cmTC_ef418.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-op5w5q\\OpenMPTryFlag.cpp"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-op5w5q\\Debug\\cmTC_ef418.exe" /INCREMENTAL /ILK:"cmTC_ef418.dir\\Debug\\cmTC_ef418.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-op5w5q/Debug/cmTC_ef418.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-op5w5q/Debug/cmTC_ef418.lib" /MACHINE:X64  /machine:x64 cmTC_ef418.dir\\Debug\\OpenMPTryFlag.obj
+          cmTC_ef418.vcxproj -> C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-op5w5q\\Debug\\cmTC_ef418.exe
+        FinalizeBuildStatus:
+          Deleting file "cmTC_ef418.dir\\Debug\\cmTC_ef418.tlog\\unsuccessfulbuild".
+          Touching "cmTC_ef418.dir\\Debug\\cmTC_ef418.tlog\\cmTC_ef418.lastbuildstate".
+        Done Building Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-op5w5q\\cmTC_ef418.vcxproj" (default targets).
+        
+        Build succeeded.
+            0 Warning(s)
+            0 Error(s)
+        
+        Time Elapsed 00:00:00.43
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindOpenMP.cmake:419 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindOpenMP.cmake:557 (_OPENMP_GET_SPEC_DATE)"
+      - "CMakeLists.txt:242 (find_package)"
+    description: "Detecting C OpenMP version"
+    directories:
+      source: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-54uc26"
+      binary: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-54uc26"
+    cmakeVariables:
+      CMAKE_CUDA_ARCHITECTURES: "52"
+      CMAKE_CUDA_RUNTIME_LIBRARY: "Shared"
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "C:/Darknet/cmake/Modules/"
+    buildResult:
+      variable: "OpenMP_SPECTEST_C_"
+      cached: true
+      stdout: |
+        Change Dir: C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-54uc26
+        
+        Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_78147.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n && MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+        Build started 12/04/2023 17:57:16.
+        Included response file: C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.rsp
+        
+        Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-54uc26\\cmTC_78147.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_78147.dir\\Debug\\".
+          Creating directory "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-54uc26\\Debug\\".
+          Creating directory "cmTC_78147.dir\\Debug\\cmTC_78147.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_78147.dir\\Debug\\cmTC_78147.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /openmp /Fo"cmTC_78147.dir\\Debug\\\\" /Fd"cmTC_78147.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-54uc26\\OpenMPCheckVersion.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.35.32216.1 for x64
+          OpenMPCheckVersion.c
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /openmp /Fo"cmTC_78147.dir\\Debug\\\\" /Fd"cmTC_78147.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-54uc26\\OpenMPCheckVersion.c"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-54uc26\\Debug\\cmTC_78147.exe" /INCREMENTAL /ILK:"cmTC_78147.dir\\Debug\\cmTC_78147.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-54uc26/Debug/cmTC_78147.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-54uc26/Debug/cmTC_78147.lib" /MACHINE:X64  /machine:x64 cmTC_78147.dir\\Debug\\OpenMPCheckVersion.obj
+          cmTC_78147.vcxproj -> C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-54uc26\\Debug\\cmTC_78147.exe
+        FinalizeBuildStatus:
+          Deleting file "cmTC_78147.dir\\Debug\\cmTC_78147.tlog\\unsuccessfulbuild".
+          Touching "cmTC_78147.dir\\Debug\\cmTC_78147.tlog\\cmTC_78147.lastbuildstate".
+        Done Building Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-54uc26\\cmTC_78147.vcxproj" (default targets).
+        
+        Build succeeded.
+            0 Warning(s)
+            0 Error(s)
+        
+        Time Elapsed 00:00:00.43
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindOpenMP.cmake:419 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindOpenMP.cmake:557 (_OPENMP_GET_SPEC_DATE)"
+      - "CMakeLists.txt:242 (find_package)"
+    description: "Detecting CXX OpenMP version"
+    directories:
+      source: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-3jqo1n"
+      binary: "C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-3jqo1n"
+    cmakeVariables:
+      CMAKE_CUDA_ARCHITECTURES: "52"
+      CMAKE_CUDA_RUNTIME_LIBRARY: "Shared"
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /GR /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "C:/Darknet/cmake/Modules/"
+    buildResult:
+      variable: "OpenMP_SPECTEST_CXX_"
+      cached: true
+      stdout: |
+        Change Dir: C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-3jqo1n
+        
+        Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_e1513.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n && MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+        Build started 12/04/2023 17:57:16.
+        Included response file: C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\MSBuild.rsp
+        
+        Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-3jqo1n\\cmTC_e1513.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_e1513.dir\\Debug\\".
+          Creating directory "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-3jqo1n\\Debug\\".
+          Creating directory "cmTC_e1513.dir\\Debug\\cmTC_e1513.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_e1513.dir\\Debug\\cmTC_e1513.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+        ClCompile:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /openmp /Fo"cmTC_e1513.dir\\Debug\\\\" /Fd"cmTC_e1513.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-3jqo1n\\OpenMPCheckVersion.cpp"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.35.32216.1 for x64
+          OpenMPCheckVersion.cpp
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /openmp /Fo"cmTC_e1513.dir\\Debug\\\\" /Fd"cmTC_e1513.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-3jqo1n\\OpenMPCheckVersion.cpp"
+        Link:
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.35.32215\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-3jqo1n\\Debug\\cmTC_e1513.exe" /INCREMENTAL /ILK:"cmTC_e1513.dir\\Debug\\cmTC_e1513.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-3jqo1n/Debug/cmTC_e1513.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Darknet/CMakeFiles/CMakeScratch/TryCompile-3jqo1n/Debug/cmTC_e1513.lib" /MACHINE:X64  /machine:x64 cmTC_e1513.dir\\Debug\\OpenMPCheckVersion.obj
+          cmTC_e1513.vcxproj -> C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-3jqo1n\\Debug\\cmTC_e1513.exe
+        FinalizeBuildStatus:
+          Deleting file "cmTC_e1513.dir\\Debug\\cmTC_e1513.tlog\\unsuccessfulbuild".
+          Touching "cmTC_e1513.dir\\Debug\\cmTC_e1513.tlog\\cmTC_e1513.lastbuildstate".
+        Done Building Project "C:\\Darknet\\CMakeFiles\\CMakeScratch\\TryCompile-3jqo1n\\cmTC_e1513.vcxproj" (default targets).
+        
+        Build succeeded.
+            0 Warning(s)
+            0 Error(s)
+        
+        Time Elapsed 00:00:00.44
+        
+      exitCode: 0
+...
