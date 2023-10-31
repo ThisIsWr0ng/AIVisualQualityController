@@ -1,5 +1,8 @@
 ![image](https://github.com/ThisIsWr0ng/AIVisualQualityController/assets/99226094/44442357-223a-4eba-b15f-0898d1e12968)
+
+
 AI VISUAL QUALITY CONTROLLER
+
 Automated quality control tool for industry
 
 
