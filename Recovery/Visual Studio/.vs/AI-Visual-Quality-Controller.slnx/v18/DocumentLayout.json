@@ -9,6 +9,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{792BC082-F777-3AEE-728D-2596E9A0AE04}|AI-Visual-Quality-Controller.csproj|c:\\github\\aivisualqualitycontroller\\recovery\\visual studio\\ai_visual_quality_controller\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{792BC082-F777-3AEE-728D-2596E9A0AE04}|AI-Visual-Quality-Controller.csproj|solutionrelative:ai_visual_quality_controller\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{792BC082-F777-3AEE-728D-2596E9A0AE04}|AI-Visual-Quality-Controller.csproj|c:\\github\\aivisualqualitycontroller\\recovery\\visual studio\\ai_visual_quality_controller\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{792BC082-F777-3AEE-728D-2596E9A0AE04}|AI-Visual-Quality-Controller.csproj|solutionrelative:ai_visual_quality_controller\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,8 +22,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\GitHub\\AIVisualQualityController\\Recovery\\Visual Studio\\AI_Visual_Quality_Controller\\Program.cs",
+              "RelativeDocumentMoniker": "AI_Visual_Quality_Controller\\Program.cs",
+              "ToolTip": "C:\\GitHub\\AIVisualQualityController\\Recovery\\Visual Studio\\AI_Visual_Quality_Controller\\Program.cs",
+              "RelativeToolTip": "AI_Visual_Quality_Controller\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-19T19:20:05.106Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -40,7 +57,7 @@
               "RelativeDocumentMoniker": "AI_Visual_Quality_Controller\\Form1.cs",
               "ToolTip": "C:\\GitHub\\AIVisualQualityController\\Recovery\\Visual Studio\\AI_Visual_Quality_Controller\\Form1.cs",
               "RelativeToolTip": "AI_Visual_Quality_Controller\\Form1.cs",
-              "ViewState": "AgIAANoBAAAAAAAAAAAiwOUBAAA7AAAAAAAAAA==",
+              "ViewState": "AgIAAHsBAAAAAAAAAADwv+UBAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-08-19T19:07:27.909Z",
               "EditorCaption": ""

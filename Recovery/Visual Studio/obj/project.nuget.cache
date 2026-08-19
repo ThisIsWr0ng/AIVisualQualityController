@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "B7BCXrKfV0U=",
+  "dgSpecHash": "/y1B2sd6GAg=",
   "success": true,
   "projectFilePath": "C:\\GitHub\\AIVisualQualityController\\Recovery\\Visual Studio\\AI-Visual-Quality-Controller.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Dawid\\.nuget\\packages\\avalonia\\12.1.1\\avalonia.12.1.1.nupkg.sha512"
+  ],
   "logs": []
 }
