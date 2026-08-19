@@ -1,0 +1,12 @@
+C:\GitHub\AIVisualQualityController\Recovery\Visual Studio\bin\Debug\net472\AI Visual Quality Controller.exe.config
+C:\GitHub\AIVisualQualityController\Recovery\Visual Studio\bin\Debug\net472\AI Visual Quality Controller.exe
+C:\GitHub\AIVisualQualityController\Recovery\Visual Studio\bin\Debug\net472\AI Visual Quality Controller.pdb
+C:\GitHub\AIVisualQualityController\Recovery\Visual Studio\obj\Debug\net472\AI-Visual-Quality-Controller.csproj.AssemblyReference.cache
+C:\GitHub\AIVisualQualityController\Recovery\Visual Studio\obj\Debug\net472\AI_Visual_Quality_Controller.Form1.resources
+C:\GitHub\AIVisualQualityController\Recovery\Visual Studio\obj\Debug\net472\AI_Visual_Quality_Controller.Properties.Resources.resources
+C:\GitHub\AIVisualQualityController\Recovery\Visual Studio\obj\Debug\net472\AI-Visual-Quality-Controller.csproj.GenerateResource.cache
+C:\GitHub\AIVisualQualityController\Recovery\Visual Studio\obj\Debug\net472\AI-Visual-Quality-Controller.GeneratedMSBuildEditorConfig.editorconfig
+C:\GitHub\AIVisualQualityController\Recovery\Visual Studio\obj\Debug\net472\AI-Visual-Quality-Controller.csproj.CoreCompileInputs.cache
+C:\GitHub\AIVisualQualityController\Recovery\Visual Studio\obj\Debug\net472\AI-Visual-Quality-Controller.sourcelink.json
+C:\GitHub\AIVisualQualityController\Recovery\Visual Studio\obj\Debug\net472\AI Visual Quality Controller.exe
+C:\GitHub\AIVisualQualityController\Recovery\Visual Studio\obj\Debug\net472\AI Visual Quality Controller.pdb
