@@ -16,7 +16,6 @@
     <ApplicationIcon>app.ico</ApplicationIcon>
     <RootNamespace />
   </PropertyGroup>
-  <ItemGroup />
   <ItemGroup>
     <Reference Include="System.Core" />
   </ItemGroup>

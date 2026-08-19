@@ -1,5 +1,11 @@
 ![image](https://github.com/ThisIsWr0ng/AIVisualQualityController/assets/99226094/44442357-223a-4eba-b15f-0898d1e12968)
 
+> [!IMPORTANT]
+> Active development has moved to [`AIVQC/`](AIVQC/README.md). The files in the
+> repository root document the original Python/Darknet prototype, while
+> [`Recovery/`](Recovery/) contains the recovered WinForms application used as a
+> behavioral reference.
+
 
 ## AI VISUAL QUALITY CONTROLLER
 

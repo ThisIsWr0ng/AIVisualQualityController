@@ -1,0 +1,29 @@
+# IDE state and user-specific settings
+**/.vs/
+**/.vscode/
+*.suo
+*.user
+*.rsuser
+*.sln.docstates
+
+# .NET build output
+**/[Bb]in/
+**/[Oo]bj/
+**/[Dd]ebug/
+**/[Rr]elease/
+TestResults/
+artifacts/
+
+# Python environments and caches
+**/__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local configuration and operating-system files
+.env
+.DS_Store
+Thumbs.db
+
+# Logs generated while running the applications
+*.log
