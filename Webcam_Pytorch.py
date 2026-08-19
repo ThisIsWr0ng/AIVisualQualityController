@@ -63,15 +63,15 @@ def detect(session, image_src, namesfile):
     
     original_height, original_width, _ = image_src.shape
 
-    # Input
+    # Convert the image to the tensor layout expected by the ONNX model.
     resized = cv2.resize(image_src, (IN_IMAGE_W, IN_IMAGE_H), interpolation=cv2.INTER_LINEAR)
     img_in = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)
     img_in = np.transpose(img_in, (2, 0, 1)).astype(np.float32)
     img_in = np.expand_dims(img_in, axis=0)
     img_in /= 255.0
-    #print("Shape of the network input: ", img_in.shape)
+    # print("Shape of the network input: ", img_in.shape)
 
-    # Compute
+    # Run inference and convert the raw outputs into detections.
     input_name = session.get_inputs()[0].name
 
     outputs = session.run(None, {input_name: img_in})
@@ -91,9 +91,9 @@ def main(onnx_file, names_file):
         ret, frame = cap.read()
         if not ret:
             break
-        #frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_LINEAR)
+        # frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_LINEAR)
         boxes = detect(session, frame, names_file)
-        #print(boxes)
+        # print(boxes)
         img_with_boxes = plot_boxes_cv2(frame, boxes, class_names=class_names)
         cv2.imshow('Detections', img_with_boxes)
 

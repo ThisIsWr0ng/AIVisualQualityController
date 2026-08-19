@@ -2,32 +2,32 @@ import cv2
 import numpy as np
 import onnxruntime as ort
 
-# Load YOLOv4-tiny ONNX model
+# Load the YOLOv4-tiny ONNX model.
 ort_session = ort.InferenceSession('Model/Yolo_weights.onnx')
 
 classes = []
 with open('Model/obj.names', 'r') as f:
     classes = [line.strip() for line in f.readlines()]
 
-# Initialize camera feed
+# Open the default camera.
 cap = cv2.VideoCapture(0)
 
 while True:
-    # Read frame from camera feed
+    # Read the next camera frame.
     ret, frame = cap.read()
     frame = cv2.resize(frame, (416, 416))
 
-    # Preprocess the frame for YOLOv4-tiny
+    # Resize and normalize the frame for YOLOv4-tiny.
     input_numpy = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB).astype(np.float32)
     input_numpy = np.transpose(input_numpy, (2, 0, 1))
     input_numpy /= 255.0
     input_tensor = input_numpy[np.newaxis, :, :, :]
 
-    # Run inference with ONNX Runtime
+    # Run inference with ONNX Runtime.
     outputs = ort_session.run(None, {"input": input_tensor})
 
 
-    # Process the outputs of YOLOv4-tiny
+    # Convert model outputs into class scores and bounding boxes.
     boxes = []
     confidences = []
     class_ids = []
@@ -48,10 +48,10 @@ while True:
             confidences.append(float(confidence))
             class_ids.append(class_id)
 
-    # Apply non-max suppression to remove redundant boxes
+    # Remove overlapping detections with non-maximum suppression.
     indices = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
 
-    # Draw the boxes on the frame and show the result
+    # Draw the remaining detections and display the frame.
     if len(indices) > 0:
         for i in indices.flatten():
             x, y, w, h = boxes[i]
@@ -63,7 +63,7 @@ while True:
 
     cv2.imshow("Object Detection", frame)
 
-    # Press 'q' to quit
+    # Press Q to stop detection.
     if cv2.waitKey(1) == ord('q'):
         break
 

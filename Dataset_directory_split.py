@@ -15,7 +15,7 @@ def split_dataset(data_dir, annotations_csv, output_dir):
 
         shutil.copy(image_path, class_dir)
 
-    # Copy the annotation file to the output directory
+    # Keep the source annotations alongside the reorganized images.
     shutil.copy(annotations_csv, output_dir)
 
 data_folders = ['train', 'valid', 'test']

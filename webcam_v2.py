@@ -10,15 +10,15 @@ def class_loss(y_true, y_pred):
 def bbox_loss(y_true, y_pred):
     return tf.keras.losses.mean_squared_error(y_true, y_pred)
 
-# Load your trained model
+# Load the trained multi-output model with its custom loss functions.
 model_path = 'model_mobilev2_v3.h5'
 with custom_object_scope({'class_loss': class_loss, 'bbox_loss': bbox_loss}):
     model = tf.keras.models.load_model(model_path)
 
-# Label map
+# Map model output indices to class names.
 label_map = {0: 'Cut', 1: 'Dressing', 2: 'F_Body', 3: 'Red_T'}
 
-# Preallocate memory for input_data
+# Reuse the input buffer to avoid allocating it for every frame.
 input_data = np.empty((1, 224, 224, 3), dtype=np.float32)
 
 def process_frame(frame, model, input_data):
@@ -47,12 +47,12 @@ while True:
     if not ret:
         break
 
-    # Calculate FPS
+    # Calculate the current frame rate.
     current_time = time.time()
     fps = 1 / (current_time - prev_time)
     prev_time = current_time
 
-    # Find the largest contour
+    # Find the largest external contour in the thresholded frame.
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY)
     edges = cv2.Canny(thresh, 400, 600, apertureSize=3)
@@ -74,15 +74,15 @@ while True:
         roi = frame[roi_y:roi_y+roi_h, roi_x:roi_x+roi_w]
         cv2.imshow('camera', frame)
 
-        # Process the ROI and get the predictions and bounding boxes
+        # Predict classes and a bounding box for the extracted ROI.
         top_two_preds, bbox_pred = process_frame(roi, model, input_data)
 
-        # Display the top two detected classes and confidences on the ROI
+        # Draw the two most likely classes and their confidence values.
         for i, (label, prob) in enumerate(top_two_preds):
             text = f"{label}: {prob * 100:.2f}%"
             cv2.putText(roi, text, (10, 30 + 30 * i), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
-        # Draw predicted bounding boxes on the ROI
+        # Convert the normalized box coordinates to ROI pixels and draw the box.
         bbox_xmin = int(bbox_pred[0] * roi_w)
         bbox_ymin = int(bbox_pred[1] * roi_h)
         bbox_xmax = int(bbox_pred[2] * roi_w)
@@ -90,14 +90,14 @@ while True:
 
         cv2.rectangle(roi, (bbox_xmin, bbox_ymin), (bbox_xmax, bbox_ymax), (0, 255, 0), 2)
 
-        # Display FPS on the frame
+        # Draw the current frame rate.
         fps_text = f"FPS: {fps:.2f}"
         cv2.putText(roi, fps_text, (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-    # Show the ROI
+    # Display the annotated ROI.
     cv2.imshow('Object Detection', roi)
 
-    # Press 'q' to exit the loop
+    # Press Q to stop detection.
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 

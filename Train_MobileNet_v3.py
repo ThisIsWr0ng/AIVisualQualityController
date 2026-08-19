@@ -5,17 +5,17 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Input, Dense, GlobalAveragePooling2D
 from keras.models import Model
 
-# Define the path to the directory containing the dataset
+# Root directory of the image dataset.
 data_dir = 'C:\Dataset_Tensorflow'
 
-# Define the input shape of the images
-input_shape = (640, 640, 3) # add an additional dimension for the channels
+# Model input dimensions, including the RGB channels.
+input_shape = (640, 640, 3)
 
-# Define the batch size and number of epochs for training
+# Training parameters.
 batch_size = 32
 num_epochs = 100
 
-# Define the data generators for training, validation, and testing
+# Create augmented training data and normalized validation/test data.
 train_datagen = ImageDataGenerator(rescale=1./255,
                                    rotation_range=20,
                                    width_shift_range=0.2,
@@ -44,23 +44,23 @@ test_data = test_datagen.flow_from_directory(data_dir + '/test',
                                               batch_size=batch_size,
                                               class_mode='categorical')
 
-# Define the MobileNetV3Small model
+# Build a MobileNetV3Small classifier.
 inputs = Input(shape=input_shape)
 x = MobileNetV3Small(input_tensor=inputs, classes=1000, include_top=False, weights='imagenet')(inputs)
-x = GlobalAveragePooling2D()(x) # reduce the spatial dimensions of the feature maps
+x = GlobalAveragePooling2D()(x)  # Reduce each feature map to a single value.
 outputs = Dense(4, activation='softmax')(x)
 model = Model(inputs=inputs, outputs=outputs)
 
-# Compile the model
+# Configure the optimizer, loss, and evaluation metric.
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Train the model
+# Train with validation after every epoch.
 history = model.fit(train_data,
                     epochs=num_epochs,
                     validation_data=val_data)
 
-# Evaluate the model
+# Evaluate the final model on the held-out test set.
 test_loss, test_acc = model.evaluate(test_data)
 
-# Save the model
+# Save the trained model.
 model.save('my_model.h5')

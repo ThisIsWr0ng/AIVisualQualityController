@@ -1,12 +1,12 @@
 import os
 
-# Set up training file directories
+# Configure the Darknet training directories.
 os.chdir('C:/Darknet')
 dataset = 'C:\Dataset_YOLO_v5'
 os.system(f"copy {dataset}\\train\\_darknet.labels data\\obj.names")
 os.mkdir("C:\\Darknet\\data\\obj")
 
-# Copy image and labels
+# Copy the training and validation images and labels into Darknet's data directory.
 os.system(f"copy {dataset}\\train\\*.jpg C:\\Darknet\\data\\obj\\")
 os.system(f"copy {dataset}\\valid\\*.jpg C:\\Darknet\\data\\obj\\")
 os.system(f"copy {dataset}\\train\\*.txt C:\\Darknet\\data\\obj\\")
@@ -19,12 +19,12 @@ with open("C:\\Darknet\\data\\obj.data", "w") as out:
     out.write("names = C:\\Darknet\\data\\obj.names\n")
     out.write("backup = backup\\")
 
-# Write train file (just the image list)
+# Write the list of training images expected by Darknet.
 with open("C:\\Darknet\\data\\train.txt", "w") as out:
     for img in [f for f in os.listdir(f"{dataset}\\train") if f.endswith("jpg")]:
         out.write(f"data/obj/{img}\n")
 
-# Write the valid file (just the image list)
+# Write the list of validation images expected by Darknet.
 with open("C:\\Darknet\\data\\valid.txt", "w") as out:
     for img in [f for f in os.listdir(f"{dataset}\\valid") if f.endswith("jpg")]:
         out.write(f"C:\\Darknet\\data\\obj\\{img}\n")

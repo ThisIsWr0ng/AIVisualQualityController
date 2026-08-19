@@ -19,7 +19,7 @@ def create_tfrecord(images, labels, bboxes, output_file):
                 img = img_file.read()
             image = Image.open(image_path)
             width, height = image.size
-            #set the dataset features
+            # Store the encoded image, class label, dimensions, and bounding box.
             example = tf.train.Example(features=tf.train.Features(feature={
                 'image/encoded': _bytes_feature(img),
                 'image/object/class/label': _int64_feature(label),
@@ -72,7 +72,7 @@ if __name__ == "__main__":
 
     create_tfrecords_from_folder(data_folder, train_output, val_output, test_output)
 
-#create label map.txt   
+# Create a text file containing one class name per line.
 def create_label_map(data_folder, output_file):
     train_folder = os.path.join(data_folder, 'train')
     class_names = [d for d in os.listdir(train_folder) if os.path.isdir(os.path.join(train_folder, d))]

@@ -1,0 +1,20 @@
+# Core numerical and computer-vision dependencies
+numpy
+opencv-python
+Pillow
+pandas
+matplotlib
+
+# Model training and inference
+tensorflow
+keras
+scikit-learn
+torch
+onnx
+onnxruntime
+
+# Desktop interface
+PyQt5
+
+# Raspberry Pi hardware support (install only on a Raspberry Pi)
+RPi.GPIO; platform_machine == "armv7l" or platform_machine == "aarch64"

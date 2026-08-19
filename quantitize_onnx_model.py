@@ -1,12 +1,12 @@
-#Quantitize the onnx model for better performance
+# Quantize the ONNX model to reduce its size and improve inference performance.
 import onnx
 from onnxruntime.quantization import quantize_dynamic, QuantType
 
 def main(input_onnx_file, output_onnx_file):
-    # Load the ONNX model
+# Load and validate the source ONNX model.
     model = onnx.load(input_onnx_file)
 
-    # Quantize the ONNX model
+# Convert model weights to the selected quantized representation.
     quantized_model = quantize_dynamic(
         input_onnx_file,
         output_onnx_file,

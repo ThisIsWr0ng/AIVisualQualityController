@@ -5,14 +5,14 @@ import tensorflow as tf
 import time
 from Qt5 import QtCore, QtGui, QtWidgets
 
-# Load your trained model
+# Load the trained classification model.
 model_path = 'model.h5'
 model = tf.keras.models.load_model(model_path)
 
-# Label map
+# Map model output indices to human-readable class names.
 label_map = {0: 'Cut', 1: 'Dressing', 2: 'F_Body', 3: 'Red_T'}
 
-# Preallocate memory for input_data
+# Reuse the input buffer to avoid allocating it for every frame.
 input_data = np.empty((1, 224, 224, 3), dtype=np.float32)
 
 def process_frame(frame, model, input_data):
@@ -36,15 +36,15 @@ class Ui_MainWindow(object):
     def __init__(self, parent=None):
         super(Ui_MainWindow, self).__init__(parent)
 
-        # Set up the user interface from the generated file
+        # Build the user interface.
         self.setupUi(self)
 
-        # Connect signals and slots
+        # Connect controls to their event handlers.
         self.StartBtn.clicked.connect(self.start_detection)
         self.StopBtn.clicked.connect(self.stop_detection)
         self.Threshold.valueChanged.connect(self.set_threshold)
 
-        # Initialize variables
+        # Initialize camera and detection state.
         self.cap = None
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.update_frame)
@@ -156,12 +156,12 @@ class Ui_MainWindow(object):
         if not ret:
             return
 
-        # Calculate FPS
+        # Calculate the current frame rate.
         current_time = time.time()
         fps = 1 / (current_time - self.prev_time)
         self.prev_time = current_time
 
-        # Find the largest contour
+        # Find the largest external contour in the thresholded frame.
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         _, thresh = cv2.threshold(gray, self.threshold, 255, cv2.THRESH_BINARY)
         edges = cv2.Canny(thresh, 400, 600, apertureSize=3)
@@ -182,26 +182,26 @@ class Ui_MainWindow(object):
 
             roi = frame[roi_y:roi_y + roi_h, roi_x:roi_x + roi_w]
 
-            # Process the ROI and get the predictions
+            # Classify the extracted region of interest.
             top_two_preds = self.process_frame(roi)
 
-            # Display the top two detected classes and confidences on the frame
+            # Draw the two most likely classes and their confidence values.
             for i, (label, prob) in enumerate(top_two_preds):
                 text = f"{label}: {prob * 100:.2f}%"
                 cv2.putText(frame, text, (10, 30 + 30 * i), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
-            # Display FPS on the frame
+            # Draw the current frame rate.
             fps_text = f"FPS: {fps:.2f}"
             cv2.putText(frame, fps_text, (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-        # Convert the frame to QImage and set it to the CameraFeed label
+        # Convert the camera frame to a Qt image and display it.
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         h, w, ch = frame.shape
         bytes_per_line = ch * w
         qt_image = QtGui.QImage(frame.data, w, h, bytes_per_line, QtGui.QImage.Format_RGB888)
         self.CameraFeed.setPixmap(QtGui.QPixmap.fromImage(qt_image))
 
-        # Convert the ROI to QImage and set it to the ROIFeed label
+        # Convert the ROI to a Qt image and display it separately.
         if largest_contour is not None:
             roi = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
             h, w, ch = roi.shape

@@ -12,13 +12,12 @@ def parse_tfrecord(example_proto):
     }
     parsed_features = tf.io.parse_single_example(example_proto, features)
     
-    # decode the JPEG-encoded image
+    # Decode the JPEG image and normalize its pixels to the [0, 1] range.
     image = tf.io.decode_jpeg(parsed_features['image/encoded'], channels=3)
     
-    # normalize pixel values to [0, 1]
     image = tf.image.convert_image_dtype(image, tf.float32)
     
-    # extract bounding box coordinates and class label
+    # Extract the class label and bounding-box coordinates.
     label = parsed_features['image/object/class/label']
     xmin = parsed_features['image/object/bbox/xmin']
     ymin = parsed_features['image/object/bbox/ymin']
@@ -28,7 +27,7 @@ def parse_tfrecord(example_proto):
     
     return image, {'bbox': bbox, 'classes': label}
 
-# Define parameters
+# Training parameters.
 IMAGE_SIZE = 224
 BATCH_SIZE = 32
 NUM_CLASSES = 4
@@ -37,7 +36,7 @@ EPOCHS = 10
 STEPS_PER_EPOCH = 100
 VALIDATION_STEPS = 20
 
-# Define the model
+# Build the MobileNetV3Small classifier.
 def create_model():
     base_model = tf.keras.applications.MobileNetV3Small(input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3), include_top=False)
     x = base_model.output
@@ -47,19 +46,19 @@ def create_model():
     model = tf.keras.models.Model(inputs=base_model.input, outputs=predictions)
     return model
 
-# Define the loss function
+# Classification loss.
 loss_object = tf.keras.losses.CategoricalCrossentropy()
 
-# Define the metrics
+# Metrics accumulated during training and validation.
 train_loss = tf.keras.metrics.Mean(name='train_loss')
 train_accuracy = tf.keras.metrics.CategoricalAccuracy(name='train_accuracy')
 val_loss = tf.keras.metrics.Mean(name='val_loss')
 val_accuracy = tf.keras.metrics.CategoricalAccuracy(name='val_accuracy')
 
-# Define the optimizer
+# Optimizer used by the custom training loop.
 optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
 
-# Define the train step
+# Perform one gradient update.
 @tf.function
 def train_step(images, labels):
     with tf.GradientTape() as tape:
@@ -70,7 +69,7 @@ def train_step(images, labels):
     train_loss(loss)
     train_accuracy(labels, predictions)
 
-# Define the validation step
+# Evaluate one validation batch without updating weights.
 @tf.function
 def val_step(images, labels):
     predictions = model(images, training=False)
@@ -78,7 +77,7 @@ def val_step(images, labels):
     val_loss(v_loss)
     val_accuracy(labels, predictions)
 
-# Load the dataset
+# Load, shuffle, batch, and prefetch both datasets.
 train_dataset = tf.data.TFRecordDataset("C:/Dataset_Tensorflow_v2/train/Dressings.tfrecord")
 train_dataset = train_dataset.map(parse_tfrecord)
 train_dataset = train_dataset.shuffle(buffer_size=10000)
@@ -91,10 +90,10 @@ val_dataset = val_dataset.shuffle(buffer_size=10000)
 val_dataset = val_dataset.batch(BATCH_SIZE)
 val_dataset = val_dataset.prefetch(buffer_size=tf.data.AUTOTUNE)
 
-# Create the model
+# Create the model used by the training steps.
 model = create_model()
 
-# Start training
+# Run the custom training and validation loop.
 for epoch in range(EPOCHS):
     train_loss.reset_states()
     train_accuracy.reset_states()

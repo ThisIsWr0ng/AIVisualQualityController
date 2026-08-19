@@ -2,7 +2,7 @@ import tensorflow as tf
 from keras.applications import MobileNetV3Small
 from keras.optimizers import Adam
 
-# Custom load_dataset function
+# Build a batched dataset from one or more TFRecord files.
 def load_dataset(tfrecords, input_shape, batch_size, num_classes):
     def parse_tfrecord(example_proto):
         feature_description = {
@@ -53,7 +53,7 @@ def read_label_map(label_map_file):
 label_map_file = 'C:\Dataset_Tensorflow_v3/label_map.txt'
 label_map = read_label_map(label_map_file)
 
-# Define parameters
+# Training parameters.
 input_shape = (224, 224, 3)
 num_classes = num_classes = len(label_map)
 batch_size = 32
@@ -61,17 +61,17 @@ num_epochs = 400
 train_tfrecords = "C:/Dataset_Tensorflow_v3/train/train.tfrecord"
 val_tfrecords = "C:/Dataset_Tensorflow_v3/valid/val.tfrecord"
 
-# Load datasets
+# Load the training and validation datasets.
 train_data = load_dataset(train_tfrecords, input_shape, batch_size, num_classes)
 val_data = load_dataset(val_tfrecords, input_shape, batch_size, num_classes)
 
-# Create and compile the model
+# Create and compile the MobileNetV3Small classifier.
 base_model = MobileNetV3Small(input_shape=input_shape, include_top=False, weights='imagenet', pooling='avg')
 x = tf.keras.layers.Dense(num_classes, activation='softmax')(base_model.output)
 model = tf.keras.Model(inputs=base_model.inputs, outputs=x)
 
 model.compile(optimizer=Adam(learning_rate=1e-4), loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Train the model
+# Train and save the model.
 history = model.fit(train_data, epochs=num_epochs, validation_data=val_data)
 model.save('modelv2.h5')

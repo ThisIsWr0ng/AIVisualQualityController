@@ -4,22 +4,22 @@ from keras.layers import Dense, GlobalAveragePooling2D
 from keras.models import Model
 from keras.optimizers import Adam
 
-# Set input size of the model
+# Image dimensions expected by the model.
 input_size = (224, 224)
 
-# Set number of classes
+# Number of dataset classes.
 num_classes = 4
 
-# Set batch size
+# Number of samples in each training batch.
 batch_size = 32
 
-# Set number of epochs
+# Maximum number of training epochs.
 num_epochs = 10
 
-# Set directory of labeled dataset
+# Root directory of the labeled dataset.
 dataset_dir = 'C:/Dataset_Label'
 
-# Create data generators for training and validation sets
+# Create augmented training data and normalized validation data.
 data_generator = ImageDataGenerator(rescale=1./255, validation_split=0.2)
 
 train_generator = data_generator.flow_from_directory(
@@ -36,26 +36,26 @@ validation_generator = data_generator.flow_from_directory(
     class_mode='categorical',
     subset='validation')
 
-# Load MobileNet model pre-trained on ImageNet dataset
+# Load MobileNet with weights pre-trained on ImageNet.
 base_model = MobileNet(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
 
-# Add global average pooling layer and output layer
+# Add pooling and classification layers.
 x = base_model.output
 x = GlobalAveragePooling2D()(x)
 x = Dense(1024, activation='relu')(x)
 predictions = Dense(num_classes, activation='softmax')(x)
 
-# Create new model with MobileNet base and custom output layers
+# Combine the MobileNet backbone with the custom classifier.
 model = Model(inputs=base_model.input, outputs=predictions)
 
-# Freeze all layers of MobileNet base model
+# Freeze the pre-trained backbone during initial training.
 for layer in base_model.layers:
     layer.trainable = False
 
-# Compile the model
+# Configure the optimizer, loss, and evaluation metric.
 model.compile(optimizer=Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Train the model on the labeled dataset
+# Train the classifier on the labeled dataset.
 history = model.fit(
     train_generator,
     steps_per_epoch=train_generator.n // batch_size,
@@ -63,5 +63,5 @@ history = model.fit(
     validation_data=validation_generator,
     validation_steps=validation_generator.n // batch_size)
 
-# Save the trained model
+# Save the trained model.
 model.save('my_model.h5')

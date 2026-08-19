@@ -10,12 +10,12 @@ def class_loss(y_true, y_pred):
 def bbox_loss(y_true, y_pred):
     return tf.keras.losses.mean_squared_error(y_true, y_pred)
 
-# Load your trained model
+# Load the trained model with its custom loss functions.
 model_path = 'model_mobilev2_v3.h5'
 with custom_object_scope({'class_loss': class_loss, 'bbox_loss': bbox_loss}):
     model = tf.keras.models.load_model(model_path)
 
-# Define test dataset file
+# Location of the TFRecord test dataset.
 test_tfrecords = "C:/Dataset_Tensorflow_v5/test/test.tfrecord"
 
 def load_dataset(tfrecords, input_shape, batch_size, num_classes):
@@ -68,15 +68,15 @@ def read_label_map(label_map_file):
 label_map_file = 'C:\Dataset_Tensorflow_v5/label_map.txt'
 label_map = read_label_map(label_map_file)
 
-# Define parameters
+# Evaluation parameters.
 input_shape = (224, 224, 3)
 num_classes = len(label_map)
 batch_size = 32
 
-# Load test dataset
+# Load and parse the test dataset.
 test_data = load_dataset(test_tfrecords, input_shape, batch_size, num_classes)
 
-# Get true labels and bounding boxes from the test dataset
+# Collect the expected classes and bounding boxes.
 y_true_labels = []
 y_true_bboxes = []
 for images, labels, bboxes in test_data.unbatch():
@@ -86,19 +86,19 @@ for images, labels, bboxes in test_data.unbatch():
 y_true_labels = np.array(y_true_labels)
 y_true_bboxes = np.stack(y_true_bboxes)
 
-# Get model predictions on the test dataset
+# Run the model on the complete test dataset.
 predictions = model.predict(test_data)
 y_pred_labels = np.argmax(predictions[0], axis=1)
 y_pred_bboxes = np.vstack(predictions[1])
 
-# Calculate and print the classification report
+# Report per-class classification metrics.
 print("Classification Report:")
 print(classification_report(y_true_labels, y_pred_labels, target_names=list(label_map.values())))
 
-# Calculate and print the confusion matrix
+# Display the classification confusion matrix.
 print("Confusion Matrix:")
 print(confusion_matrix(y_true_labels, y_pred_labels))
 
-# Calculate and print the mean squared error for bounding box predictions
+# Report the mean squared error of the predicted bounding boxes.
 print("Bounding Box Mean Squared Error:")
 print(mean_squared_error(y_true_bboxes, y_pred_bboxes))

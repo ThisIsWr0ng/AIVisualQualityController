@@ -3,11 +3,11 @@ import numpy as np
 import tensorflow as tf
 import time
 
-# Load your trained model
+# Load the trained classification model.
 model_path = 'model.h5'
 model = tf.keras.models.load_model(model_path)
 
-# Label map
+# Map model output indices to class names.
 label_map = {0: 'Cut', 1: 'Dressing', 2: 'F_Body', 3: 'Red_T'}
 
 def process_frame(frame, model, input_size):
@@ -26,30 +26,30 @@ while True:
     if not ret:
         break
 
-    # Calculate FPS
+    # Calculate the current frame rate.
     current_time = time.time()
     fps = 1 / (current_time - prev_time)
     prev_time = current_time
     
-    # Process the frame and get the predictions
+    # Classify the current frame.
     predictions = process_frame(frame, model, (224, 224))
     
-    # Get the detected class and confidence
+    # Select the class with the highest confidence.
     predicted_class = np.argmax(predictions)
     confidence = np.max(predictions)
 
-    # Display the detected class and confidence on the frame
+    # Draw the predicted class and confidence.
     text = f"{label_map[predicted_class]}: {confidence * 100:.2f}%"
     cv2.putText(frame, text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
-    # Display FPS on the frame
+    # Draw the current frame rate.
     fps_text = f"FPS: {fps:.2f}"
     cv2.putText(frame, fps_text, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-    # Show the frame
+    # Display the annotated frame.
     cv2.imshow('Object Detection', frame)
 
-    # Press 'q' to exit the loop
+    # Press Q to stop detection.
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
