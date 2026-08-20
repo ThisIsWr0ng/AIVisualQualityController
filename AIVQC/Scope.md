@@ -244,3 +244,4 @@ Target quality, maximum latency, FPS, and measurement uncertainty must be define
 - **2026-08-19 — version 0.1:** created the document, separated AIVQC Trainer and AIVQC Production, and defined the MVP, principal requirements, risks, and open decisions.
 - **2026-08-20 — version 0.2:** added UI localization and calibrated product measurements with specifications, tolerances, and OK/NOK decisions.
 - **2026-08-20 — version 0.3:** established English as the default language for all project files and the UI, with Polish as an optional UI translation.
+- **2026-08-20 — version 0.4:** selected a license-neutral PyTorch/TorchVision training backend and implemented Pascal VOC training, automatic validation/test evaluation, progress reporting, cancellation, checkpointing, and ONNX export.
