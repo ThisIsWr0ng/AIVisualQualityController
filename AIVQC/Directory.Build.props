@@ -2,6 +2,9 @@
   <Import Project="$(MSBuildThisFileDirectory)Version.props" />
 
   <PropertyGroup>
+    <Authors>Dawid Oleśko</Authors>
+    <Copyright>Copyright © 2026 Dawid Oleśko</Copyright>
+    <PackageLicenseExpression>PolyForm-Noncommercial-1.0.0</PackageLicenseExpression>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latestMajor</LangVersion>

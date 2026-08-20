@@ -11,10 +11,25 @@ Both applications share platform-independent contracts and domain logic from **A
 
 See [Scope.md](Scope.md) for the product scope, MVP requirements, risks, and open decisions.
 See [VERSIONING.md](VERSIONING.md) for the product release and Git tagging procedure.
+See [training/README.md](training/README.md) for dataset, Python and hardware setup.
+
+## Author
+
+Copyright © 2026 **Dawid Oleśko**
+
+Contact: [oleskodawid@gmail.com](mailto:oleskodawid@gmail.com)
+
+## License
+
+AIVQC is source-available under the [PolyForm Noncommercial License 1.0.0](LICENSE.md). Noncommercial use, modification, and distribution are permitted under its terms.
+
+Commercial use is not granted by that license. This includes using AIVQC in a commercial manufacturing operation, integrating it into a commercial product, or providing paid products or services based on it. A separate written commercial license is required. Contact [oleskodawid@gmail.com](mailto:oleskodawid@gmail.com) for commercial licensing.
 
 ## Key capabilities
 
 - create and annotate training datasets,
+- import and validate existing ONNX models,
+- train and evaluate an SSDLite320 object detector from Pascal VOC annotations,
 - select, train, compare, and benchmark models,
 - store camera settings with an inspection recipe,
 - detect multiple defect classes with per-class thresholds,
@@ -66,7 +81,7 @@ dotnet run --project src/Aivqc.Production
 
 Trainer, Production, Core, and the test project share one semantic version from
 [`Version.props`](Version.props). The applications display this compiled version in their footer.
-The current development version is `0.1.0-alpha.1`.
+The current development version is `0.5.3-alpha.3`.
 
 ## Status
 
