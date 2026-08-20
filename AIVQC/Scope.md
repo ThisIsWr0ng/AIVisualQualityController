@@ -1,218 +1,246 @@
-# AIVQC — zakres i założenia projektu
+# AIVQC — Project Scope and Assumptions
 
-> Żywy dokument projektu. Aktualizujemy go wraz z kolejnymi decyzjami, testami i wymaganiami.
+> This is a living project document. Update it as requirements, decisions, and test results evolve.
 
-## 1. Wizja
+## 1. Vision
 
-AI Visual Quality Controller (AIVQC) ma być uniwersalnym, dobrze zoptymalizowanym i łatwym do wdrożenia systemem wizyjnej kontroli jakości dla małych i średnich produkcji.
+AI Visual Quality Controller (AIVQC) will be a universal, well-optimized, and easy-to-deploy visual quality inspection system for small and medium-sized manufacturing operations.
 
-System powinien umożliwiać wykrywanie różnych rodzajów defektów niezależnie od branży i typu produktu. Ma ograniczać próg wejścia w uczenie maszynowe: użytkownik powinien móc zebrać dane, oznaczyć defekty, wytrenować i ocenić model, a następnie wdrożyć go na stanowisku produkcyjnym bez ręcznego przenoszenia wielu ustawień.
+The system should detect different types of defects regardless of industry or product type. It should lower the machine-learning barrier: a user should be able to collect and annotate data, train and evaluate a model, and deploy it to production without manually transferring multiple configuration files.
 
-Projekt będzie składał się z dwóch osobnych aplikacji:
+The project consists of two applications:
 
-1. **AIVQC Trainer** — przygotowanie datasetów, trening, testowanie i eksport modeli.
-2. **AIVQC Production** — wykonywanie inspekcji na stanowisku produkcyjnym.
+1. **AIVQC Trainer** — dataset preparation, training, testing, benchmarking, and deployment package export.
+2. **AIVQC Production** — inspection execution on production equipment.
 
-## 2. Użytkownicy docelowi
+## 2. Target users
 
-- inżynier procesu lub jakości konfigurujący kontrolę,
-- technik przygotowujący kamerę, dane i model,
-- operator linii korzystający z gotowej inspekcji,
-- małe i średnie zakłady bez własnego zespołu machine learning.
+- process and quality engineers configuring inspections,
+- technicians preparing cameras, datasets, and models,
+- line operators running approved inspections,
+- small and medium-sized manufacturers without an internal machine-learning team.
 
 ## 3. AIVQC Trainer
 
-### 3.1. Cel
+### 3.1. Purpose
 
-Szybkie i intuicyjne przeprowadzenie użytkownika przez cały proces: od zebrania zdjęć, przez przygotowanie datasetu i trening, aż do uzyskania gotowego, przetestowanego pakietu wdrożeniowego.
+Guide users through the complete workflow, from image collection and dataset preparation to a tested, production-ready deployment package.
 
-### 3.2. Zakres podstawowy
+### 3.2. Core scope
 
-- tworzenie projektu dla konkretnego produktu i zadania inspekcyjnego,
-- przechwytywanie zdjęć z kamery oraz import istniejących zdjęć i filmów,
-- podgląd obrazu na żywo,
-- konfiguracja kamery, między innymi rozdzielczości, ekspozycji, gain, balansu bieli, ostrości, FPS i obszaru zainteresowania — zależnie od możliwości urządzenia,
-- zapis ustawień kamery razem z projektem i wyeksportowanym modelem,
-- proste oznaczanie defektów zoptymalizowane pod dużą liczbę podobnych zdjęć,
-- obsługa klas defektów i przykładów produktu prawidłowego,
-- podział danych na zbiory treningowy, walidacyjny i testowy bez przecieku podobnych klatek między zbiorami,
-- wybór spośród obsługiwanych architektur/modeli z czytelną informacją o wymaganiach i kompromisie szybkość–dokładność,
-- konfiguracja treningu przy użyciu bezpiecznych ustawień domyślnych oraz trybu zaawansowanego,
-- prezentacja postępu treningu i wyników,
-- porównywanie kilku modeli na tym samym zbiorze testowym,
-- test wydajności na docelowym sprzęcie lub na zdefiniowanym profilu sprzętowym,
-- eksport kompletnego, wersjonowanego pakietu wdrożeniowego.
+- create a project for a product and inspection task,
+- capture images from a camera and import existing images or videos,
+- display a live camera preview,
+- configure supported camera properties such as resolution, exposure, gain, white balance, focus, FPS, and region of interest,
+- store camera settings with the project and deployment package,
+- calibrate measurements using a reference of known dimensions,
+- define measured product features, units, nominal values, and lower and upper tolerance limits,
+- provide efficient defect annotation for large sets of similar images,
+- manage defect classes and examples of conforming products,
+- split data into training, validation, and test sets without leaking related video frames between sets,
+- select supported model architectures with clear speed, accuracy, and hardware trade-offs,
+- offer safe training defaults and an advanced configuration mode,
+- present training progress and results,
+- compare models on the same test set,
+- benchmark models on target hardware or a defined hardware profile,
+- export a complete, versioned deployment package.
 
-### 3.3. Wspomagane i automatyczne tworzenie datasetów
+### 3.3. Assisted and automated dataset creation
 
-Automatyzację warto wdrażać etapami:
+Introduce automation incrementally:
 
-1. propagowanie oznaczeń na podobne lub kolejne klatki filmu,
-2. wstępne oznaczanie przez istniejący model i zatwierdzanie/poprawianie przez użytkownika,
-3. active learning — wskazywanie obrazów, których oznaczenie da największą wartość,
-4. wykrywanie duplikatów, rozmytych zdjęć i problemów z ekspozycją,
-5. opcjonalne wykorzystanie modeli typu foundation/segment-anything do szybkiego zaznaczania obiektów,
-6. generowanie danych syntetycznych wyłącznie jako uzupełnienie danych rzeczywistych i z osobną walidacją.
+1. propagate annotations across similar or consecutive video frames,
+2. pre-label data with an existing model and let the user approve or correct the result,
+3. use active learning to identify the most valuable samples to annotate,
+4. detect duplicates, blurred images, and exposure problems,
+5. optionally use foundation or segmentation models to accelerate object selection,
+6. use synthetic data only to supplement real data and validate it separately.
 
-Pełna automatyzacja bez kontroli człowieka nie jest założeniem początkowym. Błędne automatyczne etykiety mogą obniżyć jakość modelu w sposób trudny do zauważenia.
+Fully unattended annotation is not an initial goal. Incorrect automatic labels can silently reduce model quality.
 
-### 3.4. Ocena modelu
+### 3.4. Model evaluation
 
-Trainer powinien raportować co najmniej:
+The Trainer should report at least:
 
-- precision, recall oraz F1 dla każdej klasy defektu,
-- mAP dla modeli detekcyjnych i IoU dla segmentacji,
-- macierz pomyłek,
-- liczbę false accept i false reject,
-- wyniki dla każdej partii/serii danych, a nie tylko średnią globalną,
-- czas inferencji, FPS, wykorzystanie CPU/GPU/RAM/VRAM i czas rozgrzewania modelu,
-- galerię najtrudniejszych i błędnie sklasyfikowanych przykładów,
-- sugerowany threshold, który użytkownik może zaakceptować lub zmienić.
+- precision, recall, and F1 score for every defect class,
+- mAP for detection and IoU for segmentation,
+- a confusion matrix,
+- false-accept and false-reject counts,
+- results by batch or data series, not only global averages,
+- inference time, FPS, CPU/GPU/RAM/VRAM usage, and model warm-up time,
+- a gallery of difficult and incorrectly classified samples,
+- suggested per-class thresholds that the user can accept or modify.
 
-### 3.5. Pakiet wdrożeniowy
+### 3.5. Deployment package
 
-Wyeksportowany pakiet powinien być samowystarczalny i zawierać:
+A self-contained deployment package should include:
 
-- model oraz informację o jego formacie i wersji,
-- identyfikator produktu/receptury,
-- listę klas defektów,
-- domyślne progi dla każdej klasy,
-- wymagane przetwarzanie obrazu, rozmiar wejścia i normalizację,
-- konfigurację kamery i ROI,
-- metryki z walidacji oraz wymagania sprzętowe,
-- wersję aplikacji/środowiska, w którym model został przygotowany,
-- datę, autora i opcjonalne notatki wdrożeniowe,
-- sumy kontrolne pozwalające wykryć uszkodzenie lub podmianę plików.
+- the model, its format, and version,
+- the product and inspection-recipe identifiers,
+- defect classes and their default thresholds,
+- required preprocessing, input size, and normalization,
+- camera configuration and region of interest,
+- measurement definitions, units, calibration data, and tolerances,
+- validation metrics and hardware requirements,
+- the application and environment versions used to create it,
+- date, author, and optional deployment notes,
+- checksums for detecting damaged or replaced files.
 
 ## 4. AIVQC Production
 
-### 4.1. Cel
+### 4.1. Purpose
 
-Stabilna, szybka i prosta obsługa inspekcji na produkcji z minimalną liczbą czynności wymaganych od operatora.
+Provide stable, fast, and simple production inspection with minimal operator interaction.
 
-### 4.2. Zakres podstawowy
+### 4.2. Core scope
 
-- wybór produktu/receptury, która automatycznie wskazuje właściwy model i ustawienia,
-- możliwość ręcznego wyboru wersji modelu dla użytkownika z odpowiednimi uprawnieniami,
-- automatyczne wczytanie konfiguracji kamery zapisanej w pakiecie wdrożeniowym,
-- czytelna informacja, jeśli kamera nie obsługuje któregoś ustawienia lub ustawienie nie zostało zastosowane,
-- podgląd obrazu i nałożonych detekcji,
-- uruchamianie, zatrzymywanie i monitorowanie detekcji,
-- osobny threshold dla każdej klasy defektu,
-- możliwość zablokowania zmian thresholdów dla operatora,
-- jednoznaczny wynik inspekcji: OK, NOK lub błąd/niepewny wynik,
-- statystyki bieżącej zmiany i wybranego okresu,
-- zapisywanie zdarzeń, błędów i zmian konfiguracji,
-- opcjonalny zapis obrazów NOK oraz próbek OK zgodnie z polityką retencji,
-- praca lokalna bez obowiązkowego dostępu do Internetu,
-- bezpieczny powrót do ostatniej działającej wersji modelu.
+- select a product or inspection recipe that automatically loads the correct model and settings,
+- allow authorized users to select a specific model version,
+- restore camera configuration from the deployment package,
+- clearly report unsupported or unapplied camera settings,
+- display the camera image and detection overlays,
+- perform recipe-defined measurements such as width, height, diameter, distance, or area,
+- display measured values, units, nominal values, and permitted ranges,
+- reject a product when any required measurement is outside its specification,
+- mark an unreliable measurement as invalid; an invalid measurement must never be treated as conforming,
+- start, stop, and monitor detection,
+- configure a separate threshold for each defect class,
+- optionally lock threshold editing for operators,
+- return an unambiguous OK, NOK, or Error/Indeterminate result,
+- display statistics for the current shift and selected periods,
+- log events, errors, and configuration changes,
+- optionally retain NOK images and sampled OK images according to a retention policy,
+- operate locally without mandatory Internet access,
+- safely roll back to the last known working model.
 
-### 4.3. Statystyki
+### 4.3. Statistics
 
-- liczba i procent produktów OK/NOK,
-- liczba defektów według klasy,
-- false reject/false accept po ręcznym potwierdzeniu, jeśli taki proces będzie dostępny,
-- wydajność: FPS, opóźnienie, czas pracy i liczba pominiętych klatek,
-- trendy w czasie, według zmiany, partii i produktu,
-- kondycja kamery i aplikacji,
-- eksport danych do CSV; integracje z systemami zakładowymi w późniejszym etapie.
+- counts and percentages of OK and NOK products,
+- defect counts by class,
+- confirmed false rejects and false accepts when a review workflow is available,
+- FPS, latency, uptime, and dropped-frame counts,
+- trends by time, shift, batch, and product,
+- camera and application health,
+- CSV export, with plant-system integrations added later.
 
-## 5. Model danych i pojęcia
+## 5. Domain model
 
-- **Produkt** — fizyczny wyrób podlegający kontroli.
-- **Receptura inspekcji** — połączenie produktu, wersji modelu, ustawień kamery, ROI, progów i reguł decyzji.
-- **Model** — wersjonowany artefakt ML, który może być używany przez jedną lub więcej receptur.
-- **Defekt** — klasa niezgodności wykrywana przez model.
-- **Inspekcja** — pojedyncza ocena produktu lub obrazu zakończona wynikiem OK/NOK/błąd.
+- **Product** — the physical item being inspected.
+- **Inspection recipe** — a versioned combination of product, model, camera settings, region of interest, thresholds, measurement specification, and decision rules.
+- **Model** — a versioned ML artifact that can be used by one or more recipes.
+- **Defect** — a nonconformity class detected by a model.
+- **Product specification** — a versioned collection of measured features, nominal values, units, and tolerances.
+- **Measurement calibration** — parameters that convert image pixels into physical units and, when required, correct lens distortion and perspective.
+- **Measurement** — a feature value with validity and specification-conformance status.
+- **Inspection** — one product or image evaluation ending with OK, NOK, or Error/Indeterminate.
 
-Produkt i model nie powinny być traktowane jako to samo. Jeden produkt może z czasem korzystać z kolejnych wersji modelu, a jedna receptura może zostać zmieniona bez ponownego treningu, na przykład przez korektę thresholdów.
+A product and a model are not the same entity. A product can use successive model versions, while a recipe can change thresholds without retraining the model.
 
-## 6. Wymagania przekrojowe
+## 6. Cross-cutting requirements
 
-- łatwa instalacja i konfiguracja na komputerach przemysłowych,
-- wsparcie dla CPU, a opcjonalnie GPU i urządzeń edge,
-- modularna obsługa różnych kamer i formatów modeli,
-- działanie deterministyczne i odporność na chwilowy brak kamery lub uszkodzony pakiet,
-- wersjonowanie konfiguracji i pełny audit log zmian,
-- role użytkowników: operator, inżynier/administrator,
-- możliwość tworzenia kopii zapasowej i przenoszenia receptur,
-- wydajność mierzona na docelowym sprzęcie, nie tylko na komputerze treningowym,
-- lokalne przechowywanie danych i jasna polityka retencji,
-- architektura umożliwiająca późniejszą integrację z PLC, sygnalizacją, odrzutnikiem, MES lub API.
+- simple installation and configuration on industrial PCs,
+- CPU support with optional GPU and edge-device acceleration,
+- modular support for cameras and model formats,
+- deterministic behavior and resilience to camera loss or damaged packages,
+- versioned configuration and a complete audit log,
+- Operator and Engineer/Administrator roles,
+- recipe backup and migration,
+- performance measured on target hardware,
+- local data storage with a clear retention policy,
+- an architecture that can later integrate with PLCs, signals, reject mechanisms, MES, or APIs,
+- English as the default language for the UI, source code, documentation, configuration keys, logs, and technical identifiers,
+- Polish as an optional UI translation,
+- UI language switching without stopping an active inspection,
+- all user-facing text, errors, and unit labels stored in localization resources rather than hard-coded in application code,
+- language preference stored per user or station while technical data and package formats remain language-neutral,
+- version tracking for the calibration and specification used in each inspection,
+- a warning or lockout after changing the camera, lens, resolution, focus, or station geometry when the existing calibration may no longer be valid.
 
-## 7. Proponowane etapy realizacji
+## 7. Proposed delivery stages
 
-### Etap 1 — MVP
+### Stage 1 — MVP
 
-- jeden obsługiwany typ zadania: detekcja obiektów,
-- jeden główny format wdrożeniowy, preferencyjnie ONNX,
-- tworzenie projektu, import/przechwytywanie obrazów i ręczne etykietowanie,
-- trening lub uruchamianie procesu treningowego z poziomu Trainera,
-- podstawowe metryki i benchmark,
-- eksport/import pakietu wdrożeniowego,
-- aplikacja Production z wyborem receptury, podglądem, thresholdami i podstawowymi statystykami,
-- zapis ustawień kamery z kontrolą, czy zostały poprawnie zastosowane.
+- one ML task type: object detection,
+- one primary deployment format, preferably ONNX,
+- project creation, image import/capture, and manual annotation,
+- training launched and monitored from the Trainer,
+- basic metrics and performance benchmarks,
+- deployment package export and import,
+- Production recipe selection, preview, thresholds, and basic statistics,
+- stored camera settings with verification that they were applied,
+- an English default UI with an optional Polish translation,
+- scale calibration, at least one linear measurement, and tolerance-based OK/NOK decisions.
 
-### Etap 2 — usprawnienie pracy z danymi
+### Stage 2 — Data workflow improvements
 
-- pre-labeling, propagacja etykiet, active learning i kontrola jakości datasetu,
-- porównywanie eksperymentów i wersji modeli,
-- rozbudowane statystyki i raporty,
-- zarządzanie użytkownikami oraz audit log.
+- pre-labeling, annotation propagation, active learning, and dataset quality checks,
+- experiment and model-version comparison,
+- advanced statistics and reports,
+- user management and audit logging.
 
-### Etap 3 — integracje przemysłowe
+### Stage 3 — Industrial integration
 
-- PLC/wejścia i wyjścia cyfrowe oraz sterowanie odrzutnikiem,
-- integracja z MES/API,
-- obsługa wielu kamer i stanowisk,
-- centralne zarządzanie wdrożeniami, jeśli będzie potrzebne,
-- dodatkowe zadania ML, na przykład segmentacja, klasyfikacja i wykrywanie anomalii.
+- PLC and digital I/O integration with reject-mechanism control,
+- MES/API integration,
+- multiple cameras and inspection stations,
+- optional centralized deployment management,
+- additional ML tasks such as segmentation, classification, and anomaly detection.
 
-## 8. Najważniejsze ryzyka
+## 8. Primary risks
 
-- zmienne oświetlenie, pozycja produktu i parametry optyki mogą wpływać na wynik bardziej niż wybór architektury modelu,
-- losowy podział kolejnych klatek filmu może zawyżyć metryki przez przeciek danych,
-- zbyt mała liczba przykładów rzadkich defektów utrudni wiarygodną ocenę,
-- sam threshold nie rozwiąże problemu słabego lub niereprezentatywnego datasetu,
-- konfiguracja kamery może nie być przenośna między różnymi modelami urządzeń,
-- wynik laboratoryjny nie gwarantuje wymaganej wydajności i jakości na linii,
-- automatyczne etykietowanie wymaga kontroli jakości przez człowieka,
-- brak zdefiniowanej reakcji na błąd systemu może powodować przepuszczenie produktu bez ważnej inspekcji.
+- lighting, product position, and optics can affect results more than model architecture,
+- randomly splitting consecutive video frames can inflate metrics through data leakage,
+- rare defects may not have enough examples for reliable evaluation,
+- threshold adjustment cannot compensate for a poor or unrepresentative dataset,
+- camera settings may not transfer between different camera models,
+- measurements without valid calibration, fixed working distance, and controlled perspective can appear precise while being inaccurate,
+- measurement accuracy must be verified with reference artifacts and is not equivalent to image resolution,
+- laboratory results do not guarantee production-line quality or throughput,
+- automated annotation requires human quality control,
+- an undefined failure response could allow a product to pass without a valid inspection.
 
-## 9. Kryteria sukcesu MVP
+## 9. MVP success criteria
 
-- nowy użytkownik potrafi utworzyć projekt, oznaczyć dane, wytrenować model i wyeksportować pakiet bez ręcznej edycji plików konfiguracyjnych,
-- pakiet otwiera się w AIVQC Production i odtwarza model, klasy, preprocessing, ROI, progi oraz obsługiwane ustawienia kamery,
-- aplikacja jasno sygnalizuje brak kamery, niezgodny model i brak możliwości zastosowania konfiguracji,
-- benchmark raportuje powtarzalne wyniki jakości i wydajności,
-- receptura oraz każda zmiana progów są wersjonowane lub rejestrowane,
-- Production może pracować offline przez całą zmianę produkcyjną.
+- a new user can create a project, annotate data, train a model, and export a package without manually editing configuration files,
+- AIVQC Production restores the model, classes, preprocessing, region of interest, thresholds, camera settings, measurement specification, tolerances, and calibration version,
+- the application clearly reports a missing camera, incompatible model, or configuration that could not be applied,
+- benchmarks produce repeatable quality and performance results,
+- recipes and threshold changes are versioned or audited,
+- Production operates offline for a complete shift,
+- the UI defaults to English and the complete primary workflow can be switched to Polish,
+- a reference part is measured within deployment-specific uncertainty and an out-of-tolerance result produces NOK.
 
-Docelowe wartości jakości, maksymalnego opóźnienia i FPS muszą zostać określone osobno dla konkretnego wdrożenia.
+Target quality, maximum latency, FPS, and measurement uncertainty must be defined for each deployment.
 
-## 10. Poza zakresem MVP
+## 10. Outside the MVP
 
-- pełna automatyzacja etykietowania bez zatwierdzenia człowieka,
-- jednoczesna obsługa wszystkich frameworków i modeli ML,
-- chmurowe trenowanie i centralne zarządzanie flotą stanowisk,
-- integracja ze wszystkimi sterownikami PLC i systemami MES,
-- formalna certyfikacja dla branż regulowanych,
-- automatyczne podejmowanie decyzji procesowych innych niż skonfigurowany wynik inspekcji.
+- fully unattended annotation without human approval,
+- simultaneous support for every ML framework and model family,
+- cloud training and centralized fleet management,
+- integration with every PLC and MES platform,
+- formal certification for regulated industries,
+- process decisions beyond the configured inspection result.
 
-## 11. Otwarte decyzje
+## 11. Open decisions
 
-- pierwszy docelowy typ produktu i zestaw defektów dla MVP,
-- docelowy system operacyjny i minimalna specyfikacja sprzętu,
-- pierwsze obsługiwane modele i sposób uruchamiania treningu,
-- pierwsze obsługiwane kamery i biblioteka komunikacyjna,
-- wymagany FPS, maksymalne opóźnienie oraz sposób wyzwalania inspekcji,
-- czy oceniany będzie ciągły obraz, pojedynczy produkt po triggerze, czy oba tryby,
-- reguła wyniku NOK przy wielu klasach i wielu detekcjach,
-- sposób potwierdzania false accept/false reject,
-- czas przechowywania obrazów i statystyk,
-- format pakietu wdrożeniowego i strategia jego wersjonowania,
-- technologia interfejsu obu aplikacji.
+- first MVP product and defect classes,
+- target operating system and minimum hardware,
+- first supported models and training execution method,
+- first supported cameras and communication library,
+- required FPS, maximum latency, and inspection trigger method,
+- continuous-stream inspection, trigger-based product inspection, or both,
+- NOK rules for multiple classes and detections,
+- false-accept and false-reject review workflow,
+- image and statistics retention periods,
+- deployment package format and versioning strategy,
+- UI technology for both applications,
+- required measurement types and target accuracy/uncertainty,
+- calibration method and verification interval,
+- decision rules for boundary values and invalid measurements,
+- additional UI languages beyond English and Polish.
 
-## 12. Rejestr zmian
+## 12. Change log
 
-- **2026-08-19 — wersja 0.1:** utworzenie dokumentu, podział na AIVQC Trainer i AIVQC Production, zdefiniowanie MVP, głównych wymagań, ryzyk i otwartych decyzji.
+- **2026-08-19 — version 0.1:** created the document, separated AIVQC Trainer and AIVQC Production, and defined the MVP, principal requirements, risks, and open decisions.
+- **2026-08-20 — version 0.2:** added UI localization and calibrated product measurements with specifications, tolerances, and OK/NOK decisions.
+- **2026-08-20 — version 0.3:** established English as the default language for all project files and the UI, with Polish as an optional UI translation.

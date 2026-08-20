@@ -3,18 +3,226 @@
         xmlns:vm="using:Aivqc.Trainer.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Aivqc.Trainer.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+        mc:Ignorable="d"
+        d:DesignWidth="1360"
+        d:DesignHeight="820"
+        Width="1360"
+        Height="820"
+        MinWidth="1060"
+        MinHeight="680"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Aivqc.Trainer">
-
+        Title="AIVQC Trainer">
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Grid RowDefinitions="64,*,34">
+        <Border Grid.Row="0"
+                Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="22,0">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="11" VerticalAlignment="Center">
+                    <Border Width="34" Height="34" CornerRadius="9" Background="{DynamicResource PrimaryBrush}">
+                        <TextBlock Text="AI" Foreground="#061411" FontWeight="Bold"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Spacing="0" VerticalAlignment="Center">
+                        <TextBlock Text="AIVQC" FontWeight="Bold" FontSize="15" />
+                        <TextBlock Text="TRAINER" Classes="eyebrow" />
+                    </StackPanel>
+                </StackPanel>
 
+                <TextBlock Grid.Column="1" Text="Model development workspace" Classes="muted"
+                           VerticalAlignment="Center" Margin="28,0,0,0" />
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Button Classes="secondary" Content="Documentation" />
+                    <Border Background="{DynamicResource SurfaceRaisedBrush}" CornerRadius="8" Padding="12,7">
+                        <TextBlock Text="EN" FontWeight="SemiBold" />
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="236,*">
+            <Border Grid.Column="0" Background="#0D1422" BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,0,1,0" Padding="14,20">
+                <Grid RowDefinitions="Auto,Auto,*,Auto">
+                    <StackPanel Grid.Row="0" Spacing="9">
+                        <Button Classes="primary" Content="＋  New project" Command="{Binding CreateProjectCommand}" />
+                        <Button Classes="secondary" Content="Open project" Command="{Binding OpenProjectCommand}" />
+                        <Button Classes="secondary" Content="Import ONNX model" Click="OnImportOnnxClick" />
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="1" Text="WORKSPACE" Classes="eyebrow" Margin="10,28,0,9" />
+
+                    <StackPanel Grid.Row="2" Spacing="3">
+                        <Button Classes="nav" Background="{DynamicResource PrimaryMutedBrush}"
+                                Foreground="{DynamicResource PrimaryBrush}" Content="◈  Overview" />
+                        <Button Classes="nav" Content="▧  Dataset" />
+                        <Button Classes="nav" Content="◇  Annotation" />
+                        <Button Classes="nav" Content="△  Training" />
+                        <Button Classes="nav" Content="⌁  Evaluation" />
+                        <Button Classes="nav" Content="⇧  Deployment" />
+                    </StackPanel>
+
+                    <Border Grid.Row="3" Classes="card" Padding="14">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="COMPUTE" Classes="eyebrow" />
+                            <TextBlock Text="CPU available" FontWeight="SemiBold" />
+                            <TextBlock Text="Hardware acceleration not configured" Classes="muted"
+                                       FontSize="11" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <ScrollViewer Grid.Column="1">
+                <StackPanel Margin="32,28,32,36" Spacing="20">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Grid.Column="0" Spacing="5">
+                            <TextBlock Text="TRAINER WORKSPACE" Classes="eyebrow" />
+                            <TextBlock Text="Build a production-ready inspection" FontSize="28" FontWeight="SemiBold" />
+                            <TextBlock Text="Follow the workflow from data collection to a versioned deployment package."
+                                       Classes="muted" FontSize="14" />
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="{DynamicResource PrimaryMutedBrush}"
+                                CornerRadius="20" Padding="14,7" VerticalAlignment="Center">
+                            <TextBlock Text="MVP WORKSPACE" Foreground="{DynamicResource PrimaryBrush}"
+                                       FontWeight="SemiBold" FontSize="11" />
+                        </Border>
+                    </Grid>
+
+                    <Border Classes="card">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Column="0" Spacing="5">
+                                <TextBlock Text="CURRENT PROJECT" Classes="eyebrow" />
+                                <TextBlock Text="{Binding ProjectName}" FontSize="20" FontWeight="SemiBold" />
+                                <TextBlock Text="Object detection · ONNX deployment · Last edited just now"
+                                           Classes="muted" />
+                            </StackPanel>
+                            <Button Grid.Column="1" Classes="secondary" Content="Project settings"
+                                    VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
+
+                    <Grid ColumnDefinitions="2*,*">
+                        <Border Grid.Column="0" Classes="card" Margin="0,0,10,0">
+                            <StackPanel Spacing="18">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel>
+                                        <TextBlock Text="Inspection workflow" FontSize="18" FontWeight="SemiBold" />
+                                        <TextBlock Text="Complete each stage before exporting to Production."
+                                                   Classes="muted" Margin="0,4,0,0" />
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="1" Text="1 OF 6" Classes="eyebrow" VerticalAlignment="Center" />
+                                </Grid>
+
+                                <ProgressBar Minimum="0" Maximum="6" Value="1" Height="5"
+                                             Foreground="{DynamicResource PrimaryBrush}" />
+
+                                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+                                    <Border Grid.Row="0" Width="28" Height="28" CornerRadius="14"
+                                            Background="{DynamicResource PrimaryBrush}" Margin="0,0,14,12">
+                                        <TextBlock Text="1" Foreground="#061411" FontWeight="Bold"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,2,0,12">
+                                        <TextBlock Text="Configure image source" FontWeight="SemiBold" />
+                                        <TextBlock Text="Connect a camera or import images and video." Classes="muted" />
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Row="1" Text="2" Classes="muted" HorizontalAlignment="Center" Margin="0,2,14,14" />
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="Prepare and review dataset" Classes="muted" Margin="0,2,0,14" />
+                                    <TextBlock Grid.Row="2" Text="3" Classes="muted" HorizontalAlignment="Center" Margin="0,2,14,14" />
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="Annotate defects" Classes="muted" Margin="0,2,0,14" />
+                                    <TextBlock Grid.Row="3" Text="4" Classes="muted" HorizontalAlignment="Center" Margin="0,2,14,14" />
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="Train model" Classes="muted" Margin="0,2,0,14" />
+                                    <TextBlock Grid.Row="4" Text="5" Classes="muted" HorizontalAlignment="Center" Margin="0,2,14,14" />
+                                    <TextBlock Grid.Row="4" Grid.Column="1" Text="Evaluate and benchmark" Classes="muted" Margin="0,2,0,14" />
+                                    <TextBlock Grid.Row="5" Text="6" Classes="muted" HorizontalAlignment="Center" Margin="0,2,14,0" />
+                                    <TextBlock Grid.Row="5" Grid.Column="1" Text="Export deployment package" Classes="muted" Margin="0,2,0,0" />
+                                </Grid>
+
+                                <Button Classes="primary" Content="Configure image source  →"
+                                        Command="{Binding ContinueWorkflowCommand}" HorizontalAlignment="Left" />
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel Grid.Column="1" Margin="10,0,0,0" Spacing="20">
+                            <Border Classes="card">
+                                <StackPanel Spacing="11">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <TextBlock Text="Imported ONNX model" FontSize="17" FontWeight="SemiBold" />
+                                        <Button Grid.Column="1" Classes="secondary" Content="Browse…"
+                                                Click="OnImportOnnxClick" />
+                                    </Grid>
+                                    <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsModelImporting}"
+                                                 Height="4" Foreground="{DynamicResource PrimaryBrush}" />
+                                    <TextBlock Text="{Binding ModelImportStatus}" Classes="muted" TextWrapping="Wrap" />
+                                    <StackPanel IsVisible="{Binding HasImportedModel}" Spacing="9">
+                                        <Border Height="1" Background="{DynamicResource BorderBrush}" />
+                                        <TextBlock Text="{Binding ModelName}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                        <Grid ColumnDefinitions="Auto,*">
+                                            <TextBlock Text="Size" Classes="muted" Margin="0,0,12,0" />
+                                            <TextBlock Grid.Column="1" Text="{Binding ModelSize}" />
+                                        </Grid>
+                                        <TextBlock Text="INPUT" Classes="eyebrow" />
+                                        <TextBlock Text="{Binding ModelInput}" FontSize="11" TextWrapping="Wrap" />
+                                        <TextBlock Text="OUTPUT" Classes="eyebrow" />
+                                        <TextBlock Text="{Binding ModelOutput}" FontSize="11" TextWrapping="Wrap" />
+                                        <TextBlock Text="SHA-256" Classes="eyebrow" />
+                                        <TextBlock Text="{Binding ModelSha256}" Classes="muted" FontSize="10"
+                                                   TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Classes="card">
+                                <StackPanel Spacing="14">
+                                    <TextBlock Text="Dataset readiness" FontSize="17" FontWeight="SemiBold" />
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <TextBlock Text="Images" Classes="muted" />
+                                        <TextBlock Grid.Column="1" Text="0" FontWeight="SemiBold" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <TextBlock Text="Defect classes" Classes="muted" />
+                                        <TextBlock Grid.Column="1" Text="3" FontWeight="SemiBold" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <TextBlock Text="Annotations" Classes="muted" />
+                                        <TextBlock Grid.Column="1" Text="0%" FontWeight="SemiBold" />
+                                    </Grid>
+                                    <Border Height="1" Background="{DynamicResource BorderBrush}" />
+                                    <TextBlock Text="Import the first images to unlock annotation and training."
+                                               Classes="muted" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Classes="card">
+                                <StackPanel Spacing="9">
+                                    <TextBlock Text="Activity" FontSize="17" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding ActivityMessage}" Classes="muted" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <Border Grid.Row="2" Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="18,0">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Text="Local workspace · No cloud connection required" Classes="muted"
+                           FontSize="11" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="{Binding VersionDisplay}" Classes="muted"
+                           FontSize="11" VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+    </Grid>
 </Window>

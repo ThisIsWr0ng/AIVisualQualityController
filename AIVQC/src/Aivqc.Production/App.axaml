@@ -1,15 +1,60 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="Aivqc.Production.App"
              xmlns:local="using:Aivqc.Production"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+             x:Class="Aivqc.Production.App"
+             RequestedThemeVariant="Dark">
+    <Application.Resources>
+        <SolidColorBrush x:Key="PageBrush" Color="#080D17" />
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#111927" />
+        <SolidColorBrush x:Key="SurfaceRaisedBrush" Color="#182336" />
+        <SolidColorBrush x:Key="BorderBrush" Color="#28364B" />
+        <SolidColorBrush x:Key="PrimaryBrush" Color="#36D6A8" />
+        <SolidColorBrush x:Key="PrimaryMutedBrush" Color="#143B35" />
+        <SolidColorBrush x:Key="WarningBrush" Color="#F4B860" />
+        <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F6F8FB" />
+        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#9AA8BA" />
+    </Application.Resources>
 
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <local:ViewLocator />
     </Application.DataTemplates>
-  
+
     <Application.Styles>
-        <FluentTheme />
+        <FluentTheme DensityStyle="Compact" />
+        <Style Selector="Window">
+            <Setter Property="Background" Value="{DynamicResource PageBrush}" />
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="18" />
+        </Style>
+        <Style Selector="TextBlock.muted">
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+        </Style>
+        <Style Selector="TextBlock.eyebrow">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="Foreground" Value="#061411" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="Padding" Value="20,13" />
+        </Style>
+        <Style Selector="Button.secondary">
+            <Setter Property="Background" Value="{DynamicResource SurfaceRaisedBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="14,9" />
+        </Style>
     </Application.Styles>
 </Application>
