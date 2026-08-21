@@ -133,17 +133,51 @@ Provide stable, fast, and simple production inspection with minimal operator int
 - **Measurement calibration** — parameters that convert image pixels into physical units and, when required, correct lens distortion and perspective.
 - **Measurement** — a feature value with validity and specification-conformance status.
 - **Inspection** — one product or image evaluation ending with OK, NOK, or Error/Indeterminate.
+- **User profile** — an authenticated identity with one or more assigned roles and an auditable set of permissions.
+- **Shared resource** — a versioned model, deployment package, recipe, dataset artifact, localization resource, report, or other file synchronized through the AIVQC Server.
 
 A product and a model are not the same entity. A product can use successive model versions, while a recipe can change thresholds without retraining the model.
 
 ## 6. Cross-cutting requirements
+
+### 6.1. User profiles and authorization
+
+Access must be controlled through role-based access control. The initial roles are:
+
+- **Operator** — select an approved product or recipe, start and stop inspections, view live results and permitted statistics, and acknowledge operational messages. An Operator cannot modify models, calibration, specifications, or protected thresholds.
+- **Technician** — all Operator permissions plus camera and station configuration, calibration, diagnostics, installation or activation of approved deployment packages, and recipe or threshold adjustment within limits defined by an Expert.
+- **Expert** — all Technician permissions plus dataset management, model training and evaluation, specification definition, model/package approval and publication, unrestricted recipe configuration, user and role administration, and access to audit and system-management functions.
+
+Authorization must be enforced by the application and server, not only by hiding UI controls. Every security-sensitive action must record the user, timestamp, station, action, and affected resource version in the audit log. The detailed permission matrix must be configurable without changing the meaning of the three base roles.
+
+### 6.2. AIVQC Server
+
+A shared server component will connect AIVQC Trainer and AIVQC Production and provide:
+
+- centralized user accounts, authentication, role assignments, sessions, and account revocation,
+- password storage using a current, salted, adaptive password-hashing algorithm; passwords must never be stored or logged in plaintext or with reversible encryption,
+- versioned storage for models, deployment packages, recipes, calibration data, specifications, localization resources, reports, and other approved shared assets,
+- controlled publication from Trainer and controlled retrieval by Production,
+- immutable identifiers, version history, checksums, and integrity verification for distributed packages,
+- approval states such as Draft, Validated, Approved, Published, Retired, and Revoked,
+- audit logging for authentication, downloads, publication, activation, rollback, configuration changes, and administrative actions,
+- encrypted network communication and authenticated API access,
+- backup, restore, retention, storage-quota, and disaster-recovery policies,
+- compatibility checks between server, package, Trainer, and Production versions,
+- synchronization status, conflict handling, retry behavior, and clear error reporting.
+
+Production must keep an authenticated, integrity-checked local cache of approved recipes and packages. A temporary server or network outage must not stop an already authorized production inspection. Offline actions and statistics must be queued and synchronized after connectivity returns. Revoked packages must be blocked as soon as the station receives the revocation, subject to a separately defined emergency/offline policy.
+
+Trainer and Production must access shared resources through documented server APIs; they must not directly access the server database or shared storage directories.
+
+### 6.3. General requirements
 
 - simple installation and configuration on industrial PCs,
 - CPU support with optional GPU and edge-device acceleration,
 - modular support for cameras and model formats,
 - deterministic behavior and resilience to camera loss or damaged packages,
 - versioned configuration and a complete audit log,
-- Operator and Engineer/Administrator roles,
+- least-privilege authorization based on Operator, Technician, and Expert roles,
 - recipe backup and migration,
 - performance measured on target hardware,
 - local data storage with a clear retention policy,
@@ -169,14 +203,18 @@ A product and a model are not the same entity. A product can use successive mode
 - Production recipe selection, preview, thresholds, and basic statistics,
 - stored camera settings with verification that they were applied,
 - an English default UI with an optional Polish translation,
-- scale calibration, at least one linear measurement, and tolerance-based OK/NOK decisions.
+- scale calibration, at least one linear measurement, and tolerance-based OK/NOK decisions,
+- local user profiles and role enforcement sufficient for a single-station MVP, with a migration path to centralized authentication,
+- a versioned server API contract and deployment-package repository prototype.
 
 ### Stage 2 — Data workflow improvements
 
 - pre-labeling, annotation propagation, active learning, and dataset quality checks,
 - experiment and model-version comparison,
 - advanced statistics and reports,
-- user management and audit logging.
+- centralized user management and audit logging,
+- production-ready AIVQC Server authentication and shared-resource synchronization,
+- package approval, publication, revocation, local caching, and offline synchronization workflows.
 
 ### Stage 3 — Industrial integration
 
@@ -197,7 +235,10 @@ A product and a model are not the same entity. A product can use successive mode
 - measurement accuracy must be verified with reference artifacts and is not equivalent to image resolution,
 - laboratory results do not guarantee production-line quality or throughput,
 - automated annotation requires human quality control,
-- an undefined failure response could allow a product to pass without a valid inspection.
+- an undefined failure response could allow a product to pass without a valid inspection,
+- a compromised account or overly broad role could allow unauthorized model, recipe, or threshold changes,
+- server downtime, network partitions, or synchronization conflicts could leave stations on outdated packages,
+- loss of encryption keys, backups, or server storage could make shared resources unavailable or unrecoverable.
 
 ## 9. MVP success criteria
 
@@ -207,6 +248,9 @@ A product and a model are not the same entity. A product can use successive mode
 - benchmarks produce repeatable quality and performance results,
 - recipes and threshold changes are versioned or audited,
 - Production operates offline for a complete shift,
+- Operator, Technician, and Expert permissions are enforced and covered by authorization tests,
+- passwords are never stored in plaintext and security-sensitive actions appear in the audit log,
+- a package published by Trainer can be retrieved, verified, activated, and rolled back by an authorized Production station,
 - the UI defaults to English and the complete primary workflow can be switched to Polish,
 - a reference part is measured within deployment-specific uncertainty and an out-of-tolerance result produces NOK.
 
@@ -237,7 +281,14 @@ Target quality, maximum latency, FPS, and measurement uncertainty must be define
 - required measurement types and target accuracy/uncertainty,
 - calibration method and verification interval,
 - decision rules for boundary values and invalid measurements,
-- additional UI languages beyond English and Polish.
+- additional UI languages beyond English and Polish,
+- server deployment model: on-premises, cloud, or both,
+- identity model: server-managed accounts, Active Directory/LDAP, OpenID Connect, or a staged combination,
+- password policy, multi-factor authentication, session duration, lockout, and account-recovery rules,
+- permissions assigned to each role and whether custom roles are required,
+- resource-storage technology, capacity limits, retention, backup location, and recovery objectives,
+- behavior and maximum permitted offline duration after a user, station, recipe, or package is revoked,
+- ownership and synchronization rules for datasets, which may be too large or sensitive for automatic replication.
 
 ## 12. Change log
 
@@ -245,3 +296,4 @@ Target quality, maximum latency, FPS, and measurement uncertainty must be define
 - **2026-08-20 — version 0.2:** added UI localization and calibrated product measurements with specifications, tolerances, and OK/NOK decisions.
 - **2026-08-20 — version 0.3:** established English as the default language for all project files and the UI, with Polish as an optional UI translation.
 - **2026-08-20 — version 0.4:** selected a license-neutral PyTorch/TorchVision training backend and implemented Pascal VOC training, automatic validation/test evaluation, progress reporting, cancellation, checkpointing, and ONNX export.
+- **2026-08-21 — version 0.5:** added Operator, Technician, and Expert profiles plus the AIVQC Server for authentication, secure password handling, shared-resource storage, publication, synchronization, and offline Production operation.
