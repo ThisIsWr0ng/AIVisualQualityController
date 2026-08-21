@@ -28,4 +28,14 @@
   <ItemGroup>
     <ProjectReference Include="..\Aivqc.Core\Aivqc.Core.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\training\train.py" Link="TrainingBackend\train.py"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\training\requirements.txt" Link="TrainingBackend\requirements.txt"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\training\aivqc_training\**\*.py"
+             Link="TrainingBackend\aivqc_training\%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

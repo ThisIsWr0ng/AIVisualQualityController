@@ -34,4 +34,19 @@ public partial class MainWindow : Window
             await viewModel.ImportOnnxAsync(filePath);
         }
     }
+
+    private async void OnSelectTrainingDatasetClick(object? sender, RoutedEventArgs e)
+    {
+        var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+        {
+            Title = "Select Pascal VOC dataset",
+            AllowMultiple = false,
+        });
+
+        var directoryPath = folders.FirstOrDefault()?.TryGetLocalPath();
+        if (directoryPath is not null && DataContext is MainWindowViewModel viewModel)
+        {
+            viewModel.SelectTrainingDataset(directoryPath);
+        }
+    }
 }

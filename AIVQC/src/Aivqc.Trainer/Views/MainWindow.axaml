@@ -110,6 +110,109 @@
                         </Grid>
                     </Border>
 
+                    <Border Classes="card">
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel>
+                                    <TextBlock Text="Train and evaluate model" FontSize="19" FontWeight="SemiBold" />
+                                    <TextBlock Text="SSDLite320 MobileNetV3 · Pascal VOC · automatic test evaluation · ONNX export"
+                                               Classes="muted" Margin="0,4,0,0" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="9">
+                                    <Button Classes="secondary" Content="Cancel"
+                                            Command="{Binding CancelTrainingCommand}" />
+                                    <Button Classes="primary" Content="Start training"
+                                            Command="{Binding StartTrainingCommand}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBox Grid.Column="0" Text="{Binding TrainingDatasetPath}"
+                                         PlaceholderText="Dataset directory containing train, valid and test"
+                                         IsReadOnly="True" />
+                                <Button Grid.Column="1" Classes="secondary" Content="Select dataset…"
+                                        Click="OnSelectTrainingDatasetClick" Margin="10,0,0,0" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*,*,*">
+                                <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,8,0">
+                                    <TextBlock Text="EPOCHS" Classes="eyebrow" />
+                                    <NumericUpDown Value="{Binding TrainingEpochs}" Minimum="1" Maximum="1000"
+                                                   Increment="1" FormatString="0" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Spacing="6" Margin="8,0">
+                                    <TextBlock Text="BATCH SIZE" Classes="eyebrow" />
+                                    <NumericUpDown Value="{Binding TrainingBatchSize}" Minimum="2" Maximum="256"
+                                                   Increment="1" FormatString="0" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Spacing="6" Margin="8,0">
+                                    <TextBlock Text="LEARNING RATE" Classes="eyebrow" />
+                                    <NumericUpDown Value="{Binding TrainingLearningRate}" Minimum="0.00001" Maximum="1"
+                                                   Increment="0.0001" FormatString="0.00000" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="3" Spacing="6" Margin="8,0,0,0">
+                                    <TextBlock Text="DEVICE" Classes="eyebrow" />
+                                    <ComboBox SelectedIndex="{Binding TrainingDeviceIndex}">
+                                        <ComboBoxItem Content="Auto" />
+                                        <ComboBoxItem Content="CPU" />
+                                        <ComboBoxItem Content="GPU required" />
+                                    </ComboBox>
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Grid.Column="0" Spacing="6">
+                                    <TextBlock Text="PYTHON EXECUTABLE" Classes="eyebrow" />
+                                    <TextBox Text="{Binding PythonExecutable}"
+                                             PlaceholderText="py or full path to python.exe" />
+                                </StackPanel>
+                                <CheckBox Grid.Column="1" Content="Use pretrained ImageNet backbone"
+                                          IsChecked="{Binding UsePretrainedBackbone}"
+                                          VerticalAlignment="Bottom" Margin="18,0,0,8" />
+                            </Grid>
+
+                            <StackPanel Spacing="7">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Text="{Binding TrainingStatus}" Classes="muted" TextWrapping="Wrap" />
+                                    <TextBlock Grid.Column="1" Text="{Binding TrainingEpochDisplay}"
+                                               FontWeight="SemiBold" Margin="14,0,0,0" />
+                                </Grid>
+                                <ProgressBar Minimum="0" Maximum="100" Value="{Binding TrainingProgress}"
+                                             Height="6" Foreground="{DynamicResource PrimaryBrush}" />
+                            </StackPanel>
+
+                            <Grid ColumnDefinitions="*,*,*,*,*,*">
+                                <StackPanel Grid.Column="0" Spacing="3">
+                                    <TextBlock Text="LOSS" Classes="eyebrow" />
+                                    <TextBlock Text="{Binding TrainingLossDisplay}" FontSize="18" FontWeight="SemiBold" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Spacing="3">
+                                    <TextBlock Text="mAP@50" Classes="eyebrow" />
+                                    <TextBlock Text="{Binding TrainingMap50Display}" FontSize="18" FontWeight="SemiBold" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Spacing="3">
+                                    <TextBlock Text="mAP@50–95" Classes="eyebrow" />
+                                    <TextBlock Text="{Binding TrainingMapDisplay}" FontSize="18" FontWeight="SemiBold" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="3" Spacing="3">
+                                    <TextBlock Text="PRECISION" Classes="eyebrow" />
+                                    <TextBlock Text="{Binding TrainingPrecisionDisplay}" FontSize="18" FontWeight="SemiBold" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="4" Spacing="3">
+                                    <TextBlock Text="RECALL" Classes="eyebrow" />
+                                    <TextBlock Text="{Binding TrainingRecallDisplay}" FontSize="18" FontWeight="SemiBold" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="5" Spacing="3">
+                                    <TextBlock Text="F1" Classes="eyebrow" />
+                                    <TextBlock Text="{Binding TrainingF1Display}" FontSize="18" FontWeight="SemiBold" />
+                                </StackPanel>
+                            </Grid>
+
+                            <TextBlock Text="{Binding TrainingOutputPath}" Classes="muted" FontSize="11"
+                                       TextWrapping="Wrap" IsVisible="{Binding HasTrainingMetrics}" />
+                        </StackPanel>
+                    </Border>
+
                     <Grid ColumnDefinitions="2*,*">
                         <Border Grid.Column="0" Classes="card" Margin="0,0,10,0">
                             <StackPanel Spacing="18">
