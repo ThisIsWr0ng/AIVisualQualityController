@@ -30,6 +30,8 @@ Commercial use is not granted by that license. This includes using AIVQC in a co
 - create and annotate training datasets,
 - import and validate existing ONNX models,
 - train and evaluate an SSDLite320 object detector from Pascal VOC annotations,
+- inspect local images in Production with an exported ONNX model,
+- draw accepted defect detections and produce deterministic OK/NOK/Error results,
 - select, train, compare, and benchmark models,
 - store camera settings with an inspection recipe,
 - detect multiple defect classes with per-class thresholds,
@@ -77,11 +79,24 @@ dotnet run --project src/Aivqc.Trainer
 dotnet run --project src/Aivqc.Production
 ```
 
+## First Production inspection
+
+1. Start `Aivqc.Production` and select **Load ONNX**.
+2. Choose the `model.onnx` produced by Trainer. Keep its `classes.json` file in
+   the same directory to display the original defect names.
+3. Select a JPG, PNG, BMP, or WebP image.
+4. Set the confidence threshold and choose **Run inspection**.
+
+Production validates the AIVQC model contract, performs preprocessing and local
+CPU inference with ONNX Runtime, draws detections above the threshold, and
+returns an unambiguous OK, NOK, or Error result. Camera streaming and recipe
+package import remain subsequent implementation stages.
+
 ## Product version
 
 Trainer, Production, Core, and the test project share one semantic version from
 [`Version.props`](Version.props). The applications display this compiled version in their footer.
-The current development version is `0.5.3-alpha.3`.
+The current development version is `0.5.3-alpha.4`.
 
 ## Status
 
