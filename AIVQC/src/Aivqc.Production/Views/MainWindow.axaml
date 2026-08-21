@@ -35,24 +35,14 @@
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10"
                             HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="Station" Classes="muted" VerticalAlignment="Center" />
-                    <TextBlock Text="LINE-01" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBlock Text="Offline image inspection" FontWeight="SemiBold" />
                     <Border Width="1" Height="18" Background="{DynamicResource BorderBrush}" Margin="8,0" />
-                    <TextBlock Text="Shift A" Classes="muted" VerticalAlignment="Center" />
+                    <TextBlock Text="ONNX Runtime · CPU" Classes="muted" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Border Background="{DynamicResource PrimaryMutedBrush}" CornerRadius="18" Padding="12,6">
-                        <StackPanel Orientation="Horizontal" Spacing="7">
-                            <TextBlock Text="●" Foreground="{DynamicResource PrimaryBrush}" FontSize="10" />
-                            <TextBlock Text="System healthy" Foreground="{DynamicResource PrimaryBrush}"
-                                       FontSize="12" FontWeight="SemiBold" />
-                        </StackPanel>
-                    </Border>
-                    <Button Classes="secondary" Content="Engineer mode" />
-                    <Border Background="{DynamicResource SurfaceRaisedBrush}" CornerRadius="8" Padding="12,7">
-                        <TextBlock Text="EN" FontWeight="SemiBold" />
-                    </Border>
+                    <Button Classes="secondary" Content="Load ONNX" Click="OnSelectModelClick" />
+                    <Button Classes="secondary" Content="Select image" Click="OnSelectImageClick" />
                 </StackPanel>
             </Grid>
         </Border>
@@ -62,22 +52,22 @@
                 <Grid RowDefinitions="*,Auto">
                     <Border Grid.Row="0" Background="#050912">
                         <Grid>
-                            <Grid Opacity="0.16">
-                                <Border BorderBrush="#4C6078" BorderThickness="1" Margin="80,54" />
-                                <Border BorderBrush="#4C6078" BorderThickness="1" Margin="180,116" />
-                            </Grid>
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
                                 <Border Width="72" Height="56" CornerRadius="12"
                                         BorderBrush="#43516A" BorderThickness="2">
                                     <TextBlock Text="◉" FontSize="28" Foreground="#60718B"
                                                HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 </Border>
-                                <TextBlock Text="CAMERA PREVIEW" Classes="eyebrow" HorizontalAlignment="Center" />
-                                <TextBlock Text="No live frame available in the UI prototype" Classes="muted" />
+                                <TextBlock Text="INSPECTION IMAGE" Classes="eyebrow" HorizontalAlignment="Center" />
+                                <TextBlock Text="Select an image to run the first production inspection"
+                                           Classes="muted" />
                             </StackPanel>
+
+                            <Image Source="{Binding PreviewImage}" Stretch="Uniform" IsVisible="{Binding HasImage}" />
+
                             <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="16"
-                                    Background="#B30A0F1C" CornerRadius="7" Padding="10,6">
-                                <TextBlock Text="1920 × 1080  ·  30 FPS" FontSize="11" />
+                                    Background="#D909101D" CornerRadius="7" Padding="10,6">
+                                <TextBlock Text="{Binding ImageResolution}" FontSize="11" />
                             </Border>
                         </Grid>
                     </Border>
@@ -85,22 +75,22 @@
                     <Border Grid.Row="1" Background="{DynamicResource SurfaceRaisedBrush}"
                             BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="16,12">
                         <Grid ColumnDefinitions="*,Auto">
-                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="18">
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="28">
                                 <StackPanel>
                                     <TextBlock Text="LAST RESULT" Classes="eyebrow" />
-                                    <TextBlock Text="—" FontSize="20" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding LastResult}" FontSize="20" FontWeight="Bold" />
                                 </StackPanel>
                                 <StackPanel>
-                                    <TextBlock Text="CONFIDENCE" Classes="eyebrow" />
-                                    <TextBlock Text="—" FontSize="20" FontWeight="SemiBold" />
+                                    <TextBlock Text="TOP CONFIDENCE" Classes="eyebrow" />
+                                    <TextBlock Text="{Binding LastConfidence}" FontSize="20" FontWeight="SemiBold" />
                                 </StackPanel>
                                 <StackPanel>
-                                    <TextBlock Text="LATENCY" Classes="eyebrow" />
-                                    <TextBlock Text="— ms" FontSize="20" FontWeight="SemiBold" />
+                                    <TextBlock Text="INFERENCE" Classes="eyebrow" />
+                                    <TextBlock Text="{Binding LastLatency}" FontSize="20" FontWeight="SemiBold" />
                                 </StackPanel>
                             </StackPanel>
-                            <Button Grid.Column="1" Classes="secondary" Content="Review last image" IsEnabled="False"
-                                    VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="{Binding ImageName}" Classes="muted"
+                                       MaxWidth="260" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                         </Grid>
                     </Border>
                 </Grid>
@@ -114,63 +104,63 @@
                             <Grid ColumnDefinitions="*,Auto">
                                 <StackPanel>
                                     <TextBlock Text="INSPECTION STATE" Classes="eyebrow" />
-                                    <TextBlock Text="{Binding InspectionState}" FontSize="28" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding InspectionState}" FontSize="25" FontWeight="Bold" />
                                 </StackPanel>
                                 <TextBlock Grid.Column="1" Text="●" Foreground="{DynamicResource PrimaryBrush}"
                                            FontSize="22" VerticalAlignment="Center" />
                             </Grid>
-                            <TextBlock Text="{Binding InspectionStatusMessage}" Classes="muted" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding InspectionStatusMessage}" Classes="muted"
+                                       TextWrapping="Wrap" MinHeight="38" />
                             <Button Classes="primary" Content="{Binding InspectionAction}"
                                     Command="{Binding ToggleInspectionCommand}" HorizontalAlignment="Stretch" />
                         </StackPanel>
                     </Border>
 
                     <Border Classes="card">
-                        <StackPanel Spacing="12">
+                        <StackPanel Spacing="10">
                             <Grid ColumnDefinitions="*,Auto">
-                                <TextBlock Text="Active recipe" FontSize="17" FontWeight="SemiBold" />
-                                <Button Grid.Column="1" Classes="secondary" Content="Change" />
+                                <TextBlock Text="Loaded model" FontSize="17" FontWeight="SemiBold" />
+                                <Button Grid.Column="1" Classes="secondary" Content="Change"
+                                        Click="OnSelectModelClick" />
                             </Grid>
-                            <TextBlock Text="Medical dressing · Standard" FontWeight="SemiBold" />
-                            <Grid ColumnDefinitions="*,Auto">
-                                <TextBlock Text="Recipe version" Classes="muted" />
-                                <TextBlock Grid.Column="1" Text="1.0.0" />
+                            <TextBlock Text="{Binding ModelName}" FontWeight="SemiBold"
+                                       TextTrimming="CharacterEllipsis" />
+                            <Grid ColumnDefinitions="Auto,*">
+                                <TextBlock Text="Input" Classes="muted" Margin="0,0,12,0" />
+                                <TextBlock Grid.Column="1" Text="{Binding ModelInput}" HorizontalAlignment="Right" />
                             </Grid>
-                            <Grid ColumnDefinitions="*,Auto">
-                                <TextBlock Text="Model" Classes="muted" />
-                                <TextBlock Grid.Column="1" Text="YOLO · 224 px" />
-                            </Grid>
-                            <Grid ColumnDefinitions="*,Auto">
-                                <TextBlock Text="Camera" Classes="muted" />
-                                <TextBlock Grid.Column="1" Text="Configured" Foreground="{DynamicResource PrimaryBrush}" />
-                            </Grid>
+                            <TextBlock Text="{Binding ClassSummary}" Classes="muted"
+                                       TextWrapping="Wrap" FontSize="11" />
                         </StackPanel>
                     </Border>
 
                     <Border Classes="card">
-                        <StackPanel Spacing="13">
+                        <StackPanel Spacing="10">
                             <Grid ColumnDefinitions="*,Auto">
-                                <TextBlock Text="Detection thresholds" FontSize="17" FontWeight="SemiBold" />
-                                <TextBlock Grid.Column="1" Text="Locked" Classes="muted" FontSize="11" />
+                                <TextBlock Text="Defect threshold" FontSize="17" FontWeight="SemiBold" />
+                                <TextBlock Grid.Column="1" Text="{Binding ThresholdDisplay}"
+                                           Foreground="{DynamicResource PrimaryBrush}" FontWeight="Bold" />
                             </Grid>
-                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
-                                <TextBlock Text="Foreign body" />
-                                <TextBlock Grid.Column="1" Text="80%" FontWeight="SemiBold" />
-                                <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Minimum="0" Maximum="100" Value="80"
-                                             Height="4" Margin="0,6,0,0" Foreground="{DynamicResource PrimaryBrush}" />
-                            </Grid>
-                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
-                                <TextBlock Text="Red tape" />
-                                <TextBlock Grid.Column="1" Text="80%" FontWeight="SemiBold" />
-                                <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Minimum="0" Maximum="100" Value="80"
-                                             Height="4" Margin="0,6,0,0" Foreground="{DynamicResource PrimaryBrush}" />
-                            </Grid>
-                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
-                                <TextBlock Text="Cut" />
-                                <TextBlock Grid.Column="1" Text="80%" FontWeight="SemiBold" />
-                                <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Minimum="0" Maximum="100" Value="80"
-                                             Height="4" Margin="0,6,0,0" Foreground="{DynamicResource PrimaryBrush}" />
-                            </Grid>
+                            <Slider Minimum="1" Maximum="99" Value="{Binding ConfidenceThreshold}" />
+                            <TextBlock Text="Any defect at or above this confidence produces NOK."
+                                       Classes="muted" TextWrapping="Wrap" FontSize="11" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Classes="card">
+                        <StackPanel Spacing="9">
+                            <TextBlock Text="Detected defects" FontSize="17" FontWeight="SemiBold" />
+                            <TextBlock Text="No defects above threshold" Classes="muted"
+                                       IsVisible="{Binding HasNoDetectedDefects}" />
+                            <ItemsControl ItemsSource="{Binding DetectedDefects}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="x:String">
+                                        <Border Background="#311625" CornerRadius="6" Padding="9,6" Margin="0,2">
+                                            <TextBlock Text="{Binding .}" Foreground="#FF9AAA" />
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -181,36 +171,36 @@
             <Border Grid.Column="0" Classes="card" Margin="0,0,7,0">
                 <StackPanel Spacing="5">
                     <TextBlock Text="INSPECTED" Classes="eyebrow" />
-                    <TextBlock Text="0" FontSize="26" FontWeight="SemiBold" />
-                    <TextBlock Text="Current shift" Classes="muted" FontSize="11" />
+                    <TextBlock Text="{Binding InspectedCount}" FontSize="26" FontWeight="SemiBold" />
+                    <TextBlock Text="Current session" Classes="muted" FontSize="11" />
                 </StackPanel>
             </Border>
             <Border Grid.Column="1" Classes="card" Margin="7,0">
                 <StackPanel Spacing="5">
                     <TextBlock Text="OK" Foreground="{DynamicResource PrimaryBrush}" FontSize="11" FontWeight="SemiBold" />
-                    <TextBlock Text="0" FontSize="26" FontWeight="SemiBold" />
-                    <TextBlock Text="0.0%" Classes="muted" FontSize="11" />
+                    <TextBlock Text="{Binding OkCount}" FontSize="26" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding OkPercentage}" Classes="muted" FontSize="11" />
                 </StackPanel>
             </Border>
             <Border Grid.Column="2" Classes="card" Margin="7,0">
                 <StackPanel Spacing="5">
                     <TextBlock Text="NOK" Foreground="#FF7A86" FontSize="11" FontWeight="SemiBold" />
-                    <TextBlock Text="0" FontSize="26" FontWeight="SemiBold" />
-                    <TextBlock Text="0.0%" Classes="muted" FontSize="11" />
+                    <TextBlock Text="{Binding NokCount}" FontSize="26" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding NokPercentage}" Classes="muted" FontSize="11" />
                 </StackPanel>
             </Border>
             <Border Grid.Column="3" Classes="card" Margin="7,0">
                 <StackPanel Spacing="5">
-                    <TextBlock Text="THROUGHPUT" Classes="eyebrow" />
-                    <TextBlock Text="0 / min" FontSize="26" FontWeight="SemiBold" />
-                    <TextBlock Text="Target not set" Classes="muted" FontSize="11" />
+                    <TextBlock Text="ERRORS" Foreground="{DynamicResource WarningBrush}" FontSize="11" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding ErrorCount}" FontSize="26" FontWeight="SemiBold" />
+                    <TextBlock Text="Inference failures" Classes="muted" FontSize="11" />
                 </StackPanel>
             </Border>
             <Border Grid.Column="4" Classes="card" Margin="7,0,0,0">
                 <StackPanel Spacing="5">
-                    <TextBlock Text="UPTIME" Classes="eyebrow" />
-                    <TextBlock Text="00:00:00" FontSize="26" FontWeight="SemiBold" />
-                    <TextBlock Text="No dropped frames" Classes="muted" FontSize="11" />
+                    <TextBlock Text="SOURCE" Classes="eyebrow" />
+                    <TextBlock Text="Image" FontSize="26" FontWeight="SemiBold" />
+                    <TextBlock Text="Camera integration next" Classes="muted" FontSize="11" />
                 </StackPanel>
             </Border>
         </Grid>
@@ -218,8 +208,8 @@
         <Border Grid.Row="3" Background="{DynamicResource SurfaceBrush}"
                 BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="18,0">
             <Grid ColumnDefinitions="*,Auto">
-                <TextBlock Text="Offline mode · Events are stored locally" Classes="muted"
-                           FontSize="11" VerticalAlignment="Center" />
+                <TextBlock Text="Offline mode · ONNX inference runs locally"
+                           Classes="muted" FontSize="11" VerticalAlignment="Center" />
                 <TextBlock Grid.Column="1" Text="{Binding VersionDisplay}" Classes="muted"
                            FontSize="11" VerticalAlignment="Center" />
             </Grid>
