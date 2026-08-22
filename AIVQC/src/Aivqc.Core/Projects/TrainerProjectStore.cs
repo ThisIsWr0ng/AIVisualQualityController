@@ -150,7 +150,8 @@ public static class TrainerProjectStore
             throw new InvalidDataException("The Trainer project metadata is incomplete.");
         }
 
-        if (manifest.DefectClasses.Any(string.IsNullOrWhiteSpace)
+        if (manifest.DefectClasses.Count > 9
+            || manifest.DefectClasses.Any(string.IsNullOrWhiteSpace)
             || manifest.DefectClasses.Distinct(StringComparer.OrdinalIgnoreCase).Count()
                 != manifest.DefectClasses.Count)
         {

@@ -15,7 +15,8 @@
         MinWidth="1060"
         MinHeight="680"
         Icon="/Assets/avalonia-logo.ico"
-        Title="AIVQC Trainer">
+        Title="AIVQC Trainer"
+        KeyDown="OnWindowKeyDown">
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
@@ -234,6 +235,7 @@
                                     <controls:AnnotationCanvas
                                         ImagePath="{Binding SelectedImagePath}"
                                         Annotations="{Binding SelectedImageAnnotations}"
+                                        DefectClasses="{Binding DefectClasses}"
                                         SelectedAnnotationId="{Binding SelectedAnnotationId}"
                                         SelectedClassName="{Binding SelectedDefectClass}"
                                         AnnotationCreated="OnAnnotationCreated"
@@ -242,9 +244,32 @@
 
                                 <StackPanel Grid.Column="1" Margin="10,0,0,0" Spacing="13">
                                     <TextBlock Text="DEFECT CLASS" Classes="eyebrow" />
-                                    <ComboBox ItemsSource="{Binding DefectClasses}"
-                                              SelectedItem="{Binding SelectedDefectClass}"
-                                              PlaceholderText="Add a class first" />
+                                    <ListBox ItemsSource="{Binding DefectClassItems}"
+                                             SelectedItem="{Binding SelectedDefectClassItem}"
+                                             Background="Transparent" BorderThickness="0"
+                                             MaxHeight="270">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate x:DataType="models:DefectClassViewModel">
+                                                <Border Padding="7,6" CornerRadius="6">
+                                                    <Grid ColumnDefinitions="30,Auto,*">
+                                                        <Border Grid.Column="0" Width="24" Height="24" CornerRadius="5"
+                                                                Background="{Binding ColorBrush}">
+                                                            <TextBlock Text="{Binding ShortcutDisplay}"
+                                                                       Foreground="#07100E" FontWeight="Bold"
+                                                                       HorizontalAlignment="Center"
+                                                                       VerticalAlignment="Center" />
+                                                        </Border>
+                                                        <Border Grid.Column="1" Width="10" Height="10" CornerRadius="5"
+                                                                Background="{Binding ColorBrush}" Margin="10,0"
+                                                                VerticalAlignment="Center" />
+                                                        <TextBlock Grid.Column="2" Text="{Binding ClassName}"
+                                                                   FontWeight="SemiBold" VerticalAlignment="Center"
+                                                                   TextTrimming="CharacterEllipsis" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
                                     <Grid ColumnDefinitions="*,Auto">
                                         <TextBox Text="{Binding NewDefectClassName, UpdateSourceTrigger=PropertyChanged}"
                                                  PlaceholderText="e.g. scratch" MaxLength="64" />
@@ -254,25 +279,18 @@
 
                                     <Border Height="1" Background="{DynamicResource BorderBrush}" />
                                     <Grid ColumnDefinitions="*,Auto">
-                                        <TextBlock Text="BOXES ON IMAGE" Classes="eyebrow" />
+                                        <StackPanel Orientation="Horizontal" Spacing="7" VerticalAlignment="Center">
+                                            <TextBlock Text="BOXES ON IMAGE" Classes="eyebrow" />
+                                            <TextBlock Text="{Binding SelectedImageAnnotations.Count}"
+                                                       Foreground="{DynamicResource PrimaryBrush}"
+                                                       FontWeight="SemiBold" />
+                                        </StackPanel>
                                         <Button Grid.Column="1" Classes="secondary" Content="Delete selected"
                                                 Command="{Binding DeleteSelectedAnnotationCommand}" />
                                     </Grid>
-                                    <ListBox ItemsSource="{Binding AnnotationListItems}"
-                                             MaxHeight="260" Background="Transparent" BorderThickness="0">
-                                        <ListBox.ItemTemplate>
-                                            <DataTemplate x:DataType="models:AnnotationListItemViewModel">
-                                                <Button Classes="nav" Tag="{Binding AnnotationId}"
-                                                        Click="OnAnnotationListItemClick">
-                                                    <TextBlock Text="{Binding Summary}" TextWrapping="Wrap"
-                                                               FontSize="11" />
-                                                </Button>
-                                            </DataTemplate>
-                                        </ListBox.ItemTemplate>
-                                    </ListBox>
                                     <TextBlock Text="{Binding AnnotationStatus}" Classes="muted"
                                                TextWrapping="Wrap" />
-                                    <TextBlock Text="Tip: boxes smaller than 4 screen pixels are ignored."
+                                    <TextBlock Text="Shortcuts 1–9 select classes. Click a box to select it; boxes smaller than 4 screen pixels are ignored."
                                                Classes="muted" FontSize="10" TextWrapping="Wrap" />
                                 </StackPanel>
                             </Grid>

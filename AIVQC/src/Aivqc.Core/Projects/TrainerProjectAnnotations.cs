@@ -13,6 +13,12 @@ public static class TrainerProjectAnnotations
         ValidateClassName(className);
 
         var normalizedName = className.Trim();
+        if (project.DefectClasses.Count >= 9)
+        {
+            throw new InvalidOperationException(
+                "Manual annotation supports up to nine defect classes with shortcuts 1–9.");
+        }
+
         if (project.DefectClasses.Contains(normalizedName, StringComparer.OrdinalIgnoreCase))
         {
             throw new InvalidOperationException($"Defect class '{normalizedName}' already exists.");

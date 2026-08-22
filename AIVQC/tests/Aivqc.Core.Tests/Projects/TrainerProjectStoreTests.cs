@@ -187,6 +187,30 @@ public sealed class TrainerProjectStoreTests
     }
 
     [Fact]
+    public void AnnotationEditor_RejectsTenthDefectClass()
+    {
+        var root = CreateTemporaryDirectory();
+
+        try
+        {
+            var project = TrainerProjectStore.Create(root, "Inspection", "product") with
+            {
+                DefectClasses = Enumerable.Range(1, 9).Select(index => $"class-{index}").ToArray(),
+                UpdatedAtUtc = DateTimeOffset.UtcNow,
+            };
+
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                TrainerProjectAnnotations.AddClass(project, "class-10"));
+
+            Assert.Contains("shortcuts 1–9", exception.Message, StringComparison.Ordinal);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [Fact]
     public void Load_RejectsCopiedImagePathOutsideProject()
     {
         var root = CreateTemporaryDirectory();

@@ -77,7 +77,10 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     private IReadOnlyList<ProjectObjectAnnotation> _selectedImageAnnotations = [];
 
     [ObservableProperty]
-    private IReadOnlyList<AnnotationListItemViewModel> _annotationListItems = [];
+    private IReadOnlyList<DefectClassViewModel> _defectClassItems = [];
+
+    [ObservableProperty]
+    private DefectClassViewModel? _selectedDefectClassItem;
 
     [ObservableProperty]
     private Guid _selectedAnnotationId;
@@ -376,6 +379,12 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             return;
         }
 
+        if (_project.DefectClasses.Count >= 9)
+        {
+            AnnotationStatus = "Manual annotation currently supports up to nine classes with shortcuts 1–9.";
+            return;
+        }
+
         try
         {
             var updated = TrainerProjectAnnotations.AddClass(_project, NewDefectClassName);
@@ -383,7 +392,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             NewDefectClassName = string.Empty;
             RefreshAnnotationWorkspace();
             InvalidatePreparedProjectDataset();
-            SelectedDefectClass = updated.DefectClasses[^1];
+            SelectedDefectClassItem = DefectClassItems[^1];
             AnnotationStatus = $"Defect class '{SelectedDefectClass}' added and selected.";
         }
         catch (Exception exception)
@@ -473,6 +482,19 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             var annotation = SelectedImageAnnotations.Single(item => item.AnnotationId == annotationId);
             AnnotationStatus = $"Selected {annotation.ClassName} annotation.";
         }
+    }
+
+    public void SelectDefectClassByShortcut(int shortcut)
+    {
+        var item = DefectClassItems.FirstOrDefault(defectClass => defectClass.Shortcut == shortcut);
+        if (item is null)
+        {
+            AnnotationStatus = $"No defect class is assigned to shortcut {shortcut}.";
+            return;
+        }
+
+        SelectedDefectClassItem = item;
+        AnnotationStatus = $"Class {shortcut}: {item.ClassName} selected.";
     }
 
     public async Task ImportOnnxAsync(string filePath)
@@ -942,6 +964,11 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         RefreshSelectedImage();
     }
 
+    partial void OnSelectedDefectClassItemChanged(DefectClassViewModel? value)
+    {
+        SelectedDefectClass = value?.ClassName;
+    }
+
     private void ApplyProject(string projectDirectory, TrainerProjectManifest project)
     {
         _autosaveCancellation?.Cancel();
@@ -1090,13 +1117,15 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     private void RefreshAnnotationWorkspace()
     {
+        var previouslySelectedClass = SelectedDefectClass;
         DefectClasses = _project?.DefectClasses.ToArray() ?? [];
+        DefectClassItems = AnnotationColorPalette.Create(DefectClasses);
         DefectClassCount = DefectClasses.Count;
-        if (SelectedDefectClass is null
-            || !DefectClasses.Contains(SelectedDefectClass, StringComparer.OrdinalIgnoreCase))
-        {
-            SelectedDefectClass = DefectClasses.FirstOrDefault();
-        }
+        SelectedDefectClassItem = DefectClassItems.FirstOrDefault(item => string.Equals(
+            item.ClassName,
+            previouslySelectedClass,
+            StringComparison.OrdinalIgnoreCase))
+            ?? DefectClassItems.FirstOrDefault();
 
         if (_project is null)
         {
@@ -1128,7 +1157,6 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             SelectedImagePath = null;
             SelectedImageAnnotations = [];
-            AnnotationListItems = [];
             return;
         }
 
@@ -1138,19 +1166,12 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             SelectedImagePath = null;
             SelectedImageAnnotations = [];
-            AnnotationListItems = [];
             return;
         }
 
         var imagePath = TrainerProjectStore.ResolveImagePath(_projectDirectory, image);
         SelectedImagePath = File.Exists(imagePath) ? imagePath : null;
         SelectedImageAnnotations = image.Annotations?.ToArray() ?? [];
-        AnnotationListItems = SelectedImageAnnotations
-            .Select(annotation => new AnnotationListItemViewModel(
-                annotation.AnnotationId,
-                $"{annotation.ClassName} · x {annotation.X:P0}, y {annotation.Y:P0}, "
-                + $"w {annotation.Width:P0}, h {annotation.Height:P0}"))
-            .ToArray();
     }
 
     private void SelectRelativeImage(int offset)

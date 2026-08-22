@@ -1,9 +1,11 @@
 using Aivqc.Core.Projects;
+using Aivqc.Trainer.Models;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using System.Globalization;
 
 namespace Aivqc.Trainer.Controls;
 
@@ -25,6 +27,11 @@ public sealed class AnnotationCanvas : Control, IDisposable
 
     public static readonly StyledProperty<string?> SelectedClassNameProperty =
         AvaloniaProperty.Register<AnnotationCanvas, string?>(nameof(SelectedClassName));
+
+    public static readonly StyledProperty<IReadOnlyList<string>> DefectClassesProperty =
+        AvaloniaProperty.Register<AnnotationCanvas, IReadOnlyList<string>>(
+            nameof(DefectClasses),
+            []);
 
     private Bitmap? _image;
     private Point? _dragStart;
@@ -64,6 +71,12 @@ public sealed class AnnotationCanvas : Control, IDisposable
         set => SetValue(SelectedClassNameProperty, value);
     }
 
+    public IReadOnlyList<string> DefectClasses
+    {
+        get => GetValue(DefectClassesProperty);
+        set => SetValue(DefectClassesProperty, value);
+    }
+
     public override void Render(DrawingContext context)
     {
         base.Render(context);
@@ -79,19 +92,23 @@ public sealed class AnnotationCanvas : Control, IDisposable
         {
             var rectangle = ToDisplayRectangle(annotation, imageRectangle);
             var isSelected = annotation.AnnotationId == SelectedAnnotationId;
-            var color = isSelected ? Color.Parse("#FFD166") : Color.Parse("#39D9B1");
+            var color = AnnotationColorPalette.GetColor(annotation.ClassName, DefectClasses);
             context.DrawRectangle(
-                isSelected ? new SolidColorBrush(Color.FromArgb(34, color.R, color.G, color.B)) : null,
-                new Pen(new SolidColorBrush(color), isSelected ? 3 : 2),
+                isSelected ? new SolidColorBrush(Color.FromArgb(48, color.R, color.G, color.B)) : null,
+                new Pen(new SolidColorBrush(color), isSelected ? 4 : 2),
                 rectangle);
+            DrawClassLabel(context, annotation.ClassName, color, rectangle);
         }
 
         if (_dragStart is { } start && _dragEnd is { } end)
         {
             var preview = ClipToImage(CreateRectangle(start, end), imageRectangle);
+            var previewColor = string.IsNullOrWhiteSpace(SelectedClassName)
+                ? Color.Parse("#39D9B1")
+                : AnnotationColorPalette.GetColor(SelectedClassName, DefectClasses);
             context.DrawRectangle(
-                new SolidColorBrush(Color.FromArgb(28, 57, 217, 177)),
-                new Pen(new SolidColorBrush(Color.Parse("#39D9B1")), 2, dashStyle: DashStyle.Dash),
+                new SolidColorBrush(Color.FromArgb(36, previewColor.R, previewColor.G, previewColor.B)),
+                new Pen(new SolidColorBrush(previewColor), 2, dashStyle: DashStyle.Dash),
                 preview);
         }
     }
@@ -105,7 +122,9 @@ public sealed class AnnotationCanvas : Control, IDisposable
         }
 
         if (change.Property == AnnotationsProperty
-            || change.Property == SelectedAnnotationIdProperty)
+            || change.Property == SelectedAnnotationIdProperty
+            || change.Property == SelectedClassNameProperty
+            || change.Property == DefectClassesProperty)
         {
             InvalidateVisual();
         }
@@ -233,6 +252,27 @@ public sealed class AnnotationCanvas : Control, IDisposable
             imageRectangle.Y + annotation.Y * imageRectangle.Height,
             annotation.Width * imageRectangle.Width,
             annotation.Height * imageRectangle.Height);
+
+    private void DrawClassLabel(
+        DrawingContext context,
+        string className,
+        Color color,
+        Rect rectangle)
+    {
+        var text = new FormattedText(
+            className,
+            CultureInfo.CurrentCulture,
+            FlowDirection.LeftToRight,
+            new Typeface("Inter", FontStyle.Normal, FontWeight.SemiBold),
+            12,
+            Brushes.Black);
+        var left = Math.Clamp(rectangle.Left, 0, Math.Max(0, Bounds.Width - 1));
+        var top = Math.Clamp(rectangle.Top, 0, Math.Max(0, Bounds.Height - text.Height - 6));
+        var width = Math.Min(text.Width + 12, Math.Max(1, Bounds.Width - left));
+        var background = new Rect(left, top, width, text.Height + 6);
+        context.FillRectangle(new SolidColorBrush(color), background);
+        context.DrawText(text, new Point(left + 6, top + 3));
+    }
 
     private static Rect CreateRectangle(Point first, Point second) =>
         new(

@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Aivqc.Trainer.Controls;
@@ -119,12 +120,31 @@ public partial class MainWindow : Window
         }
     }
 
-    private void OnAnnotationListItemClick(object? sender, RoutedEventArgs e)
+    private void OnWindowKeyDown(object? sender, KeyEventArgs e)
     {
-        if (sender is Button { Tag: Guid annotationId }
-            && DataContext is MainWindowViewModel viewModel)
+        if (TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement() is TextBox
+            || DataContext is not MainWindowViewModel viewModel)
         {
-            viewModel.SelectAnnotation(annotationId);
+            return;
+        }
+
+        var shortcut = e.Key switch
+        {
+            Key.D1 or Key.NumPad1 => 1,
+            Key.D2 or Key.NumPad2 => 2,
+            Key.D3 or Key.NumPad3 => 3,
+            Key.D4 or Key.NumPad4 => 4,
+            Key.D5 or Key.NumPad5 => 5,
+            Key.D6 or Key.NumPad6 => 6,
+            Key.D7 or Key.NumPad7 => 7,
+            Key.D8 or Key.NumPad8 => 8,
+            Key.D9 or Key.NumPad9 => 9,
+            _ => 0,
+        };
+        if (shortcut > 0)
+        {
+            viewModel.SelectDefectClassByShortcut(shortcut);
+            e.Handled = true;
         }
     }
 
