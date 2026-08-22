@@ -104,6 +104,20 @@ public partial class MainWindow : Window
         }
     }
 
+    private async void OnSettingsClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not MainWindowViewModel viewModel)
+        {
+            return;
+        }
+
+        var settingsWindow = new SettingsWindow
+        {
+            DataContext = new SettingsWindowViewModel(viewModel),
+        };
+        await settingsWindow.ShowDialog(this);
+    }
+
     private async void OnAnnotationCreated(object? sender, AnnotationCreatedEventArgs e)
     {
         if (DataContext is MainWindowViewModel viewModel)

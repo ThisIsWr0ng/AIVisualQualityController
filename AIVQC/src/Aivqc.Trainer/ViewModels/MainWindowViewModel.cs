@@ -15,6 +15,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 {
     private readonly TrainingProcessRunner _trainingProcessRunner = new();
     private readonly RecentProjectStore _recentProjectStore = new();
+    private readonly TrainerSettingsStore _trainerSettingsStore = new();
     private readonly SemaphoreSlim _projectWriteLock = new(1, 1);
     private CancellationTokenSource? _trainingCancellation;
     private CancellationTokenSource? _autosaveCancellation;
@@ -233,6 +234,15 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     private string _connectionStationName = "Production line 1";
 
     [ObservableProperty]
+    private IReadOnlyList<DeploymentLineViewModel> _deploymentLines = [];
+
+    [ObservableProperty]
+    private DeploymentLineViewModel? _selectedDeploymentLine;
+
+    [ObservableProperty]
+    private bool _expertModeEnabled;
+
+    [ObservableProperty]
     private string _connectionApiKey = string.Empty;
 
     [ObservableProperty]
@@ -250,6 +260,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     public MainWindowViewModel()
     {
         RefreshRecentProjects();
+        TryLoadTrainerSettings();
         TryLoadConnectionProfile();
     }
 
@@ -593,30 +604,14 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     }
 
     [RelayCommand]
-    private async Task TestConnectionAsync()
+    private async Task DeployAsync()
     {
-        await RunConnectionActionAsync(async client =>
+        if (SelectedDeploymentLine is null)
         {
-            var info = await client.GetInfoAsync();
-            SaveConnectionProfile(client.Settings);
-            ConnectionStatus = $"Connected to {info.Name} · API {info.ApiVersion} · server {info.ServerVersion}.";
-        });
-    }
+            ConnectionStatus = "Select a production line before deployment.";
+            return;
+        }
 
-    [RelayCommand]
-    private async Task RegisterConnectionStationAsync()
-    {
-        await RunConnectionActionAsync(async client =>
-        {
-            await client.RegisterStationAsync(ConnectionStationId, ConnectionStationName);
-            SaveConnectionProfile(client.Settings);
-            ConnectionStatus = $"Station '{ConnectionStationId}' registered.";
-        });
-    }
-
-    [RelayCommand]
-    private async Task PublishPackageToConnectionAsync()
-    {
         if (string.IsNullOrWhiteSpace(_lastExportedPackagePath)
             || !File.Exists(_lastExportedPackagePath))
         {
@@ -628,11 +623,42 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             var published = await client.PublishPackageAsync(
                 _lastExportedPackagePath,
-                ConnectionStationId);
+                SelectedDeploymentLine.Id);
             SaveConnectionProfile(client.Settings);
+            SelectedDeploymentLine.RecordDeployment();
+            SaveTrainerSettings();
             ConnectionStatus = $"Published {published.ProductId}/{published.RecipeId} "
                 + $"to {published.TargetStationId} · {published.PackageId:D}.";
         });
+    }
+
+    public void ApplySettings(SettingsWindowViewModel settingsViewModel)
+    {
+        ArgumentNullException.ThrowIfNull(settingsViewModel);
+        if (settingsViewModel.Lines.Count == 0)
+        {
+            throw new InvalidOperationException("At least one production line must be configured.");
+        }
+
+        var connectionSettings = settingsViewModel.CreateConnectionSettings();
+        ConnectionModeIndex = settingsViewModel.ConnectionModeIndex;
+        ConnectionEndpoint = settingsViewModel.ConnectionEndpoint.Trim();
+        ConnectionClientId = settingsViewModel.ConnectionClientId.Trim();
+        ConnectionApiKey = settingsViewModel.ConnectionApiKey;
+        AllowInsecureConnection = settingsViewModel.AllowInsecureConnection;
+        ExpertModeEnabled = settingsViewModel.ExpertModeEnabled;
+        DeploymentLines = settingsViewModel.Lines.Select(line => line.Clone()).ToArray();
+        SelectedDeploymentLine = DeploymentLines.First(line => string.Equals(
+            line.Id,
+            settingsViewModel.SelectedLine?.Id,
+            StringComparison.OrdinalIgnoreCase));
+        ConnectionStationId = SelectedDeploymentLine.Id;
+        ConnectionStationName = SelectedDeploymentLine.Name;
+        SaveConnectionProfile(connectionSettings);
+        SaveTrainerSettings();
+        ConnectionStatus = settingsViewModel.SettingsStatus.StartsWith("Connected", StringComparison.OrdinalIgnoreCase)
+            ? settingsViewModel.SettingsStatus
+            : "Settings saved. Connection has not been tested in this session.";
     }
 
     public void SelectTrainingDataset(string directoryPath)
@@ -881,8 +907,59 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             ConnectionModeIndex == 1 ? AivqcConnectionMode.Direct : AivqcConnectionMode.Server,
             endpoint,
             ConnectionClientId,
-            ConnectionStationId,
+            SelectedDeploymentLine?.Id ?? ConnectionStationId,
             AllowInsecureConnection);
+    }
+
+    private void TryLoadTrainerSettings()
+    {
+        try
+        {
+            var settings = _trainerSettingsStore.Load();
+            DeploymentLines = settings.Lines
+                .Select(line => new DeploymentLineViewModel(
+                    line.Id,
+                    line.Name,
+                    line.ProductIds,
+                    line.DeploymentCount,
+                    line.LastDeploymentUtc))
+                .ToArray();
+            SelectedDeploymentLine = DeploymentLines.First(line => string.Equals(
+                line.Id,
+                settings.SelectedLineId,
+                StringComparison.OrdinalIgnoreCase));
+            ConnectionStationId = SelectedDeploymentLine.Id;
+            ConnectionStationName = SelectedDeploymentLine.Name;
+            ExpertModeEnabled = settings.ExpertModeEnabled;
+        }
+        catch (Exception exception)
+        {
+            var defaults = TrainerApplicationSettings.CreateDefault();
+            DeploymentLines = defaults.Lines
+                .Select(line => new DeploymentLineViewModel(line.Id, line.Name))
+                .ToArray();
+            SelectedDeploymentLine = DeploymentLines[0];
+            ConnectionStatus = $"Application settings could not be loaded: {exception.Message}";
+        }
+    }
+
+    private void SaveTrainerSettings()
+    {
+        if (SelectedDeploymentLine is null)
+        {
+            return;
+        }
+
+        _trainerSettingsStore.Save(new TrainerApplicationSettings(
+            TrainerSettingsStore.CurrentSchemaVersion,
+            SelectedDeploymentLine.Id,
+            ExpertModeEnabled,
+            DeploymentLines.Select(line => new DeploymentLineSettings(
+                line.Id,
+                line.Name.Trim(),
+                line.ProductIds,
+                line.DeploymentCount,
+                line.LastDeploymentUtc)).ToArray()));
     }
 
     private void TryLoadConnectionProfile()
@@ -898,7 +975,15 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             ConnectionModeIndex = profile.Mode == AivqcConnectionMode.Direct ? 1 : 0;
             ConnectionEndpoint = profile.Endpoint.AbsoluteUri;
             ConnectionClientId = profile.ClientId;
-            ConnectionStationId = profile.StationId ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(profile.StationId))
+            {
+                SelectedDeploymentLine = DeploymentLines.FirstOrDefault(line => string.Equals(
+                    line.Id,
+                    profile.StationId,
+                    StringComparison.OrdinalIgnoreCase))
+                    ?? SelectedDeploymentLine;
+                ConnectionStationId = SelectedDeploymentLine?.Id ?? profile.StationId;
+            }
             AllowInsecureConnection = profile.AllowInsecureHttp;
         }
         catch (Exception exception)
@@ -967,6 +1052,17 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     partial void OnSelectedDefectClassItemChanged(DefectClassViewModel? value)
     {
         SelectedDefectClass = value?.ClassName;
+    }
+
+    partial void OnSelectedDeploymentLineChanged(DeploymentLineViewModel? value)
+    {
+        if (value is null)
+        {
+            return;
+        }
+
+        ConnectionStationId = value.Id;
+        ConnectionStationName = value.Name;
     }
 
     private void ApplyProject(string projectDirectory, TrainerProjectManifest project)

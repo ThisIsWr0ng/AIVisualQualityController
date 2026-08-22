@@ -44,6 +44,7 @@
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                     <Button Classes="secondary" Content="Documentation" />
+                    <Button Classes="secondary" Content="⚙  Settings" Click="OnSettingsClick" />
                     <Border Background="{DynamicResource SurfaceRaisedBrush}" CornerRadius="8" Padding="12,7">
                         <TextBlock Text="EN" FontWeight="SemiBold" />
                     </Border>
@@ -420,65 +421,37 @@
                     <Border Classes="card">
                         <StackPanel Spacing="14">
                             <Grid ColumnDefinitions="*,Auto">
-                                <StackPanel>
-                                    <TextBlock Text="Deployment connection" FontSize="19" FontWeight="SemiBold" />
-                                    <TextBlock Text="Publish through AIVQC Server or a compatible direct Production endpoint. API keys remain in memory only."
-                                               Classes="muted" Margin="0,4,0,0" TextWrapping="Wrap" />
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Deployment" FontSize="19" FontWeight="SemiBold" />
+                                    <TextBlock Text="Send the latest deployment package to a production line."
+                                               Classes="muted" TextWrapping="Wrap" />
                                 </StackPanel>
                                 <ProgressBar Grid.Column="1" IsIndeterminate="True"
                                              IsVisible="{Binding IsConnectionBusy}" Width="120" Height="4"
                                              Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center" />
                             </Grid>
-
-                            <Grid ColumnDefinitions="*,2*,*,*" ColumnSpacing="10">
+                            <Grid ColumnDefinitions="2*,3*,Auto" ColumnSpacing="12">
                                 <StackPanel Grid.Column="0" Spacing="5">
-                                    <TextBlock Text="MODE" Classes="eyebrow" />
-                                    <ComboBox SelectedIndex="{Binding ConnectionModeIndex}">
-                                        <ComboBoxItem Content="AIVQC Server" />
-                                        <ComboBoxItem Content="Direct connection" />
+                                    <TextBlock Text="PRODUCTION LINE" Classes="eyebrow" />
+                                    <ComboBox ItemsSource="{Binding DeploymentLines}"
+                                              SelectedItem="{Binding SelectedDeploymentLine}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate x:DataType="models:DeploymentLineViewModel">
+                                                <TextBlock Text="{Binding DisplayName}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
                                     </ComboBox>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Spacing="5">
-                                    <TextBlock Text="HTTPS ENDPOINT" Classes="eyebrow" />
-                                    <TextBox Text="{Binding ConnectionEndpoint, UpdateSourceTrigger=PropertyChanged}"
-                                             PlaceholderText="https://aivqc.example.local/" />
+                                    <TextBlock Text="CONNECTION STATUS" Classes="eyebrow" />
+                                    <Border Background="{DynamicResource SurfaceRaisedBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                            CornerRadius="8" Padding="12,8">
+                                        <TextBlock Text="{Binding ConnectionStatus}" TextWrapping="Wrap" />
+                                    </Border>
                                 </StackPanel>
-                                <StackPanel Grid.Column="2" Spacing="5">
-                                    <TextBlock Text="CLIENT ID" Classes="eyebrow" />
-                                    <TextBox Text="{Binding ConnectionClientId}" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="3" Spacing="5">
-                                    <TextBlock Text="TARGET STATION" Classes="eyebrow" />
-                                    <TextBox Text="{Binding ConnectionStationId}" />
-                                </StackPanel>
-                            </Grid>
-
-                            <Grid ColumnDefinitions="2*,*,Auto" ColumnSpacing="10">
-                                <StackPanel Grid.Column="0" Spacing="5">
-                                    <TextBlock Text="SESSION API KEY" Classes="eyebrow" />
-                                    <TextBox Text="{Binding ConnectionApiKey, UpdateSourceTrigger=PropertyChanged}"
-                                             PasswordChar="●" PlaceholderText="Not saved to disk" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Spacing="5">
-                                    <TextBlock Text="STATION NAME" Classes="eyebrow" />
-                                    <TextBox Text="{Binding ConnectionStationName}" />
-                                </StackPanel>
-                                <CheckBox Grid.Column="2" Content="Allow HTTP for isolated setup"
-                                          IsChecked="{Binding AllowInsecureConnection}"
-                                          VerticalAlignment="Bottom" Margin="8,0,0,8" />
-                            </Grid>
-
-                            <Grid ColumnDefinitions="*,Auto">
-                                <TextBlock Text="{Binding ConnectionStatus}" Classes="muted"
-                                           VerticalAlignment="Center" TextWrapping="Wrap" />
-                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                                    <Button Classes="secondary" Content="Test"
-                                            Command="{Binding TestConnectionCommand}" />
-                                    <Button Classes="secondary" Content="Register station"
-                                            Command="{Binding RegisterConnectionStationCommand}" />
-                                    <Button Classes="primary" Content="Publish last package"
-                                            Command="{Binding PublishPackageToConnectionCommand}" />
-                                </StackPanel>
+                                <Button Grid.Column="2" Classes="primary" Content="Deploy"
+                                        Command="{Binding DeployCommand}" VerticalAlignment="Bottom" />
                             </Grid>
                         </StackPanel>
                     </Border>

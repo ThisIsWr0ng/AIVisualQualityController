@@ -1,0 +1,225 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Aivqc.Trainer.ViewModels"
+        xmlns:models="using:Aivqc.Trainer.Models"
+        x:Class="Aivqc.Trainer.Views.SettingsWindow"
+        x:DataType="vm:SettingsWindowViewModel"
+        Width="980" Height="700" MinWidth="820" MinHeight="600"
+        WindowStartupLocation="CenterOwner"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="AIVQC Trainer settings">
+    <Grid RowDefinitions="72,*,64">
+        <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1"
+                Padding="24,0">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel VerticalAlignment="Center" Spacing="3">
+                    <TextBlock Text="Settings" FontSize="22" FontWeight="SemiBold" />
+                    <TextBlock Text="Application, connection and production line configuration"
+                               Classes="muted" />
+                </StackPanel>
+                <Border Grid.Column="1" Background="{DynamicResource PrimaryMutedBrush}"
+                        CornerRadius="12" Padding="12,6" VerticalAlignment="Center">
+                    <TextBlock Text="TRAINER" Classes="eyebrow" />
+                </Border>
+            </Grid>
+        </Border>
+
+        <TabControl Grid.Row="1" TabStripPlacement="Left" Margin="18">
+            <TabItem Header="General">
+                <ScrollViewer>
+                    <StackPanel Margin="24,4,12,20" Spacing="18">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="General" FontSize="22" FontWeight="SemiBold" />
+                            <TextBlock Text="Global preferences for AIVQC Trainer." Classes="muted" />
+                        </StackPanel>
+                        <Border Classes="card">
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="EXPERT FEATURES" Classes="eyebrow" />
+                                <CheckBox Content="Enable expert mode on this workstation"
+                                          IsChecked="{Binding ExpertModeEnabled}" />
+                                <TextBlock Text="Expert mode reveals administration areas intended for trained personnel. Server roles will enforce access when authentication is added."
+                                           Classes="muted" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+                        <Border Classes="card">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="MORE SETTINGS" Classes="eyebrow" />
+                                <TextBlock Text="Reserved for language, appearance, update policy and workspace defaults."
+                                           Classes="muted" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Connection">
+                <ScrollViewer>
+                    <StackPanel Margin="24,4,12,20" Spacing="18">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Deployment connection" FontSize="22" FontWeight="SemiBold" />
+                            <TextBlock Text="Connect through AIVQC Server or directly to a compatible Production endpoint."
+                                       Classes="muted" TextWrapping="Wrap" />
+                        </StackPanel>
+                        <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}"
+                                     Height="4" Foreground="{DynamicResource PrimaryBrush}" />
+                        <Border Classes="card">
+                            <StackPanel Spacing="14">
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                                    <StackPanel Grid.Column="0" Spacing="5">
+                                        <TextBlock Text="CONNECTION MODE" Classes="eyebrow" />
+                                        <ComboBox SelectedIndex="{Binding ConnectionModeIndex}">
+                                            <ComboBoxItem Content="AIVQC Server" />
+                                            <ComboBoxItem Content="Direct connection" />
+                                        </ComboBox>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Spacing="5">
+                                        <TextBlock Text="CLIENT ID" Classes="eyebrow" />
+                                        <TextBox Text="{Binding ConnectionClientId}" />
+                                    </StackPanel>
+                                </Grid>
+                                <StackPanel Spacing="5">
+                                    <TextBlock Text="HTTPS ENDPOINT" Classes="eyebrow" />
+                                    <TextBox Text="{Binding ConnectionEndpoint, UpdateSourceTrigger=PropertyChanged}"
+                                             PlaceholderText="https://aivqc.example.local/" />
+                                </StackPanel>
+                                <StackPanel Spacing="5">
+                                    <TextBlock Text="SESSION API KEY" Classes="eyebrow" />
+                                    <TextBox Text="{Binding ConnectionApiKey, UpdateSourceTrigger=PropertyChanged}"
+                                             PasswordChar="●" PlaceholderText="Kept in memory only" />
+                                </StackPanel>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <CheckBox Content="Allow HTTP for an isolated local setup"
+                                              IsChecked="{Binding AllowInsecureConnection}" />
+                                    <Button Grid.Column="1" Classes="secondary" Content="Test connection"
+                                            Command="{Binding TestConnectionCommand}" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Production lines">
+                <Grid Margin="24,4,12,20" RowDefinitions="Auto,*" ColumnDefinitions="260,*">
+                    <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Spacing="4" Margin="0,0,0,18">
+                        <TextBlock Text="Production lines" FontSize="22" FontWeight="SemiBold" />
+                        <TextBlock Text="Manage deployment targets and the projects available on each line."
+                                   Classes="muted" />
+                    </StackPanel>
+                    <Border Grid.Row="1" Grid.Column="0" Classes="card" Padding="12" Margin="0,0,10,0">
+                        <Grid RowDefinitions="*,Auto,Auto">
+                            <ListBox ItemsSource="{Binding Lines}" SelectedItem="{Binding SelectedLine}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="models:DeploymentLineViewModel">
+                                        <StackPanel Margin="5" Spacing="2">
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                            <TextBlock Text="{Binding Id}" Classes="muted" FontSize="10" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <TextBox Grid.Row="1" Text="{Binding NewLineName}"
+                                     PlaceholderText="New line name" Margin="0,10,0,8" />
+                            <Button Grid.Row="2" Classes="secondary" Content="＋ Add line"
+                                    Command="{Binding AddLineCommand}" />
+                        </Grid>
+                    </Border>
+                    <ScrollViewer Grid.Row="1" Grid.Column="1" Margin="10,0,0,0">
+                        <StackPanel Spacing="14" IsVisible="{Binding SelectedLine, Converter={x:Static ObjectConverters.IsNotNull}}">
+                            <Border Classes="card">
+                                <StackPanel Spacing="12">
+                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                                        <StackPanel Grid.Column="0" Spacing="5">
+                                            <TextBlock Text="LINE NAME" Classes="eyebrow" />
+                                            <TextBox Text="{Binding SelectedLine.Name}" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Spacing="5">
+                                            <TextBlock Text="STABLE LINE ID" Classes="eyebrow" />
+                                            <TextBox Text="{Binding SelectedLine.Id}" IsReadOnly="True" />
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                        <StackPanel Spacing="4">
+                                            <TextBlock Text="AVAILABLE PROJECTS" Classes="eyebrow" />
+                                            <TextBlock Text="{Binding SelectedLine.AvailableProductsDisplay}"
+                                                       TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding CurrentProjectId, StringFormat=Current project: {0}}"
+                                                       Classes="muted" FontSize="11" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Spacing="7">
+                                            <Button Classes="secondary" Content="Assign current"
+                                                    Command="{Binding AssignCurrentProjectCommand}" />
+                                            <Button Classes="secondary" Content="Remove current"
+                                                    Command="{Binding RemoveCurrentProjectCommand}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                            <Border Classes="card">
+                                <StackPanel Spacing="12">
+                                    <TextBlock Text="DEPLOYMENT STATISTICS" Classes="eyebrow" />
+                                    <Grid ColumnDefinitions="*,*">
+                                        <StackPanel Grid.Column="0" Spacing="3">
+                                            <TextBlock Text="Successful deployments" Classes="muted" />
+                                            <TextBlock Text="{Binding SelectedLine.DeploymentCountDisplay}"
+                                                       FontSize="20" FontWeight="SemiBold" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Spacing="3">
+                                            <TextBlock Text="Last deployment" Classes="muted" />
+                                            <TextBlock Text="{Binding SelectedLine.LastDeploymentDisplay}"
+                                                       FontSize="16" FontWeight="SemiBold" />
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="14">
+                                        <TextBlock Text="Detailed quality and throughput statistics will be provided by AIVQC Server."
+                                                   Classes="muted" TextWrapping="Wrap" />
+                                        <Button Grid.Column="1" Classes="secondary" Content="Register line"
+                                                Command="{Binding RegisterSelectedLineCommand}" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                            <Button Classes="secondary" Content="Remove selected line"
+                                    Foreground="#FF8090" HorizontalAlignment="Left"
+                                    Command="{Binding RemoveSelectedLineCommand}" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Users" IsVisible="{Binding ExpertModeEnabled}">
+                <StackPanel Margin="24,4,12,20" Spacing="18">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Users" FontSize="22" FontWeight="SemiBold" />
+                        <TextBlock Text="Expert-only administration area" Classes="eyebrow" />
+                    </StackPanel>
+                    <Border Classes="card">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Spacing="7">
+                                <TextBlock Text="User and role management requires AIVQC Server authentication."
+                                           FontWeight="SemiBold" TextWrapping="Wrap" />
+                                <TextBlock Text="This space is reserved for experts, operators, role assignments and audit history. No local account is treated as a security boundary."
+                                           Classes="muted" TextWrapping="Wrap" />
+                            </StackPanel>
+                            <Button Grid.Column="1" Classes="secondary" Content="Add user" IsEnabled="False"
+                                    VerticalAlignment="Center" Margin="18,0,0,0" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+
+        <Border Grid.Row="2" Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0"
+                Padding="20,0">
+            <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                <TextBlock Text="{Binding SettingsStatus}" Classes="muted"
+                           TextWrapping="Wrap" VerticalAlignment="Center" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                    <Button Classes="secondary" Content="Cancel" Command="{Binding CancelCommand}" />
+                    <Button Classes="primary" Content="Save settings" Command="{Binding SaveCommand}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
