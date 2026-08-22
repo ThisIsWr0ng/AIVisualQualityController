@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:Aivqc.Trainer.ViewModels"
+        xmlns:models="using:Aivqc.Trainer.Models"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         x:Class="Aivqc.Trainer.Views.MainWindow"
@@ -53,8 +54,8 @@
                     BorderThickness="0,0,1,0" Padding="14,20">
                 <Grid RowDefinitions="Auto,Auto,*,Auto">
                     <StackPanel Grid.Row="0" Spacing="9">
-                        <Button Classes="primary" Content="＋  New project" Command="{Binding CreateProjectCommand}" />
-                        <Button Classes="secondary" Content="Open project" Command="{Binding OpenProjectCommand}" />
+                        <Button Classes="primary" Content="＋  New project" Click="OnCreateProjectClick" />
+                        <Button Classes="secondary" Content="Open project" Click="OnOpenProjectClick" />
                         <Button Classes="secondary" Content="Import ONNX model" Click="OnImportOnnxClick" />
                     </StackPanel>
 
@@ -68,6 +69,21 @@
                         <Button Classes="nav" Content="△  Training" />
                         <Button Classes="nav" Content="⌁  Evaluation" />
                         <Button Classes="nav" Content="⇧  Deployment" />
+                        <TextBlock Text="RECENT PROJECTS" Classes="eyebrow" Margin="10,20,0,6" />
+                        <ItemsControl ItemsSource="{Binding RecentProjects}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:RecentProjectViewModel">
+                                    <Button Classes="nav" Tag="{Binding ProjectDirectory}"
+                                            Click="OnRecentProjectClick" Margin="0,1">
+                                        <StackPanel Spacing="1">
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold"
+                                                       TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Status}" Classes="muted" FontSize="10" />
+                                        </StackPanel>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
 
                     <Border Grid.Row="3" Classes="card" Padding="14">
@@ -101,13 +117,92 @@
                         <Grid ColumnDefinitions="*,Auto">
                             <StackPanel Grid.Column="0" Spacing="5">
                                 <TextBlock Text="CURRENT PROJECT" Classes="eyebrow" />
-                                <TextBlock Text="{Binding ProjectName}" FontSize="20" FontWeight="SemiBold" />
-                                <TextBlock Text="Object detection · ONNX deployment · Last edited just now"
-                                           Classes="muted" />
+                                <TextBox Text="{Binding ProjectName}" FontSize="20" FontWeight="SemiBold"
+                                         IsEnabled="{Binding IsProjectLoaded}" MaxWidth="620"
+                                         HorizontalAlignment="Stretch" />
+                                <TextBlock Text="{Binding ProjectPath}" Classes="muted" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding ProjectHealth}" Classes="muted" TextWrapping="Wrap" />
                             </StackPanel>
-                            <Button Grid.Column="1" Classes="secondary" Content="Project settings"
-                                    VerticalAlignment="Center" />
+                            <Border Grid.Column="1" Background="{DynamicResource PrimaryMutedBrush}"
+                                    CornerRadius="14" Padding="12,6" VerticalAlignment="Center">
+                                <TextBlock Text="AUTOSAVE" Classes="eyebrow" />
+                            </Border>
                         </Grid>
+                    </Border>
+
+                    <Border Classes="card">
+                        <StackPanel Spacing="14">
+                            <Grid ColumnDefinitions="*,Auto,Auto">
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Project dataset" FontSize="19" FontWeight="SemiBold" />
+                                    <TextBlock Text="Import validated images without preparing folders manually."
+                                               Classes="muted" Margin="0,4,0,0" />
+                                </StackPanel>
+                                <ComboBox Grid.Column="1" SelectedIndex="{Binding ImageImportModeIndex}"
+                                          Width="170" Margin="10,0">
+                                    <ComboBoxItem Content="Copy into project" />
+                                    <ComboBoxItem Content="Reference originals" />
+                                </ComboBox>
+                                <Button Grid.Column="2" Classes="primary" Content="Import images…"
+                                        Click="OnImportImagesClick" IsEnabled="{Binding IsProjectLoaded}" />
+                            </Grid>
+
+                            <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsImportingImages}"
+                                         Height="4" Foreground="{DynamicResource PrimaryBrush}" />
+                            <TextBlock Text="{Binding ImageImportStatus}" Classes="muted" TextWrapping="Wrap" />
+
+                            <Grid ColumnDefinitions="*,*,*">
+                                <Border Grid.Column="0" Background="{DynamicResource SurfaceRaisedBrush}"
+                                        CornerRadius="8" Padding="12" Margin="0,0,6,0">
+                                    <StackPanel>
+                                        <TextBlock Text="IMAGES" Classes="eyebrow" />
+                                        <TextBlock Text="{Binding ProjectImageCount}" FontSize="22" FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Background="{DynamicResource SurfaceRaisedBrush}"
+                                        CornerRadius="8" Padding="12" Margin="6,0">
+                                    <StackPanel>
+                                        <TextBlock Text="WARNINGS" Classes="eyebrow" />
+                                        <TextBlock Text="{Binding ImageWarningCount}" FontSize="22" FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="2" Background="{DynamicResource SurfaceRaisedBrush}"
+                                        CornerRadius="8" Padding="12" Margin="6,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="MISSING" Classes="eyebrow" />
+                                        <TextBlock Text="{Binding MissingImageCount}" FontSize="22" FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <ListBox ItemsSource="{Binding ProjectImages}" MaxHeight="310"
+                                     Background="Transparent" BorderThickness="0">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="models:ProjectImageViewModel">
+                                        <Border Background="{DynamicResource SurfaceRaisedBrush}"
+                                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                                CornerRadius="8" Padding="9" Margin="0,3">
+                                            <Grid ColumnDefinitions="96,*,Auto">
+                                                <Border Width="88" Height="66" Background="#080D17"
+                                                        CornerRadius="5" ClipToBounds="True">
+                                                    <Image Source="{Binding Thumbnail}" Stretch="Uniform" />
+                                                </Border>
+                                                <StackPanel Grid.Column="1" Margin="12,0" Spacing="3"
+                                                            VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding FileName}" FontWeight="SemiBold"
+                                                               TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Resolution}" Classes="muted" FontSize="11" />
+                                                    <TextBlock Text="{Binding WarningSummary}" Classes="muted"
+                                                               FontSize="11" TextWrapping="Wrap" />
+                                                </StackPanel>
+                                                <TextBlock Grid.Column="2" Text="{Binding Storage}" Classes="muted"
+                                                           FontSize="11" VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
                     </Border>
 
                     <Border Classes="card">
@@ -281,6 +376,32 @@
                                         <TextBlock Text="SHA-256" Classes="eyebrow" />
                                         <TextBlock Text="{Binding ModelSha256}" Classes="muted" FontSize="10"
                                                    TextWrapping="Wrap" />
+                                        <Border Height="1" Background="{DynamicResource BorderBrush}" Margin="0,4" />
+                                        <TextBlock Text="DEPLOYMENT PACKAGE" Classes="eyebrow" />
+                                        <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                            <StackPanel Grid.Column="0" Spacing="4">
+                                                <TextBlock Text="Product ID" Classes="muted" FontSize="11" />
+                                                <TextBox Text="{Binding DeploymentProductId}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Spacing="4">
+                                                <TextBlock Text="Recipe ID" Classes="muted" FontSize="11" />
+                                                <TextBox Text="{Binding DeploymentRecipeId}" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <TextBlock Text="Created by" Classes="muted" FontSize="11" />
+                                        <TextBox Text="{Binding DeploymentAuthor}" />
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <TextBlock Text="Default defect threshold" Classes="muted" />
+                                            <TextBlock Grid.Column="1" Text="{Binding DeploymentThreshold, StringFormat={}{0:0}%}"
+                                                       Foreground="{DynamicResource PrimaryBrush}" FontWeight="SemiBold" />
+                                        </Grid>
+                                        <Slider Minimum="1" Maximum="99" Value="{Binding DeploymentThreshold}" />
+                                        <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsExportingPackage}"
+                                                     Height="4" Foreground="{DynamicResource PrimaryBrush}" />
+                                        <TextBlock Text="{Binding PackageExportStatus}" Classes="muted"
+                                                   TextWrapping="Wrap" FontSize="11" />
+                                        <Button Classes="primary" Content="Export deployment package"
+                                                Click="OnExportPackageClick" />
                                     </StackPanel>
                                 </StackPanel>
                             </Border>
@@ -290,11 +411,11 @@
                                     <TextBlock Text="Dataset readiness" FontSize="17" FontWeight="SemiBold" />
                                     <Grid ColumnDefinitions="*,Auto">
                                         <TextBlock Text="Images" Classes="muted" />
-                                        <TextBlock Grid.Column="1" Text="0" FontWeight="SemiBold" />
+                                        <TextBlock Grid.Column="1" Text="{Binding ProjectImageCount}" FontWeight="SemiBold" />
                                     </Grid>
                                     <Grid ColumnDefinitions="*,Auto">
                                         <TextBlock Text="Defect classes" Classes="muted" />
-                                        <TextBlock Grid.Column="1" Text="3" FontWeight="SemiBold" />
+                                        <TextBlock Grid.Column="1" Text="0" FontWeight="SemiBold" />
                                     </Grid>
                                     <Grid ColumnDefinitions="*,Auto">
                                         <TextBlock Text="Annotations" Classes="muted" />

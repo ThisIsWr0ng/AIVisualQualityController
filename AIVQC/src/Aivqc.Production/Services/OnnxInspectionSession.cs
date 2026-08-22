@@ -22,7 +22,9 @@ public sealed class OnnxInspectionSession : IDisposable
     private readonly int _inputHeight;
     private bool _disposed;
 
-    public OnnxInspectionSession(string modelPath)
+    public OnnxInspectionSession(
+        string modelPath,
+        IReadOnlyDictionary<int, string>? classNames = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(modelPath);
 
@@ -54,7 +56,7 @@ public sealed class OnnxInspectionSession : IDisposable
         try
         {
             (_inputName, _inputWidth, _inputHeight) = ValidateContract(_session);
-            _classNames = LoadClassNames(modelPath);
+            _classNames = classNames ?? LoadClassNames(modelPath);
             Information = new OnnxModelInformation(
                 Path.GetFileName(modelPath),
                 Path.GetFullPath(modelPath),
@@ -75,6 +77,17 @@ public sealed class OnnxInspectionSession : IDisposable
         string imagePath,
         float confidenceThreshold,
         CancellationToken cancellationToken = default)
+        => InspectAsync(
+            imagePath,
+            classThresholds: null,
+            confidenceThreshold,
+            cancellationToken);
+
+    public Task<OnnxInspectionResult> InspectAsync(
+        string imagePath,
+        IReadOnlyDictionary<int, float>? classThresholds,
+        float confidenceThreshold,
+        CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
         ArgumentException.ThrowIfNullOrWhiteSpace(imagePath);
@@ -87,7 +100,7 @@ public sealed class OnnxInspectionSession : IDisposable
         }
 
         return Task.Run(
-            () => Inspect(imagePath, confidenceThreshold, cancellationToken),
+            () => Inspect(imagePath, classThresholds, confidenceThreshold, cancellationToken),
             cancellationToken);
     }
 
@@ -104,6 +117,7 @@ public sealed class OnnxInspectionSession : IDisposable
 
     private OnnxInspectionResult Inspect(
         string imagePath,
+        IReadOnlyDictionary<int, float>? classThresholds,
         float confidenceThreshold,
         CancellationToken cancellationToken)
     {
@@ -132,6 +146,7 @@ public sealed class OnnxInspectionSession : IDisposable
         var candidates = ReadDetections(outputs, source.Width, source.Height);
         var decision = InspectionDecisionEngine.Decide(
             candidates,
+            classThresholds,
             defaultThreshold: confidenceThreshold);
         var annotatedImage = RenderAnnotatedImage(source, decision.RejectedDetections);
 

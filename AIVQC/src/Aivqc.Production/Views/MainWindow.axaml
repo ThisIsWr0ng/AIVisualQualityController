@@ -41,7 +41,8 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Button Classes="secondary" Content="Load ONNX" Click="OnSelectModelClick" />
+                    <Button Classes="primary" Content="Load package" Click="OnSelectPackageClick" />
+                    <Button Classes="secondary" Content="Raw ONNX" Click="OnSelectModelClick" />
                     <Button Classes="secondary" Content="Select image" Click="OnSelectImageClick" />
                 </StackPanel>
             </Grid>
@@ -119,10 +120,12 @@
                     <Border Classes="card">
                         <StackPanel Spacing="10">
                             <Grid ColumnDefinitions="*,Auto">
-                                <TextBlock Text="Loaded model" FontSize="17" FontWeight="SemiBold" />
-                                <Button Grid.Column="1" Classes="secondary" Content="Change"
-                                        Click="OnSelectModelClick" />
+                                <TextBlock Text="Active deployment" FontSize="17" FontWeight="SemiBold" />
+                                <Button Grid.Column="1" Classes="secondary" Content="Change package"
+                                        Click="OnSelectPackageClick" />
                             </Grid>
+                            <TextBlock Text="{Binding PackageSummary}" Classes="muted" FontSize="11"
+                                       TextWrapping="Wrap" />
                             <TextBlock Text="{Binding ModelName}" FontWeight="SemiBold"
                                        TextTrimming="CharacterEllipsis" />
                             <Grid ColumnDefinitions="Auto,*">
@@ -141,7 +144,11 @@
                                 <TextBlock Grid.Column="1" Text="{Binding ThresholdDisplay}"
                                            Foreground="{DynamicResource PrimaryBrush}" FontWeight="Bold" />
                             </Grid>
-                            <Slider Minimum="1" Maximum="99" Value="{Binding ConfidenceThreshold}" />
+                            <Slider Minimum="1" Maximum="99" Value="{Binding ConfidenceThreshold}"
+                                    IsEnabled="{Binding CanEditThreshold}" />
+                            <TextBlock Text="Thresholds are locked by the verified deployment recipe."
+                                       Foreground="{DynamicResource PrimaryBrush}" FontSize="11"
+                                       IsVisible="{Binding AreThresholdsLocked}" />
                             <TextBlock Text="Any defect at or above this confidence produces NOK."
                                        Classes="muted" TextWrapping="Wrap" FontSize="11" />
                         </StackPanel>

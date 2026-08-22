@@ -1,22 +1,69 @@
 using Aivqc.Core.Diagnostics;
+using Aivqc.Core.Deployment;
+using Aivqc.Core.Projects;
 using Aivqc.Core.Training;
 using Aivqc.Trainer.Models;
 using Aivqc.Trainer.Services;
+using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace Aivqc.Trainer.ViewModels;
 
-public partial class MainWindowViewModel : ViewModelBase
+public partial class MainWindowViewModel : ViewModelBase, IDisposable
 {
     private readonly TrainingProcessRunner _trainingProcessRunner = new();
+    private readonly RecentProjectStore _recentProjectStore = new();
+    private readonly SemaphoreSlim _projectWriteLock = new(1, 1);
     private CancellationTokenSource? _trainingCancellation;
+    private CancellationTokenSource? _autosaveCancellation;
+    private TrainerProjectManifest? _project;
+    private string _projectDirectory = string.Empty;
+    private bool _isApplyingProject;
+    private bool _disposed;
+    private string _importedModelPath = string.Empty;
+    private int _importedModelInputWidth;
+    private int _importedModelInputHeight;
+    private IReadOnlyDictionary<string, int> _importedClassNames = new Dictionary<string, int>();
 
     [ObservableProperty]
     private string _activityMessage = "Create a project or open an existing workspace to begin.";
 
     [ObservableProperty]
     private string _projectName = "Medical dressing inspection";
+
+    [ObservableProperty]
+    private bool _isProjectLoaded;
+
+    [ObservableProperty]
+    private string _projectPath = "No project workspace is open.";
+
+    [ObservableProperty]
+    private string _projectHealth = "Create or open a project to start importing images.";
+
+    [ObservableProperty]
+    private IReadOnlyList<RecentProjectViewModel> _recentProjects = [];
+
+    [ObservableProperty]
+    private IReadOnlyList<ProjectImageViewModel> _projectImages = [];
+
+    [ObservableProperty]
+    private int _projectImageCount;
+
+    [ObservableProperty]
+    private int _missingImageCount;
+
+    [ObservableProperty]
+    private int _imageWarningCount;
+
+    [ObservableProperty]
+    private int _imageImportModeIndex;
+
+    [ObservableProperty]
+    private bool _isImportingImages;
+
+    [ObservableProperty]
+    private string _imageImportStatus = "Open a project before importing images.";
 
     [ObservableProperty]
     private bool _hasImportedModel;
@@ -99,26 +146,146 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private string _trainingOutputPath = "—";
 
+    [ObservableProperty]
+    private string _deploymentProductId = "medical-dressing";
+
+    [ObservableProperty]
+    private string _deploymentRecipeId = "standard";
+
+    [ObservableProperty]
+    private string _deploymentAuthor = Environment.UserName;
+
+    [ObservableProperty]
+    private double _deploymentThreshold = 50;
+
+    [ObservableProperty]
+    private bool _isExportingPackage;
+
+    [ObservableProperty]
+    private string _packageExportStatus = "Configure deployment metadata after loading a model.";
+
     public string VersionDisplay { get; } =
         $"v{ApplicationVersion.DisplayFromAssembly(typeof(MainWindowViewModel).Assembly)}";
 
-    [RelayCommand]
-    private void CreateProject()
+    public MainWindowViewModel()
     {
-        ProjectName = "Untitled inspection project";
-        ActivityMessage = "New project created. Configure the image source to continue.";
+        RefreshRecentProjects();
+    }
+
+    public async Task CreateProjectAsync(string parentDirectory)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        ArgumentException.ThrowIfNullOrWhiteSpace(parentDirectory);
+
+        try
+        {
+            var name = string.IsNullOrWhiteSpace(ProjectName)
+                ? "Untitled inspection project"
+                : ProjectName.Trim();
+            var directory = CreateUniqueProjectDirectory(parentDirectory, CreateSlug(name));
+            var productId = CreateSlug(name);
+            var project = await Task.Run(() => TrainerProjectStore.Create(directory, name, productId));
+            ApplyProject(directory, project);
+            ActivityMessage = $"Created project {project.Name}.";
+            ImageImportStatus = "Project ready. Import JPG, PNG, BMP, or WebP images.";
+        }
+        catch (Exception exception)
+        {
+            ActivityMessage = $"Project creation failed: {exception.Message}";
+        }
+    }
+
+    public async Task OpenProjectAsync(string projectPath)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        ArgumentException.ThrowIfNullOrWhiteSpace(projectPath);
+
+        try
+        {
+            var manifestPath = TrainerProjectStore.ResolveManifestPath(projectPath);
+            var directory = Path.GetDirectoryName(manifestPath)!;
+            var project = await Task.Run(() => TrainerProjectStore.Load(manifestPath));
+            ApplyProject(directory, project);
+            ActivityMessage = $"Opened project {project.Name}.";
+        }
+        catch (Exception exception)
+        {
+            ActivityMessage = $"Project open failed: {exception.Message}";
+        }
     }
 
     [RelayCommand]
-    private void OpenProject()
-    {
-        ActivityMessage = "Project picker integration is the next implementation step.";
-    }
+    private Task OpenRecentProjectAsync(string projectDirectory) => OpenProjectAsync(projectDirectory);
 
     [RelayCommand]
     private void ContinueWorkflow()
     {
-        ActivityMessage = "Image-source setup selected. Camera and file import will be connected next.";
+        ActivityMessage = IsProjectLoaded
+            ? "Use Import images to build the project dataset."
+            : "Create or open a project before configuring its dataset.";
+    }
+
+    public async Task ImportImagesAsync(IReadOnlyList<string> filePaths)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
+        if (_project is null || !IsProjectLoaded)
+        {
+            ImageImportStatus = "Create or open a project before importing images.";
+            return;
+        }
+
+        if (filePaths.Count == 0 || IsImportingImages)
+        {
+            return;
+        }
+
+        IsImportingImages = true;
+        ImageImportStatus = $"Validating {filePaths.Count} selected image(s)…";
+        _autosaveCancellation?.Cancel();
+
+        ImageImportResult? result = null;
+        try
+        {
+            var storageMode = ImageImportModeIndex == 1
+                ? ImageStorageMode.Reference
+                : ImageStorageMode.Copy;
+            var projectSnapshot = _project;
+            result = await Task.Run(() => ProjectImageImporter.Import(
+                projectSnapshot,
+                _projectDirectory,
+                filePaths,
+                storageMode));
+
+            var updatedProject = projectSnapshot with
+            {
+                UpdatedAtUtc = DateTimeOffset.UtcNow,
+                Images = projectSnapshot.Images.Concat(result.ImportedImages).ToArray(),
+            };
+            await SaveProjectAsync(updatedProject);
+            RefreshProjectImages();
+
+            var failed = result.Issues.Count - result.DuplicateCount;
+            ImageImportStatus = $"Imported {result.ImportedImages.Count}; "
+                + $"duplicates skipped: {result.DuplicateCount}; failed: {Math.Max(0, failed)}.";
+            ActivityMessage = result.Issues.Count == 0
+                ? "Image import completed successfully."
+                : result.Issues.First().Message;
+        }
+        catch (Exception exception)
+        {
+            if (result is not null)
+            {
+                RollBackImportedFiles(result.ImportedImages);
+            }
+
+            ImageImportStatus = $"Image import failed: {exception.Message}";
+            ActivityMessage = "No imported image metadata was committed after the failure.";
+        }
+        finally
+        {
+            IsImportingImages = false;
+        }
     }
 
     public async Task ImportOnnxAsync(string filePath)
@@ -135,19 +302,83 @@ public partial class MainWindowViewModel : ViewModelBase
             ModelInput = string.Join(Environment.NewLine, summary.Inputs);
             ModelOutput = string.Join(Environment.NewLine, summary.Outputs);
             ModelSha256 = summary.Sha256;
-            ModelImportStatus = "Valid ONNX model loaded for this session.";
+            _importedModelPath = summary.SourcePath;
+            _importedModelInputWidth = summary.InputWidth;
+            _importedModelInputHeight = summary.InputHeight;
+            _importedClassNames = summary.ClassNames;
+            ModelImportStatus = summary.ClassNames.Count == 0
+                ? "Model is valid, but classes.json is missing. Package export is unavailable."
+                : $"Valid ONNX model with {summary.ClassNames.Count} defect classes loaded.";
+            PackageExportStatus = summary.ClassNames.Count == 0
+                ? "Place classes.json next to the ONNX model before exporting."
+                : "Model is ready for deployment-package export.";
             ActivityMessage = $"Imported and validated {summary.FileName}.";
             HasImportedModel = true;
         }
         catch (Exception exception)
         {
             HasImportedModel = false;
+            _importedModelPath = string.Empty;
+            _importedClassNames = new Dictionary<string, int>();
             ModelImportStatus = $"Import failed: {exception.Message}";
             ActivityMessage = "The selected ONNX file could not be imported.";
         }
         finally
         {
             IsModelImporting = false;
+        }
+    }
+
+    public async Task ExportDeploymentPackageAsync(string outputPath)
+    {
+        if (IsExportingPackage)
+        {
+            return;
+        }
+
+        IsExportingPackage = true;
+        PackageExportStatus = "Creating and verifying deployment package…";
+
+        try
+        {
+            if (!HasImportedModel || string.IsNullOrWhiteSpace(_importedModelPath))
+            {
+                throw new InvalidOperationException("Import or train an ONNX model before exporting.");
+            }
+
+            if (_importedClassNames.Count == 0)
+            {
+                throw new InvalidOperationException("The model requires a classes.json file for package export.");
+            }
+
+            var threshold = (float)(DeploymentThreshold / 100d);
+            var request = new DeploymentPackageExportRequest(
+                outputPath,
+                _importedModelPath,
+                DeploymentProductId,
+                DeploymentRecipeId,
+                DeploymentAuthor,
+                _importedModelInputWidth,
+                _importedModelInputHeight,
+                new PreprocessingManifest("RGB", "zeroToOne", PreserveAspectRatio: false),
+                new RegionOfInterestManifest(0, 0, 0, 0),
+                _importedClassNames
+                    .OrderBy(item => item.Value)
+                    .Select(item => new DefectClassManifest(item.Value, item.Key, threshold))
+                    .ToArray());
+
+            var result = await Task.Run(() => DeploymentPackageArchive.Export(request));
+            PackageExportStatus = $"Package exported: {result.PackagePath}";
+            ActivityMessage = $"Deployment package {result.Manifest.PackageId:N} is ready for Production.";
+        }
+        catch (Exception exception)
+        {
+            PackageExportStatus = $"Package export failed: {exception.Message}";
+            ActivityMessage = "The deployment package could not be exported.";
+        }
+        finally
+        {
+            IsExportingPackage = false;
         }
     }
 
@@ -309,5 +540,266 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         const double bytesPerMegabyte = 1024d * 1024d;
         return $"{bytes / bytesPerMegabyte:0.00} MB";
+    }
+
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _autosaveCancellation?.Cancel();
+        _autosaveCancellation?.Dispose();
+        _trainingCancellation?.Cancel();
+
+        if (_project is not null && !string.IsNullOrWhiteSpace(ProjectName))
+        {
+            try
+            {
+                var finalProject = _project with
+                {
+                    Name = ProjectName.Trim(),
+                    UpdatedAtUtc = DateTimeOffset.UtcNow,
+                };
+                TrainerProjectStore.Save(_projectDirectory, finalProject);
+            }
+            catch
+            {
+                // The latest successful autosave remains intact if shutdown saving fails.
+            }
+        }
+
+        DisposeProjectImages();
+        _disposed = true;
+    }
+
+    partial void OnProjectNameChanged(string value)
+    {
+        if (!_isApplyingProject && _project is not null)
+        {
+            ScheduleAutosave();
+        }
+    }
+
+    private void ApplyProject(string projectDirectory, TrainerProjectManifest project)
+    {
+        _autosaveCancellation?.Cancel();
+        _projectDirectory = Path.GetFullPath(projectDirectory);
+        _project = project;
+        _isApplyingProject = true;
+        try
+        {
+            ProjectName = project.Name;
+            DeploymentProductId = project.ProductId;
+        }
+        finally
+        {
+            _isApplyingProject = false;
+        }
+
+        IsProjectLoaded = true;
+        ProjectPath = _projectDirectory;
+        RefreshProjectImages();
+        TryUpdateRecentProjects(project.Name);
+        ImageImportStatus = project.Images.Count == 0
+            ? "Project ready. Import JPG, PNG, BMP, or WebP images."
+            : $"Loaded {project.Images.Count} project image(s).";
+    }
+
+    private async Task SaveProjectAsync(TrainerProjectManifest project)
+    {
+        await _projectWriteLock.WaitAsync();
+        try
+        {
+            await Task.Run(() => TrainerProjectStore.Save(_projectDirectory, project));
+            _project = project;
+            TryUpdateRecentProjects(project.Name);
+        }
+        finally
+        {
+            _projectWriteLock.Release();
+        }
+    }
+
+    private void ScheduleAutosave()
+    {
+        _autosaveCancellation?.Cancel();
+        _autosaveCancellation?.Dispose();
+        _autosaveCancellation = new CancellationTokenSource();
+        _ = AutosaveAfterDelayAsync(_autosaveCancellation.Token);
+    }
+
+    private async Task AutosaveAfterDelayAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await Task.Delay(600, cancellationToken);
+            if (_project is null || string.IsNullOrWhiteSpace(ProjectName))
+            {
+                ProjectHealth = "Project name cannot be empty; changes have not been saved.";
+                return;
+            }
+
+            var updated = _project with
+            {
+                Name = ProjectName.Trim(),
+                UpdatedAtUtc = DateTimeOffset.UtcNow,
+            };
+            await SaveProjectAsync(updated);
+            ProjectHealth = MissingImageCount == 0
+                ? $"Saved automatically · {ProjectImageCount} image(s) available."
+                : $"Saved · {MissingImageCount} source image(s) are missing.";
+        }
+        catch (OperationCanceledException)
+        {
+            // A newer edit superseded this autosave.
+        }
+        catch (Exception exception)
+        {
+            ProjectHealth = $"Autosave failed: {exception.Message}";
+        }
+    }
+
+    private void RefreshProjectImages()
+    {
+        DisposeProjectImages();
+
+        if (_project is null)
+        {
+            ProjectImages = [];
+            ProjectImageCount = 0;
+            MissingImageCount = 0;
+            ImageWarningCount = 0;
+            return;
+        }
+
+        var items = new List<ProjectImageViewModel>(_project.Images.Count);
+        var missingImages = 0;
+        var missingThumbnails = 0;
+
+        foreach (var image in _project.Images)
+        {
+            if (!File.Exists(TrainerProjectStore.ResolveImagePath(_projectDirectory, image)))
+            {
+                missingImages++;
+            }
+
+            var thumbnailPath = TrainerProjectStore.ResolveThumbnailPath(_projectDirectory, image);
+            if (!File.Exists(thumbnailPath))
+            {
+                missingThumbnails++;
+                continue;
+            }
+
+            try
+            {
+                items.Add(new ProjectImageViewModel(
+                    image.ImageId,
+                    image.SourceFileName,
+                    $"{image.Width} × {image.Height} · {image.Format.ToUpperInvariant()}",
+                    image.StorageMode == ImageStorageMode.Copy ? "Project copy" : "External reference",
+                    image.Warnings.Count == 0 ? "Ready" : string.Join(" ", image.Warnings),
+                    new Bitmap(thumbnailPath)));
+            }
+            catch
+            {
+                missingThumbnails++;
+            }
+        }
+
+        ProjectImages = items;
+        ProjectImageCount = _project.Images.Count;
+        MissingImageCount = missingImages;
+        ImageWarningCount = _project.Images.Sum(image => image.Warnings.Count) + missingThumbnails;
+        ProjectHealth = missingImages == 0 && missingThumbnails == 0
+            ? $"Project healthy · {ProjectImageCount} image(s) available."
+            : $"Attention required · missing images: {missingImages}; missing thumbnails: {missingThumbnails}.";
+    }
+
+    private void DisposeProjectImages()
+    {
+        foreach (var image in ProjectImages)
+        {
+            image.Dispose();
+        }
+    }
+
+    private void RollBackImportedFiles(IReadOnlyList<ProjectImageAsset> images)
+    {
+        foreach (var image in images)
+        {
+            if (image.StorageMode == ImageStorageMode.Copy)
+            {
+                var imagePath = TrainerProjectStore.ResolveImagePath(_projectDirectory, image);
+                if (File.Exists(imagePath))
+                {
+                    File.Delete(imagePath);
+                }
+            }
+
+            var thumbnailPath = TrainerProjectStore.ResolveThumbnailPath(_projectDirectory, image);
+            if (File.Exists(thumbnailPath))
+            {
+                File.Delete(thumbnailPath);
+            }
+        }
+    }
+
+    private void RefreshRecentProjects()
+    {
+        RecentProjects = MapRecentProjects(_recentProjectStore.Load());
+    }
+
+    private void TryUpdateRecentProjects(string projectName)
+    {
+        try
+        {
+            RecentProjects = MapRecentProjects(_recentProjectStore.Add(projectName, _projectDirectory));
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            ActivityMessage = $"Project opened, but recent-project history could not be updated: {exception.Message}";
+        }
+    }
+
+    private static IReadOnlyList<RecentProjectViewModel> MapRecentProjects(
+        IReadOnlyList<RecentProjectEntry> entries) =>
+        entries.Select(entry => new RecentProjectViewModel(
+            entry.Name,
+            entry.ProjectDirectory,
+            entry.LastOpenedAtUtc.ToLocalTime().ToString("g"),
+            !File.Exists(Path.Combine(entry.ProjectDirectory, TrainerProjectStore.ManifestFileName))))
+        .ToArray();
+
+    private static string CreateUniqueProjectDirectory(string parentDirectory, string baseName)
+    {
+        var parent = Path.GetFullPath(parentDirectory);
+        Directory.CreateDirectory(parent);
+
+        for (var suffix = 1; suffix < 10_000; suffix++)
+        {
+            var directoryName = suffix == 1 ? baseName : $"{baseName}-{suffix}";
+            var candidate = Path.Combine(parent, directoryName);
+            if (!Directory.Exists(candidate) && !File.Exists(candidate))
+            {
+                return candidate;
+            }
+        }
+
+        throw new IOException("A unique project directory could not be allocated.");
+    }
+
+    private static string CreateSlug(string value)
+    {
+        var characters = value.Trim().ToLowerInvariant()
+            .Select(character => char.IsLetterOrDigit(character) ? character : '-')
+            .ToArray();
+        var slug = string.Join(
+            '-',
+            new string(characters).Split('-', StringSplitOptions.RemoveEmptyEntries));
+        return string.IsNullOrWhiteSpace(slug)
+            ? "aivqc-project"
+            : slug[..Math.Min(slug.Length, 64)];
     }
 }

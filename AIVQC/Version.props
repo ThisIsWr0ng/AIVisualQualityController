@@ -1,8 +1,8 @@
 <Project>
   <PropertyGroup>
     <!-- Semantic product version shared by every AIVQC project. -->
-    <VersionPrefix>0.5.3</VersionPrefix>
-    <VersionSuffix>alpha.4</VersionSuffix>
+    <VersionPrefix>0.5.4</VersionPrefix>
+    <VersionSuffix>alpha.1</VersionSuffix>
     <AssemblyVersion>$(VersionPrefix).1</AssemblyVersion>
     <FileVersion>$(VersionPrefix).0</FileVersion>
   </PropertyGroup>

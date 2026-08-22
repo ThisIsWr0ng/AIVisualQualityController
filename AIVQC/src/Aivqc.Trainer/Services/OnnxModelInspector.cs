@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Security.Cryptography;
+using System.Text.Json;
 using Aivqc.Trainer.Models;
 using Microsoft.ML.OnnxRuntime;
 
@@ -45,12 +46,21 @@ public static class OnnxModelInspector
         var outputs = session.OutputMetadata
             .Select(item => FormatTensor(item.Key, item.Value.Dimensions, item.Value.ElementType))
             .ToArray();
+        var primaryInput = session.InputMetadata.Count == 1
+            ? session.InputMetadata.Single().Value.Dimensions
+            : [];
+        var inputHeight = primaryInput.Length == 4 ? primaryInput[2] : 0;
+        var inputWidth = primaryInput.Length == 4 ? primaryInput[3] : 0;
+        var classNames = LoadClassNames(filePath);
 
         return new OnnxModelSummary(
             fileInfo.Name,
             fileInfo.FullName,
             fileInfo.Length,
             sha256,
+            inputWidth,
+            inputHeight,
+            classNames,
             inputs,
             outputs);
     }
@@ -81,5 +91,24 @@ public static class OnnxModelInspector
                 : dimension.ToString(CultureInfo.InvariantCulture)));
 
         return $"{name} · {elementType.Name} [{shape}]";
+    }
+
+    private static IReadOnlyDictionary<string, int> LoadClassNames(string modelPath)
+    {
+        var classesPath = Path.Combine(Path.GetDirectoryName(modelPath)!, "classes.json");
+        if (!File.Exists(classesPath))
+        {
+            return new Dictionary<string, int>();
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize<Dictionary<string, int>>(File.ReadAllText(classesPath))
+                ?? new Dictionary<string, int>();
+        }
+        catch (JsonException exception)
+        {
+            throw new InvalidDataException("The classes.json file next to the model is invalid.", exception);
+        }
     }
 }

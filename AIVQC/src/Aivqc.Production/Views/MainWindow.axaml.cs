@@ -33,6 +33,27 @@ public partial class MainWindow : Window
         }
     }
 
+    private async void OnSelectPackageClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = "Load AIVQC deployment package",
+            AllowMultiple = false,
+            FileTypeFilter =
+            [
+                new FilePickerFileType("AIVQC deployment package")
+                {
+                    Patterns = [$"*{Aivqc.Core.Deployment.DeploymentPackageArchive.FileExtension}"],
+                },
+            ],
+        });
+
+        if (files.Count == 1 && DataContext is MainWindowViewModel viewModel)
+        {
+            await viewModel.LoadDeploymentPackageAsync(files[0].Path.LocalPath);
+        }
+    }
+
     private async void OnSelectImageClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions

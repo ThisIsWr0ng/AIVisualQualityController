@@ -27,10 +27,12 @@ Commercial use is not granted by that license. This includes using AIVQC in a co
 
 ## Key capabilities
 
-- create and annotate training datasets,
+- create persistent local Trainer projects with autosave and recent-project history,
+- import, validate, deduplicate, and browse JPG, PNG, BMP, and WebP images,
 - import and validate existing ONNX models,
 - train and evaluate an SSDLite320 object detector from Pascal VOC annotations,
-- inspect local images in Production with an exported ONNX model,
+- export integrity-checked `.aivqcpkg` deployment packages from Trainer,
+- import verified recipes and inspect local images in Production,
 - draw accepted defect detections and produce deterministic OK/NOK/Error results,
 - select, train, compare, and benchmark models,
 - store camera settings with an inspection recipe,
@@ -50,7 +52,8 @@ AIVQC/
 │   ├── Aivqc.Trainer/
 │   └── Aivqc.Production/
 ├── tests/
-│   └── Aivqc.Core.Tests/
+│   ├── Aivqc.Core.Tests/
+│   └── Aivqc.Trainer.Tests/
 ├── Model/                  # Legacy models retained for migration tests
 ├── Scope.md                # Product scope and MVP requirements
 └── Aivqc.sln
@@ -79,24 +82,43 @@ dotnet run --project src/Aivqc.Trainer
 dotnet run --project src/Aivqc.Production
 ```
 
+## Trainer project and image import
+
+1. Select **New project** and choose a parent directory. Trainer creates a
+   dedicated project folder containing `project.aivqc.json`, `images`, and
+   `thumbnails`.
+2. Rename the project in the workspace header. Changes are saved
+   automatically.
+3. Choose whether imported images should be copied into the project or kept as
+   external references.
+4. Select **Import images** and choose one or more supported files.
+
+Each image is decoded and checked before it enters the project. Trainer stores
+its dimensions, actual encoded format, SHA-256, storage mode, source location,
+and quality warnings. Identical content is skipped even when it has a different
+file name. Reference mode keeps the original file in place, so moving or
+deleting it is reported as a missing source when the project is opened again.
+
 ## First Production inspection
 
-1. Start `Aivqc.Production` and select **Load ONNX**.
-2. Choose the `model.onnx` produced by Trainer. Keep its `classes.json` file in
-   the same directory to display the original defect names.
-3. Select a JPG, PNG, BMP, or WebP image.
-4. Set the confidence threshold and choose **Run inspection**.
+1. Train a model or import an ONNX model with `classes.json` in Trainer.
+2. Enter the product ID, recipe ID, author, and default threshold, then select
+   **Export deployment package** to create an `.aivqcpkg` file.
+3. Start `Aivqc.Production`, select **Load package**, and choose that file.
+4. Select a JPG, PNG, BMP, or WebP image and choose **Run inspection**.
 
-Production validates the AIVQC model contract, performs preprocessing and local
-CPU inference with ONNX Runtime, draws detections above the threshold, and
-returns an unambiguous OK, NOK, or Error result. Camera streaming and recipe
-package import remain subsequent implementation stages.
+Production checks the package schema and model SHA-256 before placing it in a
+local package cache. It restores the product, recipe, classes, per-class
+thresholds, preprocessing metadata, and ONNX model. Inference runs locally on
+the CPU, draws detections above their recipe thresholds, and returns an
+unambiguous OK, NOK, or Error result. **Raw ONNX** remains available as a
+development-only path. Camera streaming is a subsequent implementation stage.
 
 ## Product version
 
 Trainer, Production, Core, and the test project share one semantic version from
 [`Version.props`](Version.props). The applications display this compiled version in their footer.
-The current development version is `0.5.3-alpha.4`.
+The current development version is `0.5.4-alpha.1`.
 
 ## Status
 

@@ -1,4 +1,5 @@
 using Aivqc.Core.Diagnostics;
+using Aivqc.Core.Deployment;
 using Aivqc.Core.Inspection;
 using Aivqc.Production.Services;
 using Avalonia.Media.Imaging;
@@ -11,6 +12,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 {
     private OnnxInspectionSession? _inspectionSession;
     private CancellationTokenSource? _inspectionCancellation;
+    private IReadOnlyDictionary<int, float>? _packageClassThresholds;
     private bool _disposed;
 
     [ObservableProperty]
@@ -37,6 +39,13 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     [ObservableProperty]
     private string _classSummary = "classes.json will be loaded next to the model";
+
+    [ObservableProperty]
+    private string _packageSummary = "Development model · no deployment package";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanEditThreshold))]
+    private bool _areThresholdsLocked;
 
     [ObservableProperty]
     private string _imageName = "No inspection image selected";
@@ -87,6 +96,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     public string ThresholdDisplay => $"{ConfidenceThreshold:0}%";
 
+    public bool CanEditThreshold => !AreThresholdsLocked;
+
     public bool HasNoDetectedDefects => DetectedDefects.Count == 0;
 
     public string OkPercentage => InspectedCount == 0
@@ -118,6 +129,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             var previousSession = _inspectionSession;
             _inspectionSession = newSession;
             previousSession?.Dispose();
+            _packageClassThresholds = null;
 
             var information = newSession.Information;
             ModelName = information.FileName;
@@ -125,6 +137,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             ClassSummary = information.ClassNames.Count == 0
                 ? "No classes.json found · numeric labels will be used"
                 : string.Join(", ", information.ClassNames.OrderBy(item => item.Key).Select(item => item.Value));
+            PackageSummary = "Development model · integrity is not package-verified";
+            AreThresholdsLocked = false;
             HasModel = true;
             LastResult = "—";
             DetectedDefects = [];
@@ -135,6 +149,71 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         catch (Exception exception)
         {
             InspectionStatusMessage = $"Model load failed: {exception.Message}";
+        }
+    }
+
+    public async Task LoadDeploymentPackageAsync(string packagePath)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
+        if (IsInspectionRunning)
+        {
+            InspectionStatusMessage = "Cancel the active inspection before changing the package.";
+            return;
+        }
+
+        InspectionStatusMessage = "Verifying and importing the deployment package…";
+
+        try
+        {
+            var cacheRoot = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "AIVQC",
+                "Production",
+                "Packages");
+            var loaded = await Task.Run(() =>
+            {
+                var imported = DeploymentPackageArchive.Import(packagePath, cacheRoot);
+                var classNames = imported.Manifest.DefectClasses.ToDictionary(item => item.Id, item => item.Name);
+                var session = new OnnxInspectionSession(imported.ModelPath, classNames);
+
+                if (session.Information.InputWidth != imported.Manifest.Model.InputWidth
+                    || session.Information.InputHeight != imported.Manifest.Model.InputHeight)
+                {
+                    session.Dispose();
+                    throw new InvalidDataException(
+                        "The ONNX input dimensions do not match the deployment-package manifest.");
+                }
+
+                return (Imported: imported, Session: session);
+            });
+
+            var previousSession = _inspectionSession;
+            _inspectionSession = loaded.Session;
+            previousSession?.Dispose();
+
+            var manifest = loaded.Imported.Manifest;
+            _packageClassThresholds = manifest.DefectClasses.ToDictionary(item => item.Id, item => item.Threshold);
+            ConfidenceThreshold = 100d * manifest.DefectClasses.Min(item => item.Threshold);
+            ModelName = loaded.Session.Information.FileName;
+            ModelInput = $"Float · 1 × 3 × {manifest.Model.InputHeight} × {manifest.Model.InputWidth}";
+            ClassSummary = string.Join(
+                ", ",
+                manifest.DefectClasses
+                    .OrderBy(item => item.Id)
+                    .Select(item => $"{item.Name} {item.Threshold:P0}"));
+            PackageSummary = $"{manifest.ProductId} · {manifest.RecipeId} · {manifest.PackageId:N}";
+            AreThresholdsLocked = true;
+            HasModel = true;
+            LastResult = "—";
+            DetectedDefects = [];
+            InspectionStatusMessage = HasImage
+                ? "Verified package and image are ready for inspection."
+                : "Verified package loaded. Select an image to inspect.";
+        }
+        catch (Exception exception)
+        {
+            InspectionStatusMessage = $"Package import failed: {exception.Message}";
         }
     }
 
@@ -212,10 +291,16 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
         try
         {
-            var result = await _inspectionSession.InspectAsync(
-                SelectedImagePath,
-                (float)(ConfidenceThreshold / 100d),
-                _inspectionCancellation.Token);
+            var result = _packageClassThresholds is null
+                ? await _inspectionSession.InspectAsync(
+                    SelectedImagePath,
+                    (float)(ConfidenceThreshold / 100d),
+                    _inspectionCancellation.Token)
+                : await _inspectionSession.InspectAsync(
+                    SelectedImagePath,
+                    _packageClassThresholds,
+                    (float)(ConfidenceThreshold / 100d),
+                    _inspectionCancellation.Token);
 
             using var stream = new MemoryStream(result.AnnotatedImagePng, writable: false);
             PreviewImage = new Bitmap(stream);

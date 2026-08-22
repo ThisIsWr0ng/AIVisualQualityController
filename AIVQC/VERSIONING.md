@@ -10,7 +10,7 @@ The version has the form `MAJOR.MINOR.PATCH[-PRERELEASE]`:
 - increment **PATCH** for a backward-compatible correction,
 - use a suffix such as `alpha.2`, `beta.1`, or `rc.1` for a pre-release.
 
-The current development version is `0.5.3-alpha.4`.
+The current development version is `0.5.4-alpha.1`.
 
 ## Prepare a new version
 
