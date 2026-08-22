@@ -1,5 +1,6 @@
 using Aivqc.Core.Diagnostics;
 using Aivqc.Core.Deployment;
+using Aivqc.Core.Connectivity;
 using Aivqc.Core.Inspection;
 using Aivqc.Production.Services;
 using Avalonia.Media.Imaging;
@@ -13,6 +14,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     private OnnxInspectionSession? _inspectionSession;
     private CancellationTokenSource? _inspectionCancellation;
     private IReadOnlyDictionary<int, float>? _packageClassThresholds;
+    private Guid? _activePackageId;
     private bool _disposed;
 
     [ObservableProperty]
@@ -84,6 +86,30 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private int _errorCount;
 
+    [ObservableProperty]
+    private int _connectionModeIndex;
+
+    [ObservableProperty]
+    private string _connectionEndpoint = "https://aivqc.local/";
+
+    [ObservableProperty]
+    private string _connectionClientId = "production-line-1";
+
+    [ObservableProperty]
+    private string _connectionStationId = "line-1";
+
+    [ObservableProperty]
+    private string _connectionApiKey = string.Empty;
+
+    [ObservableProperty]
+    private bool _allowInsecureConnection;
+
+    [ObservableProperty]
+    private bool _isConnectionBusy;
+
+    [ObservableProperty]
+    private string _connectionStatus = "Configure AIVQC Server or direct Trainer connectivity.";
+
     public string InspectionAction => IsInspectionRunning ? "Cancel inspection" : "Run inspection";
 
     public string InspectionState => IsInspectionRunning
@@ -111,6 +137,11 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     public string VersionDisplay { get; } =
         $"v{ApplicationVersion.DisplayFromAssembly(typeof(MainWindowViewModel).Assembly)}";
 
+    public MainWindowViewModel()
+    {
+        TryLoadConnectionProfile();
+    }
+
     public async Task LoadModelAsync(string filePath)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
@@ -130,6 +161,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             _inspectionSession = newSession;
             previousSession?.Dispose();
             _packageClassThresholds = null;
+            _activePackageId = null;
 
             var information = newSession.Information;
             ModelName = information.FileName;
@@ -193,6 +225,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             previousSession?.Dispose();
 
             var manifest = loaded.Imported.Manifest;
+            _activePackageId = manifest.PackageId;
             _packageClassThresholds = manifest.DefectClasses.ToDictionary(item => item.Id, item => item.Threshold);
             ConfidenceThreshold = 100d * manifest.DefectClasses.Min(item => item.Threshold);
             ModelName = loaded.Session.Information.FileName;
@@ -215,6 +248,71 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             InspectionStatusMessage = $"Package import failed: {exception.Message}";
         }
+    }
+
+    [RelayCommand]
+    private async Task TestConnectionAsync()
+    {
+        await RunConnectionActionAsync(async client =>
+        {
+            var info = await client.GetInfoAsync();
+            SaveConnectionProfile(client.Settings);
+            ConnectionStatus = $"Connected to {info.Name} · API {info.ApiVersion} · server {info.ServerVersion}.";
+        });
+    }
+
+    [RelayCommand]
+    private async Task SynchronizePackageAsync()
+    {
+        await RunConnectionActionAsync(async client =>
+        {
+            var latest = await client.GetLatestPackageAsync(ConnectionStationId);
+            if (latest is null)
+            {
+                ConnectionStatus = "No published package is waiting for this station.";
+                return;
+            }
+
+            if (latest.Revoked)
+            {
+                throw new InvalidOperationException("The latest assigned package has been revoked.");
+            }
+
+            var downloadDirectory = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "AIVQC",
+                "Production",
+                "Downloads");
+            var packagePath = Path.Combine(downloadDirectory, $"{latest.PackageId:D}.aivqcpkg");
+            await client.DownloadPackageAsync(
+                ConnectionStationId,
+                latest.PackageId,
+                packagePath);
+            await client.AcknowledgeAsync(
+                ConnectionStationId,
+                latest.PackageId,
+                PackageAcknowledgementStatus.Downloaded);
+
+            await LoadDeploymentPackageAsync(packagePath);
+            if (_activePackageId == latest.PackageId)
+            {
+                await client.AcknowledgeAsync(
+                    ConnectionStationId,
+                    latest.PackageId,
+                    PackageAcknowledgementStatus.Activated);
+                SaveConnectionProfile(client.Settings);
+                ConnectionStatus = $"Package {latest.ProductId}/{latest.RecipeId} downloaded, verified and activated.";
+            }
+            else
+            {
+                await client.AcknowledgeAsync(
+                    ConnectionStationId,
+                    latest.PackageId,
+                    PackageAcknowledgementStatus.Failed,
+                    "Local package verification or activation failed.");
+                ConnectionStatus = "Downloaded package failed local verification and was not activated.";
+            }
+        });
     }
 
     public void LoadImage(string filePath)
@@ -248,6 +346,80 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             InspectionStatusMessage = $"Image load failed: {exception.Message}";
         }
     }
+
+    private async Task RunConnectionActionAsync(Func<AivqcServerApiClient, Task> action)
+    {
+        if (IsConnectionBusy || IsInspectionRunning)
+        {
+            ConnectionStatus = IsInspectionRunning
+                ? "Stop the active inspection before synchronizing packages."
+                : ConnectionStatus;
+            return;
+        }
+
+        IsConnectionBusy = true;
+        ConnectionStatus = "Connecting…";
+        try
+        {
+            var settings = CreateConnectionSettings();
+            using var client = new AivqcServerApiClient(settings, ConnectionApiKey);
+            await action(client);
+        }
+        catch (Exception exception)
+        {
+            ConnectionStatus = $"Connection failed: {exception.Message}";
+        }
+        finally
+        {
+            IsConnectionBusy = false;
+        }
+    }
+
+    private AivqcConnectionSettings CreateConnectionSettings()
+    {
+        if (!Uri.TryCreate(ConnectionEndpoint, UriKind.Absolute, out var endpoint))
+        {
+            throw new InvalidOperationException("Enter a valid absolute connection URL.");
+        }
+
+        return new AivqcConnectionSettings(
+            ConnectionModeIndex == 1 ? AivqcConnectionMode.Direct : AivqcConnectionMode.Server,
+            endpoint,
+            ConnectionClientId,
+            ConnectionStationId,
+            AllowInsecureConnection);
+    }
+
+    private void TryLoadConnectionProfile()
+    {
+        try
+        {
+            var profile = AivqcConnectionProfileStore.Load(GetConnectionProfilePath());
+            if (profile is null)
+            {
+                return;
+            }
+
+            ConnectionModeIndex = profile.Mode == AivqcConnectionMode.Direct ? 1 : 0;
+            ConnectionEndpoint = profile.Endpoint.AbsoluteUri;
+            ConnectionClientId = profile.ClientId;
+            ConnectionStationId = profile.StationId ?? string.Empty;
+            AllowInsecureConnection = profile.AllowInsecureHttp;
+        }
+        catch (Exception exception)
+        {
+            ConnectionStatus = $"Connection profile could not be loaded: {exception.Message}";
+        }
+    }
+
+    private static void SaveConnectionProfile(AivqcConnectionSettings settings) =>
+        AivqcConnectionProfileStore.Save(GetConnectionProfilePath(), settings);
+
+    private static string GetConnectionProfilePath() => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "AIVQC",
+        "Production",
+        "connection.json");
 
     public void Dispose()
     {

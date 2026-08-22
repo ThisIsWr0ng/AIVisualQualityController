@@ -10,6 +10,7 @@ public sealed class ProjectImageViewModel : IDisposable
         string resolution,
         string storage,
         string warningSummary,
+        string annotationSummary,
         Bitmap thumbnail)
     {
         ImageId = imageId;
@@ -17,6 +18,7 @@ public sealed class ProjectImageViewModel : IDisposable
         Resolution = resolution;
         Storage = storage;
         WarningSummary = warningSummary;
+        AnnotationSummary = annotationSummary;
         Thumbnail = thumbnail;
     }
 
@@ -30,10 +32,14 @@ public sealed class ProjectImageViewModel : IDisposable
 
     public string WarningSummary { get; }
 
+    public string AnnotationSummary { get; }
+
     public Bitmap Thumbnail { get; }
 
     public void Dispose() => Thumbnail.Dispose();
 }
+
+public sealed record AnnotationListItemViewModel(Guid AnnotationId, string Summary);
 
 public sealed record RecentProjectViewModel(
     string Name,

@@ -1,0 +1,31 @@
+services:
+  aivqc-server:
+    container_name: aivqc-server
+    build:
+      context: ../..
+      dockerfile: src/Aivqc.Server/Dockerfile
+    image: aivqc-server:local
+    restart: unless-stopped
+    user: "${AIVQC_UID:-1654}:${AIVQC_GID:-1654}"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "${AIVQC_BIND_ADDRESS:-127.0.0.1}:${AIVQC_PORT:-8088}:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      AivqcServer__MaximumPackageBytes: "${AIVQC_MAX_PACKAGE_BYTES:-1073741824}"
+      AivqcServer__StorageQuotaBytes: "${AIVQC_STORAGE_QUOTA_BYTES:-5368709120}"
+      AivqcServer__AcknowledgedPackageRetentionDays: "${AIVQC_RETENTION_DAYS:-30}"
+    volumes:
+      - ./data:/data
+      - ./secrets/api-keys.json:/run/secrets/aivqc_api_keys.json:ro
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "5"

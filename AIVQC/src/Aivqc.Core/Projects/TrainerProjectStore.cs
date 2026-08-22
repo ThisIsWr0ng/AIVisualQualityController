@@ -166,7 +166,7 @@ public static class TrainerProjectStore
 
         foreach (var image in manifest.Images)
         {
-            ValidateImage(image, projectDirectory);
+            ValidateImage(image, projectDirectory, manifest.DefectClasses);
         }
     }
 
@@ -178,7 +178,10 @@ public static class TrainerProjectStore
             : fullPath;
     }
 
-    private static void ValidateImage(ProjectImageAsset image, string projectDirectory)
+    private static void ValidateImage(
+        ProjectImageAsset image,
+        string projectDirectory,
+        IReadOnlyList<string> defectClasses)
     {
         if (image.ImageId == Guid.Empty
             || string.IsNullOrWhiteSpace(image.SourceFileName)
@@ -206,6 +209,40 @@ public static class TrainerProjectStore
         }
 
         ResolveContainedPath(projectDirectory, image.ThumbnailPath, "thumbnail");
+
+        var annotations = image.Annotations ?? [];
+        if (annotations.Select(annotation => annotation.AnnotationId).Distinct().Count() != annotations.Count)
+        {
+            throw new InvalidDataException("The image contains duplicate annotation IDs.");
+        }
+
+        foreach (var annotation in annotations)
+        {
+            ValidateAnnotation(annotation, defectClasses);
+        }
+    }
+
+    private static void ValidateAnnotation(
+        ProjectObjectAnnotation annotation,
+        IReadOnlyList<string> defectClasses)
+    {
+        const double coordinateTolerance = 0.000001;
+        if (annotation.AnnotationId == Guid.Empty
+            || annotation.UpdatedAtUtc == default
+            || !defectClasses.Contains(annotation.ClassName, StringComparer.OrdinalIgnoreCase)
+            || !double.IsFinite(annotation.X)
+            || !double.IsFinite(annotation.Y)
+            || !double.IsFinite(annotation.Width)
+            || !double.IsFinite(annotation.Height)
+            || annotation.X < 0
+            || annotation.Y < 0
+            || annotation.Width <= 0
+            || annotation.Height <= 0
+            || annotation.X + annotation.Width > 1 + coordinateTolerance
+            || annotation.Y + annotation.Height > 1 + coordinateTolerance)
+        {
+            throw new InvalidDataException("The Trainer project contains an invalid object annotation.");
+        }
     }
 
     private static string ResolveContainedPath(string projectDirectory, string relativePath, string description)

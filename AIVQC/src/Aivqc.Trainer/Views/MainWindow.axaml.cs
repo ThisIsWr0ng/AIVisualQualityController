@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using Aivqc.Trainer.Controls;
 using Aivqc.Trainer.ViewModels;
 
 namespace Aivqc.Trainer.Views;
@@ -99,6 +100,31 @@ public partial class MainWindow : Window
         if (filePath is not null && DataContext is MainWindowViewModel viewModel)
         {
             await viewModel.ImportOnnxAsync(filePath);
+        }
+    }
+
+    private async void OnAnnotationCreated(object? sender, AnnotationCreatedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel viewModel)
+        {
+            await viewModel.CreateAnnotationAsync(e.Bounds);
+        }
+    }
+
+    private void OnAnnotationSelected(object? sender, AnnotationSelectedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel viewModel)
+        {
+            viewModel.SelectAnnotation(e.AnnotationId);
+        }
+    }
+
+    private void OnAnnotationListItemClick(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button { Tag: Guid annotationId }
+            && DataContext is MainWindowViewModel viewModel)
+        {
+            viewModel.SelectAnnotation(annotationId);
         }
     }
 

@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:Aivqc.Trainer.ViewModels"
         xmlns:models="using:Aivqc.Trainer.Models"
+        xmlns:controls="using:Aivqc.Trainer.Controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         x:Class="Aivqc.Trainer.Views.MainWindow"
@@ -175,7 +176,9 @@
                                 </Border>
                             </Grid>
 
-                            <ListBox ItemsSource="{Binding ProjectImages}" MaxHeight="310"
+                            <ListBox ItemsSource="{Binding ProjectImages}"
+                                     SelectedItem="{Binding SelectedProjectImage}"
+                                     MaxHeight="310"
                                      Background="Transparent" BorderThickness="0">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate x:DataType="models:ProjectImageViewModel">
@@ -194,6 +197,9 @@
                                                     <TextBlock Text="{Binding Resolution}" Classes="muted" FontSize="11" />
                                                     <TextBlock Text="{Binding WarningSummary}" Classes="muted"
                                                                FontSize="11" TextWrapping="Wrap" />
+                                                    <TextBlock Text="{Binding AnnotationSummary}"
+                                                               Foreground="{DynamicResource PrimaryBrush}"
+                                                               FontSize="11" />
                                                 </StackPanel>
                                                 <TextBlock Grid.Column="2" Text="{Binding Storage}" Classes="muted"
                                                            FontSize="11" VerticalAlignment="Center" />
@@ -202,6 +208,74 @@
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Classes="card">
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel>
+                                    <TextBlock Text="Manual annotation" FontSize="19" FontWeight="SemiBold" />
+                                    <TextBlock Text="Select a class, then drag over each visible defect. Click a box to select it."
+                                               Classes="muted" Margin="0,4,0,0" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                    <Button Classes="secondary" Content="← Previous"
+                                            Command="{Binding SelectPreviousImageCommand}" />
+                                    <Button Classes="secondary" Content="Next →"
+                                            Command="{Binding SelectNextImageCommand}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="3*,*" MinHeight="520">
+                                <Border Grid.Column="0" Background="#080D17"
+                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                        CornerRadius="8" ClipToBounds="True" Margin="0,0,10,0">
+                                    <controls:AnnotationCanvas
+                                        ImagePath="{Binding SelectedImagePath}"
+                                        Annotations="{Binding SelectedImageAnnotations}"
+                                        SelectedAnnotationId="{Binding SelectedAnnotationId}"
+                                        SelectedClassName="{Binding SelectedDefectClass}"
+                                        AnnotationCreated="OnAnnotationCreated"
+                                        AnnotationSelected="OnAnnotationSelected" />
+                                </Border>
+
+                                <StackPanel Grid.Column="1" Margin="10,0,0,0" Spacing="13">
+                                    <TextBlock Text="DEFECT CLASS" Classes="eyebrow" />
+                                    <ComboBox ItemsSource="{Binding DefectClasses}"
+                                              SelectedItem="{Binding SelectedDefectClass}"
+                                              PlaceholderText="Add a class first" />
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <TextBox Text="{Binding NewDefectClassName, UpdateSourceTrigger=PropertyChanged}"
+                                                 PlaceholderText="e.g. scratch" MaxLength="64" />
+                                        <Button Grid.Column="1" Classes="secondary" Content="Add"
+                                                Command="{Binding AddDefectClassCommand}" Margin="8,0,0,0" />
+                                    </Grid>
+
+                                    <Border Height="1" Background="{DynamicResource BorderBrush}" />
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <TextBlock Text="BOXES ON IMAGE" Classes="eyebrow" />
+                                        <Button Grid.Column="1" Classes="secondary" Content="Delete selected"
+                                                Command="{Binding DeleteSelectedAnnotationCommand}" />
+                                    </Grid>
+                                    <ListBox ItemsSource="{Binding AnnotationListItems}"
+                                             MaxHeight="260" Background="Transparent" BorderThickness="0">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate x:DataType="models:AnnotationListItemViewModel">
+                                                <Button Classes="nav" Tag="{Binding AnnotationId}"
+                                                        Click="OnAnnotationListItemClick">
+                                                    <TextBlock Text="{Binding Summary}" TextWrapping="Wrap"
+                                                               FontSize="11" />
+                                                </Button>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                    <TextBlock Text="{Binding AnnotationStatus}" Classes="muted"
+                                               TextWrapping="Wrap" />
+                                    <TextBlock Text="Tip: boxes smaller than 4 screen pixels are ignored."
+                                               Classes="muted" FontSize="10" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Grid>
                         </StackPanel>
                     </Border>
 
@@ -228,6 +302,23 @@
                                 <Button Grid.Column="1" Classes="secondary" Content="Select dataset…"
                                         Click="OnSelectTrainingDatasetClick" Margin="10,0,0,0" />
                             </Grid>
+
+                            <Border Background="{DynamicResource SurfaceRaisedBrush}" CornerRadius="8" Padding="14">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="PROJECT ANNOTATIONS" Classes="eyebrow" />
+                                        <TextBlock Text="{Binding ProjectDatasetStatus}" Classes="muted"
+                                                   TextWrapping="Wrap" />
+                                        <ProgressBar IsIndeterminate="True"
+                                                     IsVisible="{Binding IsPreparingProjectDataset}"
+                                                     Height="4" Foreground="{DynamicResource PrimaryBrush}" />
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Classes="primary" Content="Prepare dataset snapshot"
+                                            Command="{Binding PrepareProjectDatasetCommand}"
+                                            IsEnabled="{Binding IsProjectLoaded}"
+                                            VerticalAlignment="Center" Margin="16,0,0,0" />
+                                </Grid>
+                            </Border>
 
                             <Grid ColumnDefinitions="*,*,*,*">
                                 <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,8,0">
@@ -305,6 +396,72 @@
 
                             <TextBlock Text="{Binding TrainingOutputPath}" Classes="muted" FontSize="11"
                                        TextWrapping="Wrap" IsVisible="{Binding HasTrainingMetrics}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Classes="card">
+                        <StackPanel Spacing="14">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel>
+                                    <TextBlock Text="Deployment connection" FontSize="19" FontWeight="SemiBold" />
+                                    <TextBlock Text="Publish through AIVQC Server or a compatible direct Production endpoint. API keys remain in memory only."
+                                               Classes="muted" Margin="0,4,0,0" TextWrapping="Wrap" />
+                                </StackPanel>
+                                <ProgressBar Grid.Column="1" IsIndeterminate="True"
+                                             IsVisible="{Binding IsConnectionBusy}" Width="120" Height="4"
+                                             Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,2*,*,*" ColumnSpacing="10">
+                                <StackPanel Grid.Column="0" Spacing="5">
+                                    <TextBlock Text="MODE" Classes="eyebrow" />
+                                    <ComboBox SelectedIndex="{Binding ConnectionModeIndex}">
+                                        <ComboBoxItem Content="AIVQC Server" />
+                                        <ComboBoxItem Content="Direct connection" />
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Spacing="5">
+                                    <TextBlock Text="HTTPS ENDPOINT" Classes="eyebrow" />
+                                    <TextBox Text="{Binding ConnectionEndpoint, UpdateSourceTrigger=PropertyChanged}"
+                                             PlaceholderText="https://aivqc.example.local/" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Spacing="5">
+                                    <TextBlock Text="CLIENT ID" Classes="eyebrow" />
+                                    <TextBox Text="{Binding ConnectionClientId}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="3" Spacing="5">
+                                    <TextBlock Text="TARGET STATION" Classes="eyebrow" />
+                                    <TextBox Text="{Binding ConnectionStationId}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="2*,*,Auto" ColumnSpacing="10">
+                                <StackPanel Grid.Column="0" Spacing="5">
+                                    <TextBlock Text="SESSION API KEY" Classes="eyebrow" />
+                                    <TextBox Text="{Binding ConnectionApiKey, UpdateSourceTrigger=PropertyChanged}"
+                                             PasswordChar="●" PlaceholderText="Not saved to disk" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Spacing="5">
+                                    <TextBlock Text="STATION NAME" Classes="eyebrow" />
+                                    <TextBox Text="{Binding ConnectionStationName}" />
+                                </StackPanel>
+                                <CheckBox Grid.Column="2" Content="Allow HTTP for isolated setup"
+                                          IsChecked="{Binding AllowInsecureConnection}"
+                                          VerticalAlignment="Bottom" Margin="8,0,0,8" />
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="{Binding ConnectionStatus}" Classes="muted"
+                                           VerticalAlignment="Center" TextWrapping="Wrap" />
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                    <Button Classes="secondary" Content="Test"
+                                            Command="{Binding TestConnectionCommand}" />
+                                    <Button Classes="secondary" Content="Register station"
+                                            Command="{Binding RegisterConnectionStationCommand}" />
+                                    <Button Classes="primary" Content="Publish last package"
+                                            Command="{Binding PublishPackageToConnectionCommand}" />
+                                </StackPanel>
+                            </Grid>
                         </StackPanel>
                     </Border>
 
@@ -415,14 +572,18 @@
                                     </Grid>
                                     <Grid ColumnDefinitions="*,Auto">
                                         <TextBlock Text="Defect classes" Classes="muted" />
-                                        <TextBlock Grid.Column="1" Text="0" FontWeight="SemiBold" />
+                                        <TextBlock Grid.Column="1" Text="{Binding DefectClassCount}" FontWeight="SemiBold" />
                                     </Grid>
                                     <Grid ColumnDefinitions="*,Auto">
                                         <TextBlock Text="Annotations" Classes="muted" />
-                                        <TextBlock Grid.Column="1" Text="0%" FontWeight="SemiBold" />
+                                        <TextBlock Grid.Column="1" Text="{Binding AnnotationProgressDisplay}" FontWeight="SemiBold" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <TextBlock Text="Bounding boxes" Classes="muted" />
+                                        <TextBlock Grid.Column="1" Text="{Binding AnnotationCount}" FontWeight="SemiBold" />
                                     </Grid>
                                     <Border Height="1" Background="{DynamicResource BorderBrush}" />
-                                    <TextBlock Text="Import the first images to unlock annotation and training."
+                                    <TextBlock Text="{Binding DatasetReadinessMessage}"
                                                Classes="muted" TextWrapping="Wrap" />
                                 </StackPanel>
                             </Border>

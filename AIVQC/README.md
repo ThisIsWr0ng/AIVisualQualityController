@@ -2,14 +2,17 @@
 
 AI Visual Quality Controller is a visual inspection system intended for small and medium-sized manufacturing operations. It detects product defects and verifies product dimensions against a versioned inspection recipe.
 
-The modernized system consists of two desktop applications:
+The modernized system consists of two desktop applications and one on-premises service:
 
 - **Aivqc.Trainer** — dataset creation, camera and measurement configuration, model training, evaluation, benchmarking, and deployment package export.
 - **Aivqc.Production** — production inspection, defect detection, product measurement, specification checks, statistics, and OK/NOK decisions.
+- **Aivqc.Server** — authenticated package publication, station routing, acknowledgements, revocation, and audit records, deployed with Docker by default.
 
-Both applications share platform-independent contracts and domain logic from **Aivqc.Core**. English is the default language for the software, source code, configuration, documentation, and technical identifiers. Polish is provided as an optional user-interface translation.
+All components share platform-independent contracts and domain logic from **Aivqc.Core**. English is the default language for the software, source code, configuration, documentation, and technical identifiers. Polish is provided as an optional user-interface translation.
 
 See [Scope.md](Scope.md) for the product scope, MVP requirements, risks, and open decisions.
+See [USER_MANUAL.md](USER_MANUAL.md) for the first end-user guide covering Trainer and Production.
+See [SERVER.md](SERVER.md) for Docker, Synology, security, and API deployment instructions.
 See [VERSIONING.md](VERSIONING.md) for the product release and Git tagging procedure.
 See [training/README.md](training/README.md) for dataset, Python and hardware setup.
 
@@ -33,6 +36,8 @@ Commercial use is not granted by that license. This includes using AIVQC in a co
 - train and evaluate an SSDLite320 object detector from Pascal VOC annotations,
 - export integrity-checked `.aivqcpkg` deployment packages from Trainer,
 - import verified recipes and inspect local images in Production,
+- publish packages to selected Production stations through an authenticated on-premises Server,
+- cache packages locally for offline inspection and acknowledge activation back to Server,
 - draw accepted defect detections and produce deterministic OK/NOK/Error results,
 - select, train, compare, and benchmark models,
 - store camera settings with an inspection recipe,

@@ -1,0 +1,11 @@
+**/bin/
+**/obj/
+.git/
+.vs/
+.idea/
+Recovery/
+Dataset_Tensorflow/
+deploy/server/data/
+deploy/server/secrets/
+*.user
+*.suo

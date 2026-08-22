@@ -91,6 +91,34 @@ public sealed class DeploymentPackageArchiveTests
         }
     }
 
+    [Fact]
+    public void Import_RejectsModelAboveConfiguredExtractionLimit()
+    {
+        var root = CreateTemporaryDirectory();
+
+        try
+        {
+            var modelPath = Path.Combine(root, "source.onnx");
+            File.WriteAllBytes(modelPath, new byte[4096]);
+            var packagePath = Path.Combine(root, $"dressing{DeploymentPackageArchive.FileExtension}");
+            DeploymentPackageArchive.Export(CreateRequest(packagePath, modelPath));
+
+            var exception = Assert.Throws<InvalidDataException>(() =>
+                DeploymentPackageArchive.Import(
+                    packagePath,
+                    Path.Combine(root, "cache"),
+                    maximumModelBytes: 1024));
+
+            Assert.Contains("safety limit", exception.Message, StringComparison.OrdinalIgnoreCase);
+            Assert.False(Directory.Exists(Path.Combine(root, "cache"))
+                && Directory.EnumerateFiles(Path.Combine(root, "cache"), "*", SearchOption.AllDirectories).Any());
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
     private static DeploymentPackageExportRequest CreateRequest(string outputPath, string modelPath) =>
         new(
             outputPath,

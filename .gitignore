@@ -27,3 +27,8 @@ Thumbs.db
 
 # Logs generated while running the applications
 *.log
+
+# AIVQC Server runtime data and credentials
+AIVQC/deploy/server/data/
+AIVQC/deploy/server/secrets/*
+!AIVQC/deploy/server/secrets/api-keys.example.json

@@ -27,7 +27,20 @@ public sealed record ProjectImageAsset(
     int Height,
     string Format,
     DateTimeOffset ImportedAtUtc,
-    IReadOnlyList<string> Warnings);
+    IReadOnlyList<string> Warnings,
+    IReadOnlyList<ProjectObjectAnnotation>? Annotations = null);
+
+/// <summary>
+/// Describes one object-detection label using image-relative coordinates.
+/// </summary>
+public sealed record ProjectObjectAnnotation(
+    Guid AnnotationId,
+    string ClassName,
+    double X,
+    double Y,
+    double Width,
+    double Height,
+    DateTimeOffset UpdatedAtUtc);
 
 public enum ImageStorageMode
 {

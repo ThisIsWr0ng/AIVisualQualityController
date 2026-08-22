@@ -1,5 +1,6 @@
 using Aivqc.Core.Diagnostics;
 using Aivqc.Core.Deployment;
+using Aivqc.Core.Connectivity;
 using Aivqc.Core.Projects;
 using Aivqc.Core.Training;
 using Aivqc.Trainer.Models;
@@ -25,6 +26,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     private int _importedModelInputWidth;
     private int _importedModelInputHeight;
     private IReadOnlyDictionary<string, int> _importedClassNames = new Dictionary<string, int>();
+    private string _lastExportedPackagePath = string.Empty;
 
     [ObservableProperty]
     private string _activityMessage = "Create a project or open an existing workspace to begin.";
@@ -66,6 +68,48 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     private string _imageImportStatus = "Open a project before importing images.";
 
     [ObservableProperty]
+    private ProjectImageViewModel? _selectedProjectImage;
+
+    [ObservableProperty]
+    private string? _selectedImagePath;
+
+    [ObservableProperty]
+    private IReadOnlyList<ProjectObjectAnnotation> _selectedImageAnnotations = [];
+
+    [ObservableProperty]
+    private IReadOnlyList<AnnotationListItemViewModel> _annotationListItems = [];
+
+    [ObservableProperty]
+    private Guid _selectedAnnotationId;
+
+    [ObservableProperty]
+    private IReadOnlyList<string> _defectClasses = [];
+
+    [ObservableProperty]
+    private string? _selectedDefectClass;
+
+    [ObservableProperty]
+    private string _newDefectClassName = string.Empty;
+
+    [ObservableProperty]
+    private string _annotationStatus = "Import images and add a defect class to begin annotation.";
+
+    [ObservableProperty]
+    private int _defectClassCount;
+
+    [ObservableProperty]
+    private int _annotationCount;
+
+    [ObservableProperty]
+    private int _annotatedImageCount;
+
+    [ObservableProperty]
+    private string _annotationProgressDisplay = "0%";
+
+    [ObservableProperty]
+    private string _datasetReadinessMessage = "Import the first images to unlock annotation and training.";
+
+    [ObservableProperty]
     private bool _hasImportedModel;
 
     [ObservableProperty]
@@ -91,6 +135,12 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     [ObservableProperty]
     private string _trainingDatasetPath = string.Empty;
+
+    [ObservableProperty]
+    private bool _isPreparingProjectDataset;
+
+    [ObservableProperty]
+    private string _projectDatasetStatus = "Prepare a dataset snapshot from the current project annotations.";
 
     [ObservableProperty]
     private string _pythonExecutable = PythonEnvironmentLocator.FindDefault();
@@ -164,12 +214,40 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private string _packageExportStatus = "Configure deployment metadata after loading a model.";
 
+    [ObservableProperty]
+    private int _connectionModeIndex;
+
+    [ObservableProperty]
+    private string _connectionEndpoint = "https://aivqc.local/";
+
+    [ObservableProperty]
+    private string _connectionClientId = "trainer-main";
+
+    [ObservableProperty]
+    private string _connectionStationId = "line-1";
+
+    [ObservableProperty]
+    private string _connectionStationName = "Production line 1";
+
+    [ObservableProperty]
+    private string _connectionApiKey = string.Empty;
+
+    [ObservableProperty]
+    private bool _allowInsecureConnection;
+
+    [ObservableProperty]
+    private bool _isConnectionBusy;
+
+    [ObservableProperty]
+    private string _connectionStatus = "Configure AIVQC Server or a compatible direct Production endpoint.";
+
     public string VersionDisplay { get; } =
         $"v{ApplicationVersion.DisplayFromAssembly(typeof(MainWindowViewModel).Assembly)}";
 
     public MainWindowViewModel()
     {
         RefreshRecentProjects();
+        TryLoadConnectionProfile();
     }
 
     public async Task CreateProjectAsync(string parentDirectory)
@@ -264,6 +342,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             };
             await SaveProjectAsync(updatedProject);
             RefreshProjectImages();
+            InvalidatePreparedProjectDataset();
 
             var failed = result.Issues.Count - result.DuplicateCount;
             ImageImportStatus = $"Imported {result.ImportedImages.Count}; "
@@ -285,6 +364,114 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         finally
         {
             IsImportingImages = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task AddDefectClassAsync()
+    {
+        if (_project is null)
+        {
+            AnnotationStatus = "Open a project before adding defect classes.";
+            return;
+        }
+
+        try
+        {
+            var updated = TrainerProjectAnnotations.AddClass(_project, NewDefectClassName);
+            await SaveProjectAsync(updated);
+            NewDefectClassName = string.Empty;
+            RefreshAnnotationWorkspace();
+            InvalidatePreparedProjectDataset();
+            SelectedDefectClass = updated.DefectClasses[^1];
+            AnnotationStatus = $"Defect class '{SelectedDefectClass}' added and selected.";
+        }
+        catch (Exception exception)
+        {
+            AnnotationStatus = $"Class could not be added: {exception.Message}";
+        }
+    }
+
+    public async Task CreateAnnotationAsync(NormalizedBoundingBox bounds)
+    {
+        if (_project is null || SelectedProjectImage is null)
+        {
+            AnnotationStatus = "Select a project image before drawing an annotation.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(SelectedDefectClass))
+        {
+            AnnotationStatus = "Add and select a defect class before drawing a box.";
+            return;
+        }
+
+        try
+        {
+            var imageId = SelectedProjectImage.ImageId;
+            var updated = TrainerProjectAnnotations.Add(
+                _project,
+                imageId,
+                SelectedDefectClass,
+                bounds);
+            await SaveProjectAsync(updated);
+            RefreshProjectImages(imageId);
+            InvalidatePreparedProjectDataset();
+            var annotation = updated.Images
+                .Single(image => image.ImageId == imageId)
+                .Annotations![^1];
+            SelectedAnnotationId = annotation.AnnotationId;
+            AnnotationStatus = $"Saved {annotation.ClassName} annotation.";
+        }
+        catch (Exception exception)
+        {
+            AnnotationStatus = $"Annotation could not be saved: {exception.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private async Task DeleteSelectedAnnotationAsync()
+    {
+        if (_project is null
+            || SelectedProjectImage is null
+            || SelectedAnnotationId == Guid.Empty)
+        {
+            AnnotationStatus = "Select an annotation to delete.";
+            return;
+        }
+
+        try
+        {
+            var imageId = SelectedProjectImage.ImageId;
+            var updated = TrainerProjectAnnotations.Remove(
+                _project,
+                imageId,
+                SelectedAnnotationId);
+            await SaveProjectAsync(updated);
+            SelectedAnnotationId = Guid.Empty;
+            RefreshProjectImages(imageId);
+            InvalidatePreparedProjectDataset();
+            AnnotationStatus = "Annotation deleted.";
+        }
+        catch (Exception exception)
+        {
+            AnnotationStatus = $"Annotation could not be deleted: {exception.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private void SelectPreviousImage() => SelectRelativeImage(-1);
+
+    [RelayCommand]
+    private void SelectNextImage() => SelectRelativeImage(1);
+
+    public void SelectAnnotation(Guid annotationId)
+    {
+        if (SelectedImageAnnotations.Any(annotation => annotation.AnnotationId == annotationId))
+        {
+            SelectedAnnotationId = annotationId;
+            var annotation = SelectedImageAnnotations.Single(item => item.AnnotationId == annotationId);
+            AnnotationStatus = $"Selected {annotation.ClassName} annotation.";
         }
     }
 
@@ -368,6 +555,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                     .ToArray());
 
             var result = await Task.Run(() => DeploymentPackageArchive.Export(request));
+            _lastExportedPackagePath = result.PackagePath;
             PackageExportStatus = $"Package exported: {result.PackagePath}";
             ActivityMessage = $"Deployment package {result.Manifest.PackageId:N} is ready for Production.";
         }
@@ -380,6 +568,49 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             IsExportingPackage = false;
         }
+    }
+
+    [RelayCommand]
+    private async Task TestConnectionAsync()
+    {
+        await RunConnectionActionAsync(async client =>
+        {
+            var info = await client.GetInfoAsync();
+            SaveConnectionProfile(client.Settings);
+            ConnectionStatus = $"Connected to {info.Name} · API {info.ApiVersion} · server {info.ServerVersion}.";
+        });
+    }
+
+    [RelayCommand]
+    private async Task RegisterConnectionStationAsync()
+    {
+        await RunConnectionActionAsync(async client =>
+        {
+            await client.RegisterStationAsync(ConnectionStationId, ConnectionStationName);
+            SaveConnectionProfile(client.Settings);
+            ConnectionStatus = $"Station '{ConnectionStationId}' registered.";
+        });
+    }
+
+    [RelayCommand]
+    private async Task PublishPackageToConnectionAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_lastExportedPackagePath)
+            || !File.Exists(_lastExportedPackagePath))
+        {
+            ConnectionStatus = "Export a deployment package before publishing it.";
+            return;
+        }
+
+        await RunConnectionActionAsync(async client =>
+        {
+            var published = await client.PublishPackageAsync(
+                _lastExportedPackagePath,
+                ConnectionStationId);
+            SaveConnectionProfile(client.Settings);
+            ConnectionStatus = $"Published {published.ProductId}/{published.RecipeId} "
+                + $"to {published.TargetStationId} · {published.PackageId:D}.";
+        });
     }
 
     public void SelectTrainingDataset(string directoryPath)
@@ -401,6 +632,43 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         TrainingStatus = trainingImages == 0 || validationImages == 0
             ? "No Pascal VOC XML annotations were found in one of the required splits."
             : $"Dataset ready: {trainingImages} training and {validationImages} validation images.";
+        ProjectDatasetStatus = "Using an externally prepared Pascal VOC dataset.";
+    }
+
+    [RelayCommand]
+    private async Task PrepareProjectDatasetAsync()
+    {
+        if (_project is null || IsPreparingProjectDataset)
+        {
+            ProjectDatasetStatus = "Open a project before preparing its training dataset.";
+            return;
+        }
+
+        IsPreparingProjectDataset = true;
+        ProjectDatasetStatus = "Validating annotations and creating a Pascal VOC snapshot…";
+        try
+        {
+            var projectSnapshot = _project;
+            var result = await Task.Run(() => ProjectDatasetExporter.Export(
+                projectSnapshot,
+                _projectDirectory));
+            TrainingDatasetPath = result.DatasetDirectory;
+            TrainingStatus = $"Dataset ready: {result.TrainingImageCount} train, "
+                + $"{result.ValidationImageCount} valid, {result.TestImageCount} test.";
+            ProjectDatasetStatus = $"Snapshot contains {result.AnnotationCount} bounding boxes. "
+                + $"Saved in {result.DatasetDirectory}.";
+            ActivityMessage = "Project annotations are ready for model training.";
+        }
+        catch (Exception exception)
+        {
+            TrainingDatasetPath = string.Empty;
+            ProjectDatasetStatus = $"Dataset preparation failed: {exception.Message}";
+            TrainingStatus = "Resolve the dataset issue before starting training.";
+        }
+        finally
+        {
+            IsPreparingProjectDataset = false;
+        }
     }
 
     [RelayCommand]
@@ -419,12 +687,25 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
         try
         {
+            if (string.IsNullOrWhiteSpace(TrainingDatasetPath) && _project is not null)
+            {
+                await PrepareProjectDatasetAsync();
+            }
+
+            if (string.IsNullOrWhiteSpace(TrainingDatasetPath))
+            {
+                throw new InvalidOperationException(
+                    "Prepare the current project dataset or select an external Pascal VOC dataset.");
+            }
+
             var runName = $"training-{DateTimeOffset.UtcNow:yyyyMMdd-HHmmss}";
-            var outputRoot = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "AIVQC",
-                "Trainer",
-                "Runs");
+            var outputRoot = _project is null
+                ? Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "AIVQC",
+                    "Trainer",
+                    "Runs")
+                : Path.Combine(_projectDirectory, "runs");
             var configuration = new TrainingConfiguration(
                 PythonExecutable,
                 Path.Combine(AppContext.BaseDirectory, "TrainingBackend", "train.py"),
@@ -542,6 +823,79 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         return $"{bytes / bytesPerMegabyte:0.00} MB";
     }
 
+    private async Task RunConnectionActionAsync(Func<AivqcServerApiClient, Task> action)
+    {
+        if (IsConnectionBusy)
+        {
+            return;
+        }
+
+        IsConnectionBusy = true;
+        ConnectionStatus = "Connecting…";
+        try
+        {
+            var settings = CreateConnectionSettings();
+            using var client = new AivqcServerApiClient(settings, ConnectionApiKey);
+            await action(client);
+        }
+        catch (Exception exception)
+        {
+            ConnectionStatus = $"Connection failed: {exception.Message}";
+        }
+        finally
+        {
+            IsConnectionBusy = false;
+        }
+    }
+
+    private AivqcConnectionSettings CreateConnectionSettings()
+    {
+        if (!Uri.TryCreate(ConnectionEndpoint, UriKind.Absolute, out var endpoint))
+        {
+            throw new InvalidOperationException("Enter a valid absolute connection URL.");
+        }
+
+        return new AivqcConnectionSettings(
+            ConnectionModeIndex == 1 ? AivqcConnectionMode.Direct : AivqcConnectionMode.Server,
+            endpoint,
+            ConnectionClientId,
+            ConnectionStationId,
+            AllowInsecureConnection);
+    }
+
+    private void TryLoadConnectionProfile()
+    {
+        try
+        {
+            var profile = AivqcConnectionProfileStore.Load(GetConnectionProfilePath());
+            if (profile is null)
+            {
+                return;
+            }
+
+            ConnectionModeIndex = profile.Mode == AivqcConnectionMode.Direct ? 1 : 0;
+            ConnectionEndpoint = profile.Endpoint.AbsoluteUri;
+            ConnectionClientId = profile.ClientId;
+            ConnectionStationId = profile.StationId ?? string.Empty;
+            AllowInsecureConnection = profile.AllowInsecureHttp;
+        }
+        catch (Exception exception)
+        {
+            ConnectionStatus = $"Connection profile could not be loaded: {exception.Message}";
+        }
+    }
+
+    private void SaveConnectionProfile(AivqcConnectionSettings settings)
+    {
+        AivqcConnectionProfileStore.Save(GetConnectionProfilePath(), settings);
+    }
+
+    private static string GetConnectionProfilePath() => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "AIVQC",
+        "Trainer",
+        "connection.json");
+
     public void Dispose()
     {
         if (_disposed)
@@ -582,6 +936,12 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
+    partial void OnSelectedProjectImageChanged(ProjectImageViewModel? value)
+    {
+        SelectedAnnotationId = Guid.Empty;
+        RefreshSelectedImage();
+    }
+
     private void ApplyProject(string projectDirectory, TrainerProjectManifest project)
     {
         _autosaveCancellation?.Cancel();
@@ -600,7 +960,11 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
         IsProjectLoaded = true;
         ProjectPath = _projectDirectory;
+        TrainingDatasetPath = string.Empty;
+        ProjectDatasetStatus = "Prepare a dataset snapshot from the current project annotations.";
+        TrainingStatus = "Prepare the annotated project dataset before training.";
         RefreshProjectImages();
+        RefreshAnnotationWorkspace();
         TryUpdateRecentProjects(project.Name);
         ImageImportStatus = project.Images.Count == 0
             ? "Project ready. Import JPG, PNG, BMP, or WebP images."
@@ -661,8 +1025,9 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    private void RefreshProjectImages()
+    private void RefreshProjectImages(Guid? preferredImageId = null)
     {
+        var selectedImageId = preferredImageId ?? SelectedProjectImage?.ImageId;
         DisposeProjectImages();
 
         if (_project is null)
@@ -671,6 +1036,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             ProjectImageCount = 0;
             MissingImageCount = 0;
             ImageWarningCount = 0;
+            SelectedProjectImage = null;
+            RefreshAnnotationWorkspace();
             return;
         }
 
@@ -700,6 +1067,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                     $"{image.Width} × {image.Height} · {image.Format.ToUpperInvariant()}",
                     image.StorageMode == ImageStorageMode.Copy ? "Project copy" : "External reference",
                     image.Warnings.Count == 0 ? "Ready" : string.Join(" ", image.Warnings),
+                    $"{image.Annotations?.Count ?? 0} annotation(s)",
                     new Bitmap(thumbnailPath)));
             }
             catch
@@ -709,12 +1077,115 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
 
         ProjectImages = items;
+        SelectedProjectImage = items.FirstOrDefault(image => image.ImageId == selectedImageId)
+            ?? items.FirstOrDefault();
         ProjectImageCount = _project.Images.Count;
         MissingImageCount = missingImages;
         ImageWarningCount = _project.Images.Sum(image => image.Warnings.Count) + missingThumbnails;
         ProjectHealth = missingImages == 0 && missingThumbnails == 0
             ? $"Project healthy · {ProjectImageCount} image(s) available."
             : $"Attention required · missing images: {missingImages}; missing thumbnails: {missingThumbnails}.";
+        RefreshAnnotationWorkspace();
+    }
+
+    private void RefreshAnnotationWorkspace()
+    {
+        DefectClasses = _project?.DefectClasses.ToArray() ?? [];
+        DefectClassCount = DefectClasses.Count;
+        if (SelectedDefectClass is null
+            || !DefectClasses.Contains(SelectedDefectClass, StringComparer.OrdinalIgnoreCase))
+        {
+            SelectedDefectClass = DefectClasses.FirstOrDefault();
+        }
+
+        if (_project is null)
+        {
+            AnnotationCount = 0;
+            AnnotatedImageCount = 0;
+            AnnotationProgressDisplay = "0%";
+            DatasetReadinessMessage = "Import the first images to unlock annotation and training.";
+            RefreshSelectedImage();
+            return;
+        }
+
+        AnnotationCount = _project.Images.Sum(image => image.Annotations?.Count ?? 0);
+        AnnotatedImageCount = _project.Images.Count(image => (image.Annotations?.Count ?? 0) > 0);
+        var progress = _project.Images.Count == 0
+            ? 0
+            : 100d * AnnotatedImageCount / _project.Images.Count;
+        AnnotationProgressDisplay = $"{progress:0}%";
+        DatasetReadinessMessage = _project.Images.Count == 0
+            ? "Import the first images to unlock annotation and training."
+            : DefectClasses.Count == 0
+                ? "Add at least one defect class before annotating images."
+                : $"{AnnotatedImageCount} of {_project.Images.Count} images contain annotations.";
+        RefreshSelectedImage();
+    }
+
+    private void RefreshSelectedImage()
+    {
+        if (_project is null || SelectedProjectImage is null)
+        {
+            SelectedImagePath = null;
+            SelectedImageAnnotations = [];
+            AnnotationListItems = [];
+            return;
+        }
+
+        var image = _project.Images.FirstOrDefault(
+            item => item.ImageId == SelectedProjectImage.ImageId);
+        if (image is null)
+        {
+            SelectedImagePath = null;
+            SelectedImageAnnotations = [];
+            AnnotationListItems = [];
+            return;
+        }
+
+        var imagePath = TrainerProjectStore.ResolveImagePath(_projectDirectory, image);
+        SelectedImagePath = File.Exists(imagePath) ? imagePath : null;
+        SelectedImageAnnotations = image.Annotations?.ToArray() ?? [];
+        AnnotationListItems = SelectedImageAnnotations
+            .Select(annotation => new AnnotationListItemViewModel(
+                annotation.AnnotationId,
+                $"{annotation.ClassName} · x {annotation.X:P0}, y {annotation.Y:P0}, "
+                + $"w {annotation.Width:P0}, h {annotation.Height:P0}"))
+            .ToArray();
+    }
+
+    private void SelectRelativeImage(int offset)
+    {
+        if (ProjectImages.Count == 0)
+        {
+            return;
+        }
+
+        var currentIndex = SelectedProjectImage is null
+            ? 0
+            : ProjectImages.ToList().FindIndex(image => image.ImageId == SelectedProjectImage.ImageId);
+        var nextIndex = Math.Clamp(currentIndex + offset, 0, ProjectImages.Count - 1);
+        SelectedProjectImage = ProjectImages[nextIndex];
+    }
+
+    private void InvalidatePreparedProjectDataset()
+    {
+        if (string.IsNullOrWhiteSpace(TrainingDatasetPath) || string.IsNullOrWhiteSpace(_projectDirectory))
+        {
+            return;
+        }
+
+        var datasetsDirectory = Path.GetFullPath(Path.Combine(
+            _projectDirectory,
+            ProjectDatasetExporter.DatasetsDirectoryName));
+        var selectedDataset = Path.GetFullPath(TrainingDatasetPath);
+        if (selectedDataset.StartsWith(
+            datasetsDirectory + Path.DirectorySeparatorChar,
+            StringComparison.OrdinalIgnoreCase))
+        {
+            TrainingDatasetPath = string.Empty;
+            ProjectDatasetStatus = "Annotations changed. Prepare a fresh dataset snapshot before training.";
+            TrainingStatus = "The previous project dataset snapshot is stale.";
+        }
     }
 
     private void DisposeProjectImages()

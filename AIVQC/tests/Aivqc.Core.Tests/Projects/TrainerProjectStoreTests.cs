@@ -1,4 +1,5 @@
 using Aivqc.Core.Projects;
+using System.Text.Json.Nodes;
 
 namespace Aivqc.Core.Tests.Projects;
 
@@ -42,6 +43,142 @@ public sealed class TrainerProjectStoreTests
             Assert.Equal(image.Location, restoredImage.Location);
             Assert.Equal(image.Sha256, restoredImage.Sha256);
             Assert.Empty(restoredImage.Warnings);
+            Assert.Null(restoredImage.Annotations);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void SaveAndLoad_PreserveValidatedObjectAnnotations()
+    {
+        var root = CreateTemporaryDirectory();
+
+        try
+        {
+            var created = TrainerProjectStore.Create(root, "Inspection", "product");
+            var image = CreateImage("sample.jpg", new string('C', 64));
+            var project = created with { Images = [image] };
+            project = TrainerProjectAnnotations.AddClass(project, "scratch");
+            project = TrainerProjectAnnotations.Add(
+                project,
+                image.ImageId,
+                "SCRATCH",
+                new NormalizedBoundingBox(0.1, 0.2, 0.3, 0.4));
+
+            TrainerProjectStore.Save(root, project);
+            var loaded = TrainerProjectStore.Load(root);
+
+            var annotation = Assert.Single(Assert.Single(loaded.Images).Annotations!);
+            Assert.Equal("scratch", annotation.ClassName);
+            Assert.Equal(0.1, annotation.X);
+            Assert.Equal(0.2, annotation.Y);
+            Assert.Equal(0.3, annotation.Width);
+            Assert.Equal(0.4, annotation.Height);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void Load_AcceptsLegacyImageWithoutAnnotationsProperty()
+    {
+        var root = CreateTemporaryDirectory();
+
+        try
+        {
+            var created = TrainerProjectStore.Create(root, "Legacy inspection", "product");
+            var project = created with
+            {
+                Images = [CreateImage("legacy.jpg", new string('F', 64))],
+                UpdatedAtUtc = DateTimeOffset.UtcNow,
+            };
+            TrainerProjectStore.Save(root, project);
+
+            var manifestPath = Path.Combine(root, TrainerProjectStore.ManifestFileName);
+            var document = JsonNode.Parse(File.ReadAllText(manifestPath))!.AsObject();
+            document["images"]![0]!.AsObject().Remove("annotations");
+            File.WriteAllText(manifestPath, document.ToJsonString());
+
+            var loaded = TrainerProjectStore.Load(root);
+
+            Assert.Null(Assert.Single(loaded.Images).Annotations);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void Save_RejectsAnnotationOutsideImage()
+    {
+        var root = CreateTemporaryDirectory();
+
+        try
+        {
+            var created = TrainerProjectStore.Create(root, "Inspection", "product");
+            var image = CreateImage("sample.jpg", new string('D', 64)) with
+            {
+                Annotations =
+                [
+                    new ProjectObjectAnnotation(
+                        Guid.NewGuid(),
+                        "scratch",
+                        0.8,
+                        0.2,
+                        0.3,
+                        0.4,
+                        DateTimeOffset.UtcNow),
+                ],
+            };
+            var invalid = created with
+            {
+                DefectClasses = ["scratch"],
+                Images = [image],
+                UpdatedAtUtc = DateTimeOffset.UtcNow,
+            };
+
+            Assert.Throws<InvalidDataException>(() => TrainerProjectStore.Save(root, invalid));
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void AnnotationEditor_RejectsUnknownClassAndRemovesExistingAnnotation()
+    {
+        var root = CreateTemporaryDirectory();
+
+        try
+        {
+            var created = TrainerProjectStore.Create(root, "Inspection", "product");
+            var image = CreateImage("sample.jpg", new string('E', 64));
+            var project = created with { Images = [image] };
+
+            Assert.Throws<InvalidOperationException>(() => TrainerProjectAnnotations.Add(
+                project,
+                image.ImageId,
+                "scratch",
+                new NormalizedBoundingBox(0.1, 0.1, 0.2, 0.2)));
+
+            project = TrainerProjectAnnotations.AddClass(project, "scratch");
+            project = TrainerProjectAnnotations.Add(
+                project,
+                image.ImageId,
+                "scratch",
+                new NormalizedBoundingBox(0.1, 0.1, 0.2, 0.2));
+            var annotationId = Assert.Single(project.Images[0].Annotations!).AnnotationId;
+
+            project = TrainerProjectAnnotations.Remove(project, image.ImageId, annotationId);
+
+            Assert.Empty(project.Images[0].Annotations!);
         }
         finally
         {

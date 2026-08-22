@@ -138,6 +138,41 @@
                     </Border>
 
                     <Border Classes="card">
+                        <StackPanel Spacing="9">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Package synchronization" FontSize="17" FontWeight="SemiBold" />
+                                <ProgressBar Grid.Column="1" IsIndeterminate="True"
+                                             IsVisible="{Binding IsConnectionBusy}" Width="70" Height="4"
+                                             Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center" />
+                            </Grid>
+                            <ComboBox SelectedIndex="{Binding ConnectionModeIndex}">
+                                <ComboBoxItem Content="AIVQC Server" />
+                                <ComboBoxItem Content="Direct Trainer connection" />
+                            </ComboBox>
+                            <TextBox Text="{Binding ConnectionEndpoint, UpdateSourceTrigger=PropertyChanged}"
+                                     PlaceholderText="https://aivqc.example.local/" />
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <TextBox Grid.Column="0" Text="{Binding ConnectionClientId}"
+                                         PlaceholderText="Client ID" />
+                                <TextBox Grid.Column="1" Text="{Binding ConnectionStationId}"
+                                         PlaceholderText="Station ID" />
+                            </Grid>
+                            <TextBox Text="{Binding ConnectionApiKey, UpdateSourceTrigger=PropertyChanged}"
+                                     PasswordChar="●" PlaceholderText="Session API key · not saved" />
+                            <CheckBox Content="Allow HTTP for isolated setup"
+                                      IsChecked="{Binding AllowInsecureConnection}" />
+                            <TextBlock Text="{Binding ConnectionStatus}" Classes="muted"
+                                       FontSize="11" TextWrapping="Wrap" />
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <Button Grid.Column="0" Classes="secondary" Content="Test"
+                                        Command="{Binding TestConnectionCommand}" />
+                                <Button Grid.Column="1" Classes="primary" Content="Sync latest"
+                                        Command="{Binding SynchronizePackageCommand}" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Classes="card">
                         <StackPanel Spacing="10">
                             <Grid ColumnDefinitions="*,Auto">
                                 <TextBlock Text="Defect threshold" FontSize="17" FontWeight="SemiBold" />

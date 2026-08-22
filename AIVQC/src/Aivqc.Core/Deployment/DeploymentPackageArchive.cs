@@ -83,10 +83,18 @@ public static class DeploymentPackageArchive
         }
     }
 
-    public static DeploymentPackageImportResult Import(string packagePath, string packageCacheRoot)
+    public static DeploymentPackageImportResult Import(
+        string packagePath,
+        string packageCacheRoot,
+        long maximumModelBytes = 2L * 1024 * 1024 * 1024)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(packagePath);
         ArgumentException.ThrowIfNullOrWhiteSpace(packageCacheRoot);
+
+        if (maximumModelBytes <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(maximumModelBytes));
+        }
 
         if (!File.Exists(packagePath))
         {
@@ -110,6 +118,11 @@ public static class DeploymentPackageArchive
         if (manifestEntry.Length > MaximumManifestBytes)
         {
             throw new InvalidDataException("The deployment-package manifest is too large.");
+        }
+
+        if (modelEntry.Length <= 0 || modelEntry.Length > maximumModelBytes)
+        {
+            throw new InvalidDataException("The deployment-package model exceeds the extraction safety limit.");
         }
 
         DeploymentPackageManifest manifest;
@@ -143,7 +156,7 @@ public static class DeploymentPackageArchive
             using (var source = modelEntry.Open())
             using (var target = new FileStream(modelPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
             {
-                extractedSha256 = CopyAndCalculateSha256(source, target);
+                extractedSha256 = CopyAndCalculateSha256(source, target, maximumModelBytes);
             }
 
             if (!string.Equals(extractedSha256, manifest.Model.Sha256, StringComparison.OrdinalIgnoreCase))
@@ -382,13 +395,20 @@ public static class DeploymentPackageArchive
         return Convert.ToHexString(SHA256.HashData(source));
     }
 
-    private static string CopyAndCalculateSha256(Stream source, Stream target)
+    private static string CopyAndCalculateSha256(Stream source, Stream target, long maximumBytes)
     {
         using var algorithm = SHA256.Create();
         var buffer = new byte[1024 * 1024];
+        long totalBytes = 0;
         int bytesRead;
         while ((bytesRead = source.Read(buffer, 0, buffer.Length)) > 0)
         {
+            totalBytes += bytesRead;
+            if (totalBytes > maximumBytes)
+            {
+                throw new InvalidDataException("The deployment-package model exceeds the extraction safety limit.");
+            }
+
             target.Write(buffer, 0, bytesRead);
             algorithm.TransformBlock(buffer, 0, bytesRead, null, 0);
         }
